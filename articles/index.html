@@ -1,16 +1,20 @@
 ---
 layout: Article/pagination
+title: JYU Blog
 ---
-<div class="d-flex flex-column bd-highlight mb-3">
+<div class="list-group">
     {% for post in paginator.posts %}
-    <div class="card text-center">
-        <div class="card-header">
-            {{ post.date }}
+    <a href="{{site.baseurl}}{{ post.url }}" class="list-group-item list-group-item-action d-flex gap-3 py-3"
+        aria-current="true">
+        <img src="https://github.com/twbs.png" alt="twbs" class="rounded-circle flex-shrink-0" width="32" height="32">
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div>
+                <h6 class="mb-0">{{ post.title }}</h6>
+                <!-- <p class="mb-0 opacity-75"></p> -->
+            </div>
+            <small class="opacity-50 text-nowrap">{{ post.date }}</small>
         </div>
-        <div class="card-body">
-            <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
-        </div>
-    </div>
+    </a>
     {% endfor %}
 </div>
 

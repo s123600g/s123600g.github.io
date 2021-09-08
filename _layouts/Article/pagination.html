@@ -1,19 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+  {% include header_module_v1.html %}
 
-<meta charset="utf-8">
-
-{% include header_module_v1.html %}
-
-<body>
+  <body>
     {% include top_bar_module_v1.html %}
 
-    <main class="container-sm">
-        {{ content }}
-    </main>
+    <main class="container-sm">{{ content }}</main>
+  </body>
 
-</body>
-
-{% include footer_module_v1.html %}
-
+  {% include footer_module_v1.html %}
 </html>

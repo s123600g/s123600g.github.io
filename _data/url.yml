@@ -1,5 +1,5 @@
 Home:
-  Url: "/blog/"
+  Url: "/Articles"
 
 Article:
-  Url: "/blog/articles"
+  Url: "/articles"
