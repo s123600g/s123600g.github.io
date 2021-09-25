@@ -1,18 +1,30 @@
 ---
 layout: Article/pagination
-title: JYU Blog
+title: Articles
 ---
+
+{% include Breadcrumb_module_v1.html %}
+
 <div class="list-group">
     {% for post in paginator.posts %}
     <a href="{{site.baseurl}}{{ post.url }}" class="list-group-item list-group-item-action d-flex gap-3 py-3"
         aria-current="true">
-        <img src="https://github.com/twbs.png" alt="twbs" class="rounded-circle flex-shrink-0" width="32" height="32">
+        <span>
+            <i class="fas fa-book-open py-3 fs-2 text-primary"></i>
+        </span>
+
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <h6 class="mb-0">{{ post.title }}</h6>
+                <!-- <h6 class="mb-0">{{ post.title }}</h6> -->
+                <span class="mb-0 fs-3">{{ post.title }}</span>
                 <!-- <p class="mb-0 opacity-75"></p> -->
+                <span class="text-muted fs-6">{{post.excerpt}}</span>
             </div>
-            <small class="opacity-50 text-nowrap">{{ post.date }}</small>
+
+            <small class="opacity-75 text-nowrap">
+                <i class="fas fa-clock text-info"></i>
+                {{ post.date }}
+            </small>
         </div>
     </a>
     {% endfor %}

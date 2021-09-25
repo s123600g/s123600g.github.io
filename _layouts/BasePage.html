@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html>
-
 {% include header_module_v1.html %}
-{% include VariableInit_module_v1.html %}
 
 <body>
     {% include top_bar_module_v1.html %}
-    {% include Breadcrumb_module_v2.html %}
 
-    <main class="container-sm">
-        {{ content }}
-    </main>
+    {% include Breadcrumb_module_v1.html %}
 
+    <main class="container-sm">{{ content }}</main>
 </body>
 
 {% include footer_module_v1.html %}
