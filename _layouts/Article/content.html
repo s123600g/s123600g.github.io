@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
-  {% include header_module_v1.html %} {% include VariableInit_module_v1.html %}
+{% include header_module_v1.html %} {% include VariableInit_module_v1.html %}
 
-  <body>
-    {% include top_bar_module_v1.html %} {% include Breadcrumb_module_v2.html %}
+<body>
+  {% include top_bar_module_v1.html %} {% include Breadcrumb_module_v2.html %}
 
-    <main class="container-sm">
-      {{ content }}
+  <main class="container-sm">
 
-      <hr />
+    <div class="mb-3">
+      <span class="fs-1" style="color: #A6341B;">{{page.title}}</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        {{site.author}} - <i class="fas fa-clock text-info"></i>
+        {{page.date | date: "%Y-%m-%d %H:%M:%S"}}
+      </span>
+    </div>
 
-      <script
-        src="{{site.comment_settings.src}}"
-        repo="{{site.github_repo}}"
-        issue-term="{{site.comment_settings.issue-term}}"
-        theme="{{site.comment_settings.theme}}"
-        label="{{site.comment_settings.label}}"
-        crossorigin="{{site.comment_settings.crossorigin}}"
-        async
-      ></script>
-    </main>
-  </body>
+    {{ content }}
 
-  {% include footer_module_v1.html %}
+    <script src="{{site.comment_settings.src}}" repo="{{site.github_repo}}"
+      issue-term="{{site.comment_settings.issue-term}}" theme="{{site.comment_settings.theme}}"
+      label="{{site.comment_settings.label}}" crossorigin="{{site.comment_settings.crossorigin}}" async></script>
+  </main>
+</body>
+
+{% include footer_module_v1.html %}
+
 </html>

@@ -21,7 +21,7 @@ title: Articles
 
             <small class="opacity-75 text-nowrap">
                 <i class="fas fa-clock text-info"></i>
-                {{ post.date }}
+                {{ post.date | date: "%Y-%m-%d %H:%M:%S" }}
             </small>
         </div>
     </a>
