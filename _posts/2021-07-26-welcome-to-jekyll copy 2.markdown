@@ -3,6 +3,7 @@ layout: Article/content
 title:  "Welcome to Jekyll!"
 date:   2021-07-26 21:49:09 +0800
 categories: update
+tag: test
 excerpt_separator: <!--more-->
 ---
 You’ll find this post in your `_posts` directory. 
