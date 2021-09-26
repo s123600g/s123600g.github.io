@@ -27,6 +27,16 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://s123600g.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
 github_username: s123600g
+github_repo: s123600g/s123600g.github.io
+
+# 設置留言系統配置 utteranc
+comment_settings:
+  src: https://utteranc.es/client.js
+  theme: boxy-light
+  issue-term: title
+  label: Article
+  crossorigin: anonymous
+
 
 # 設置Sass來源
 sass:
