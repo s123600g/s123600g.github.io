@@ -1,8 +1,5 @@
 Home:
   Url: "/"
 
-Article:
-  Url: "/articles"
-
 About:
   Url: "/about"

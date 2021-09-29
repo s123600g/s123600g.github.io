@@ -47,7 +47,7 @@ sass:
 
 # Pagination Settings
 paginate: 5
-paginate_path: "/articles/page:num/"
+paginate_path: "/page:num/"
 
 # Build settings
 theme: minima

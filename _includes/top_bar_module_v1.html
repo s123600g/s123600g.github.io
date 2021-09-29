@@ -1,19 +1,20 @@
-{% assign home_url = site.data.url["Home"].Url %}
-{% assign article_url = site.data.url["Article"].Url %}
-{% assign about_url = site.data.url["About"].Url %}
+{% include VariableInit_module_v1.html%}
 
 <div class="container">
     <header
         class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
 
-        <div class="col-md-3 text-start">
+        <div class="col-md-3 text-start fs-3">
             JYU Blog
         </div>
 
-        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="{{ home_url }}" class="nav-link px-2 link-secondary">Home</a></li>
-            <li><a href="{{ article_url }}" class="nav-link px-2 link-dark">Articles</a></li>
-            <li><a href="{{ about_url }}" class="nav-link px-2 link-secondary">About</a></li>
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="{{ home_url }}" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="{{ about_url }}" class="nav-link px-2 link-secondary">About</a>
+            </li>
         </ul>
 
         <div class="col-md-3 text-end">
