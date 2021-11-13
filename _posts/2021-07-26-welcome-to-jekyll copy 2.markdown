@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "Welcome to Jekyll!"
 date:   2021-07-26 21:49:09 +0800
-categories: update
-tag: test
+categories: [MyCateGories,test]
+tag: testTag
 excerpt_separator: <!--more-->
 ---
 You’ll find this post in your `_posts` directory. 
@@ -19,13 +19,13 @@ Where `YEAR` is a four-digit number, `MONTH` and `DAY` are both two-digit number
 
 Jekyll also offers powerful support for code snippets:
 
-{% highlight ruby %}
+```python
 def print_hi(name)
   puts "Hi, #{name}"
 end
 print_hi('Tom')
 #=> prints 'Hi, Tom' to STDOUT.
-{% endhighlight %}
+```
 
 Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll Talk][jekyll-talk].
 

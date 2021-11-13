@@ -38,7 +38,6 @@ comment_settings:
   label: Article
   crossorigin: anonymous
 
-
 # 設置Sass來源
 sass:
   sass_dir: _sass
@@ -49,8 +48,21 @@ sass:
 paginate: 5
 paginate_path: "/page:num/"
 
+collections:
+  categories:
+    output: true
+
 # Build settings
 theme: minima
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# 設定文章內容斷點(摘要)
+excerpt_separator: <!--more-->
+
 plugins:
   - jekyll-feed
   - jekyll-paginate

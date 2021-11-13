@@ -10,11 +10,15 @@ title: Home
         <span>
             <i class="fas fa-book-open py-3 fs-2 text-primary"></i>
         </span>
-
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
                 <span class="mb-0 fs-3">{{ post.title }}</span>
-                <span class="text-muted fs-6">{{post.excerpt}}</span>
+
+                <br />
+                {% for tt in post.categories %}
+                <span class="mt-0 badge bg-success">{{ tt }}</span>
+                {% endfor %}
+                <!-- <span class="mb-0 text-muted fs-6">{{post.excerpt}}</span> -->
             </div>
 
             <small class="opacity-75 text-nowrap">
