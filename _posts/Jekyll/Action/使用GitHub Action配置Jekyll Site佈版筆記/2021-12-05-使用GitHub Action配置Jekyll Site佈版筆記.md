@@ -25,7 +25,7 @@ excerpt_separator: <!--more-->
 * `gh-pages` 
   - 依據`main`分支作為佈版來源套用至此分支，Blog呈現來源是以此分支為基礎呈現。
 
-Blog程式更新規劃步驟如下
+Blog更新規劃步驟如下
 * Step 1. 建立分支並將更動內容**Push**上去。
 * Step 2. 建立**PR**，確認Action內PR Build程序都成功。
 * Step 3. 確認PR更動內容進行merge到`main`，**PR**狀態切為`closed`，由Action進行佈版程序。
@@ -104,9 +104,14 @@ on:
   - 回到儲存庫Actions確認由**push**事件做Build Jekyll site 是否成功執行完畢。
 * 在自訂分支建立一個**PR**
   - 在儲存庫pull_request確認由**PR**事件Action程序是否成功執行完畢。
+  ![GitHubToken_PRCheckBuild](GitHubToken_PRCheckBuild.jpg)
+  - Done <br/>
+  ![GitHubToken_PRCheckBuildDone](GitHubToken_PRCheckBuildDone.jpg)
 * 將**PR**確認進行merge程序
   - 確認pull_request merge 程序完成並已closed。
+  ![GitHubToken_PRClosed](GitHubToken_PRClosed.jpg)
   - 回到儲存庫Actions確認由**PR-closed**事件Action程序是否成功執行完畢。
+  ![GitHubToken_PRClosedDone](GitHubToken_PRClosedDone.jpg)
   - 如果成功執行完畢，在儲存庫分支會多一個`gh-pages`，此為佈版目標分支。
 
 ---
