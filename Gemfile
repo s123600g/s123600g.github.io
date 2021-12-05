@@ -20,6 +20,7 @@ group :jekyll_plugins do
   gem 'jekyll-sass-converter'
   gem "webrick", "~> 1.7"
   gem 'rouge'
+  gem 'jekyll-postfiles'
 end
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem
