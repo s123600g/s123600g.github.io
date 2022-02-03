@@ -4,67 +4,124 @@ title: Home
 ---
 
 <div class="list-group">
+    <!-- 文章列表清單區塊 -->
     {% for post in paginator.posts %}
+
     <a href="{{site.baseurl}}{{ post.url }}" class="list-group-item list-group-item-action d-flex gap-3 py-3"
         aria-current="true">
         <span>
-            <i class="fas fa-book-open py-3 fs-2 text-primary"></i>
+            <i class="fas fa-book-open py-3 fs-3 text-primary"></i>
         </span>
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <span class="mb-0 fs-3">{{ post.title }}</span>
+                <span class="mb-0 fs-4">{{ post.title }}</span>
 
                 <br />
-                {% for tt in post.categories %}
-                <span class="mt-0 badge bg-success">{{ tt }}</span>
+
+                {% for category in post.categories %}
+                <span class="mt-0 badge bg-success">{{ category }}</span>
                 {% endfor %}
                 <!-- <span class="mb-0 text-muted fs-6">{{post.excerpt}}</span> -->
+
             </div>
 
+            <!-- 新增日期時間 -->
             <small class="opacity-75 text-nowrap">
                 <i class="fas fa-clock text-info"></i>
                 {{ post.date | date: "%Y-%m-%d %H:%M:%S" }}
             </small>
         </div>
     </a>
+
     {% endfor %}
+
 </div>
 
 <div class="d-flex flex-row bd-highlight mb-2 mt-3 justify-content-center">
     <nav aria-label="Page navigation example">
         <ul class="pagination pagination-sm">
+
+            <!-- 往回前一頁指標設置區塊 -->
             {% if paginator.previous_page %}
+
             <li class="page-item">
                 <a class="page-link" href="{{ paginator.previous_page_path }}">
                     <i class="fas fa-angle-left"></i>
                 </a>
             </li>
+
+            <!-- 未有往回前一頁情況 -->
             {% else %}
+
             <li class="page-item disabled">
                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
                     <i class="fas fa-angle-left"></i>
                 </a>
             </li>
+
             {% endif %}
 
-            {% for page in paginator.total_pages %}
-            <li class="page-item"><a class="page-link" href="#">{{page}}}</a></li>
+            <!-- 產生頁面頁碼區塊 -->
+            {% if paginator.total_pages > 1 %}
+
+            <!-- 讀取頁面頁碼集合 -->
+            {% for page in (1..paginator.total_pages) %}
+
+            <!-- 如果為當前頁碼設置不啟用該區塊功能，僅單純呈現 -->
+            {% if page == paginator.page %}
+
+            <li class="page-item disabled">
+                <a class="page-link bg-warning" href="#">{{page}}</a>
+            </li>
+
+            <!-- 當頁碼為第一個時，該頁碼連結設置為根位置 -->
+            {% elsif page == 1 %}
+
+            <li class="page-item">
+                <a class="page-link" href="{{ '/' | relative_url }}">{{page}}</a>
+            </li>
+
+            <!-- 非第一個頁碼與非當前頁碼，設置連結內容為該頁碼位置 -->
             {% else %}
-            <li class="page-item disabled"><a class="page-link" href="#">1</a></li>
+
+            <!-- 只有一個頁面情況 -->
+            <li class="page-item">
+                <!-- 取分頁預設位置內容(/page:num/)，並將':num'取代為當前頁碼 -->
+                <a class="page-link" href="{{ site.paginate_path | relative_url | replace: ':num', page }}">{{page}}</a>
+            </li>
+
+            {% endif %}
+
             {% endfor %}
 
+            <!-- 頁面頁碼只有一個 -->
+            {% else %}
+
+            <!-- 頁面頁碼只有一個時，該頁碼連結設置為根位置 -->
+            <li class="page-item disabled">
+                <a class="page-link" href="{{ '/' | relative_url }}">1</a>
+            </li>
+
+            {% endif %}
+
+            <!-- 往後前一頁指標設置區塊 -->
             {% if paginator.next_page %}
+
             <li class="page-item">
                 <a class="page-link" href="{{ paginator.next_page_path }}">
                     <i class="fas fa-angle-right"></i>
                 </a>
             </li>
+
+            <!-- 未有往後前一頁情況 -->
             {% else %}
+
             <li class="page-item disabled">
                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
                     <i class="fas fa-angle-right"></i>
                 </a>
             </li>
+
             {% endif %}
         </ul>
     </nav>

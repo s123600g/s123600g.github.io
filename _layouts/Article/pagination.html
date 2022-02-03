@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
-  {% include header_module_v1.html %}
+{% include header_module_v1.html %}
 
-  <body>
-    {% include top_bar_module_v1.html %}
+<body>
 
-    <main class="container-sm">{{ content }}</main>
-  </body>
+  {% include top_bar_module_v1.html %}
 
-  {% include footer_module_v1.html %}
+  <main class="container-sm">
+    {{ content }}
+  </main>
+
+</body>
+
+{% include footer_module_v1.html %}
+
 </html>
