@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "使用Docker運行Nginx與uWSGI容器服務"
 date:   2020-06-27 20:05:00 +0800
-categories: [Docker,Nginx,uWSGI]
-tag: Docker
+categories: [docker,nginx,uwsgi]
+tag: docker
 excerpt_separator: <!--more-->
 ---
 

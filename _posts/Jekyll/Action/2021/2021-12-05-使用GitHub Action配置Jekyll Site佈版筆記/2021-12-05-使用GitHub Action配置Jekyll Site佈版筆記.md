@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "使用GitHub Action配置Jekyll Site佈版筆記"
 date:   2021-12-05 15:56:00 +0800
-categories: [Jekyll,GitHub,GitHub Action]
-tag: Jekyll
+categories: [jekyll,gitHub_action]
+tag: jekyll
 excerpt_separator: <!--more-->
 ---
 

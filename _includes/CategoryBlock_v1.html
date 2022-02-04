@@ -1,0 +1,35 @@
+<!-- Category 產生區塊 -->
+<div class="fs-5">
+    <span>
+        文章分類：
+    </span>
+
+    <!-- 預設全部文章頁面 -->
+    <span class="badge badge bg-primary ">
+        <a class="link-style text-light" href="{{ '/' | relative_url }}">
+            All
+        </a>
+    </span>
+
+    <!-- 判斷是否有其它Category -->
+    {% if site.tags.size > 1 %}
+
+    <!-- 掃描讀取所有Category -->
+    {% for tag in site.tags %}
+
+    {% assign tempTagName = tag[0] | downcase %}
+    {% assign tempPostUrl = '/Category/' | append: tempTagName %}
+
+    <span class="badge bg-warning mar" style="margin-left: 0.3em;">
+        <a class="link-style  text-dark" href="{{ tempPostUrl | relative_url}}">
+            {{ tempTagName }}
+        </a>
+    </span>
+
+    {% endfor %}
+
+    {% endif %}
+
+</div>
+
+<hr />

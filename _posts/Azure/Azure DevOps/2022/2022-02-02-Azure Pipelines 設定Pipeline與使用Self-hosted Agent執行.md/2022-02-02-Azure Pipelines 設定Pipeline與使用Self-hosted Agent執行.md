@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "Azure Pipelines 設定Pipeline與使用Self-hosted Agent執行"
 date:   2022-02-02 18:05:00 +0800
-categories: [Azure DevOps,Azure Pipelines]
-tag: Azure DevOps
+categories: [azure_devops,azure_pipelines]
+tag: azure_devops
 img_category_num: Azure_Pipelines_02
 excerpt_separator: <!--more-->
 ---

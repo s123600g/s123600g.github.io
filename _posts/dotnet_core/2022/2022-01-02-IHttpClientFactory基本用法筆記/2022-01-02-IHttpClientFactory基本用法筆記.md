@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "IHttpClientFactory基本用法筆記"
 date:   2022-01-02 22:05:00 +0800
-categories: [Asp.Net.Core, C#]
-tag: Asp.Net.Core
+categories: [dotnet_core]
+tag: dotnet_core
 excerpt_separator: <!--more-->
 ---
 

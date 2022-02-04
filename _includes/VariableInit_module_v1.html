@@ -1,2 +1,14 @@
 {% assign home_url = site.data.url["Home"].Url %}
 {% assign about_url = site.data.url["About"].Url %}
+{% assign development_mode = site.data.baseSettings["Development_Mode"] %}
+{% assign production_mode = site.data.baseSettings["Production_Mode"] %}
+
+{% if jekyll.environment == {{production_mode}}%}
+
+{% assign isRunProductionMode = true %}
+
+{% else %}
+
+{% assign isRunProductionMode = false %}
+
+{% endif %}

@@ -48,10 +48,6 @@ sass:
 paginate: 5
 paginate_path: "/page:num/"
 
-collections:
-  categories:
-    output: true
-
 # Build settings
 theme: minima
 
