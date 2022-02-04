@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "Azure Pipelines 設置Self-hosted Windows代理程式"
 date:   2022-02-01 19:20:00 +0800
-categories: [Azure DevOps,Azure Pipelines]
-tag: Azure DevOps
+categories: [azure_devops,azure_pipelines]
+tag: azure_devops
 img_category_num: Azure_Pipelines_01
 excerpt_separator: <!--more-->
 ---

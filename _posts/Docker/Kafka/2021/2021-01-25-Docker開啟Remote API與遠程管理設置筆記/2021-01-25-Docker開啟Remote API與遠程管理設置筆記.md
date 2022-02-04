@@ -2,8 +2,8 @@
 layout: Article/content
 title:  "Docker開啟Remote API與遠程管理設置筆記"
 date:   2021-01-25 23:01:00 +0800
-categories: [Docker]
-tag: Docker
+categories: [docker]
+tag: docker
 excerpt_separator: <!--more-->
 ---
 

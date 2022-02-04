@@ -1,0 +1,54 @@
+<div class="list-group">
+    <!-- 文章列表清單區塊 -->
+    {% for post in paginator.posts %}
+
+    {% assign isMainTag = true %}
+
+    <a class="list-group-item list-group-item-action d-flex gap-3 py-3" href="{{site.baseurl}}{{ post.url }}"
+        aria-current="true" target="_blank">
+        <span>
+            <i class="fas fa-book-open py-3 fs-3 text-primary"></i>
+        </span>
+        <div class="d-flex gap-2 w-100 justify-content-between">
+            <div>
+                <span class="mb-0 fs-4">{{ post.title }}</span>
+
+                <br />
+
+                <!-- 讀取文章內分類標籤 -->
+                {% for category in post.categories %}
+
+                <!-- 是否對應主Tag -->
+                {% if isMainTag %}
+
+                <span class="mt-0 badge bg-warning text-dark">
+                    {{ category }}
+                </span>
+
+                {% assign isMainTag = false %}
+
+                <!-- 非對應主Tag，屬於細項分類 -->
+                {% else %}
+
+                <span class="mt-0 badge bg-success">
+                    {{ category }}
+                </span>
+
+                {% endif %}
+
+                {% endfor %}
+                <!-- <span class="mb-0 text-muted fs-6">{{post.excerpt}}</span> -->
+
+            </div>
+
+            <!-- 新增日期時間 -->
+            <small class="opacity-75 text-nowrap">
+                <i class="fas fa-clock text-info"></i>
+                {{ post.date | date: "%Y-%m-%d %H:%M:%S" }}
+            </small>
+        </div>
+    </a>
+
+    {% endfor %}
+
+</div>
