@@ -4,8 +4,11 @@ title:  "IHttpClientFactory基本用法筆記"
 date:   2022-01-02 22:05:00 +0800
 categories: [dotnet_core]
 tag: dotnet_core
+img_category_num: dotnet_core_01
 excerpt_separator: <!--more-->
 ---
+
+<!--more-->
 
 此筆記為紀錄工作上碰到開發需要，使用`IHttpClientFactory`來建立管控`HttpClient`生命週期。
 
