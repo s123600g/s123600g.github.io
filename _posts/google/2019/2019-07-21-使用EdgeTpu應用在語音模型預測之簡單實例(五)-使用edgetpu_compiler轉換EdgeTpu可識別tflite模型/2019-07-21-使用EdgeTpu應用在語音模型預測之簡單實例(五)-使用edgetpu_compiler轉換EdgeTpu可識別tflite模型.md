@@ -73,7 +73,7 @@ cat ASR_Model_edgetpu.log
 <script src="https://gist.github.com/s123600g/f5d89147ffd5a510aad3f4eed6b4cbed.js"></script>
 
 
-**2. `ASR_Model_edgetpu.tflite - - > 轉換後EdgeTpu模型`**
+**2. `ASR_Model_edgetpu.tflite` - - > 轉換後EdgeTpu模型**
 
 ![](edgetpu05-04.png)
 
