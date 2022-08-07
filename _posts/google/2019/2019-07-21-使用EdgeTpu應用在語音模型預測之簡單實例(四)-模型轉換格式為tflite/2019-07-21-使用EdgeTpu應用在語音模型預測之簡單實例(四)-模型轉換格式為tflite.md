@@ -113,6 +113,6 @@ column_Classname = 'ClassName'
 
 <script src="https://gist.github.com/s123600g/b386cb9532d104977b9c4333d25df209.js"></script>
 
-到目前為止針對模型轉換格式為tflite，我們已將pb模型轉換為tflite模型，接下來就可以進行**(五) 使用 edgetpu_compiler 轉換 EdgeTpu 可識別 tflite模型**。
+到目前為止針對模型轉換格式為tflite，我們已將pb模型轉換為tflite模型，接下來就可以進行[(五) 使用 edgetpu_compiler 轉換 EdgeTpu 可識別 tflite模型](https://s123600g.github.io/google/edgetpu/2019/07/20/%E4%BD%BF%E7%94%A8EdgeTpu%E6%87%89%E7%94%A8%E5%9C%A8%E8%AA%9E%E9%9F%B3%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E4%B9%8B%E7%B0%A1%E5%96%AE%E5%AF%A6%E4%BE%8B(%E4%BA%94)-%E4%BD%BF%E7%94%A8edgetpu_compiler%E8%BD%89%E6%8F%9BEdgeTpu%E5%8F%AF%E8%AD%98%E5%88%A5tflite%E6%A8%A1%E5%9E%8B.html)。
 
 ---
