@@ -2,58 +2,11 @@
 {% assign currentTag = page.maintag | downcase %}
 
 <!-- 取得網站所有tag標籤 -->
-{% assign siteTagEntitys = site.tags  %}
+{% assign siteTagEntitys = site.tags %}
 
-<!-- 當前分類顯示區塊 -->
-<div class="fs-5">
-    <span>
-        文章分類：
-    </span>
+<div class="row">
 
-    <!-- 預設全部文章頁面 -->
-    <span class="badge badge bg-warning ">
-        <a class="link-style text-dark" href="{{ '/' | relative_url }}">
-            All
-        </a>
-    </span>
-
-    <!-- 判斷是否有其它Category -->
-    {% if siteTagEntitys.size > 1 %}
-
-    <!-- 掃描讀取所有Category -->
-    {% for tag in siteTagEntitys %}
-
-    <!-- 擷取目前讀出tag並將內容轉成小寫 -->
-    {% assign tempTagName = tag[0] | downcase %}
-
-    <!-- 判斷讀出tag是否為當前選取分類tag -->
-    {% if tempTagName == currentTag %}
-
-    <span class="badge badge bg-primary text-light">
-        {{ currentTag }}
-    </span>
-
-    <!-- 讀出tag非當前選取分類tag -->
-    {% else %}
-
-    <!-- 產生分類頁面Path -->
-    {% assign tempPostUrl = '/category/' | append: tempTagName %}
-
-    <span class="badge bg-warning mar" style="margin-left: 0.3em;">
-        <a class="link-style  text-dark" href="{{ tempPostUrl | relative_url}}">
-            {{ tempTagName }}
-        </a>
-    </span>
-
-    {% endif %}
-
-    {% endfor %}
-
-    {% endif %}
-
-</div>
-
-<hr />
+<div class="col-md-10">
 
 <!-- 顯示所屬當前文章分類下文章 -->
 <div class="list-group">
@@ -64,15 +17,23 @@
     {% assign isMainTag = true %}
 
     <a class="list-group-item list-group-item-action d-flex gap-3 py-3" href="{{site.baseurl}}{{ post.url }}"
-        aria-current="true" target="_blank">
+        aria-current="true">
 
         <span>
-            <i class="fas fa-book-open py-3 fs-3 text-primary"></i>
+            <i class="fas fa-book py-3 fs-4 text-secondary"></i>
         </span>
 
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <span class="mb-0 fs-4">{{ post.title }}</span>
+                <span class="mb-0 fs-6">{{ post.title }}</span>
+
+                <br />
+
+                <!-- 新增日期時間 -->
+                <small class="opacity-75 text-nowrap">
+                    <i class="fas fa-clock text-info"></i>
+                    {{ post.date | date: "%Y-%m-%d " }}
+                </small>
 
                 <br />
 
@@ -82,7 +43,8 @@
                 <!-- 是否對應主Tag -->
                 {% if isMainTag %}
 
-                <span class="mt-0 badge bg-warning text-dark">
+                <span
+                    class="mt-0 badge bg-warning-subtle border border-warning-subtle text-warning-emphasis rounded-pill">
                     {{ category }}
                 </span>
 
@@ -91,7 +53,7 @@
                 <!-- 非對應主Tag，屬於細項分類 -->
                 {% else %}
 
-                <span class="mt-0 badge bg-success">
+                <span class="mt-0 badge bg-info-subtle border border-info-subtle text-info-emphasis rounded-pill">
                     {{ category }}
                 </span>
 
@@ -101,15 +63,18 @@
 
             </div>
 
-            <!-- 新增日期時間 -->
-            <small class="opacity-75 text-nowrap">
-                <i class="fas fa-clock text-info"></i>
-                {{ post.date | date: "%Y-%m-%d %H:%M:%S" }}
-            </small>
-
         </div>
     </a>
 
     {% endfor %}
+
+</div>
+
+</div>
+
+<div class="col-md-2">
+    <!-- 引入Category 區塊模組 -->
+    {% include CategoryBlock_v2.html %}
+</div>
 
 </div>

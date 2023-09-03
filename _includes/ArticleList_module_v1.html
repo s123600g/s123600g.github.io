@@ -7,11 +7,19 @@
     <a class="list-group-item list-group-item-action d-flex gap-3 py-3" href="{{site.baseurl}}{{ post.url }}"
         aria-current="true">
         <span>
-            <i class="fas fa-book-open py-3 fs-3 text-primary"></i>
+            <i class="fas fa-book py-3 fs-4 text-secondary"></i>
         </span>
         <div class="d-flex gap-2 w-100 justify-content-between">
             <div>
-                <span class="mb-0 fs-4">{{ post.title }}</span>
+                <span class="mb-0 fs-6">{{ post.title }}</span>
+
+                <br />
+
+                <!-- 新增日期時間 -->
+                <small class="opacity-75 text-nowrap">
+                    <i class="fas fa-clock text-info"></i>
+                    {{ post.date | date: "%Y-%m-%d" }}
+                </small>
 
                 <br />
 
@@ -21,7 +29,8 @@
                 <!-- 是否對應主Tag -->
                 {% if isMainTag %}
 
-                <span class="mt-0 badge bg-warning text-dark">
+                <span
+                    class="mt-0 badge bg-warning-subtle border border-warning-subtle text-warning-emphasis rounded-pill">
                     {{ category }}
                 </span>
 
@@ -30,7 +39,7 @@
                 <!-- 非對應主Tag，屬於細項分類 -->
                 {% else %}
 
-                <span class="mt-0 badge bg-success">
+                <span class="mt-0 badge bg-info-subtle border border-info-subtle text-info-emphasis rounded-pill">
                     {{ category }}
                 </span>
 
@@ -41,11 +50,6 @@
 
             </div>
 
-            <!-- 新增日期時間 -->
-            <small class="opacity-75 text-nowrap">
-                <i class="fas fa-clock text-info"></i>
-                {{ post.date | date: "%Y-%m-%d %H:%M:%S" }}
-            </small>
         </div>
     </a>
 
