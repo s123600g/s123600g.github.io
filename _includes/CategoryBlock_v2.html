@@ -1,0 +1,52 @@
+{% assign tempCurrentPageName = page.title | downcase %}
+<dev class="mw-100">
+    <p class="fs-5 w-100 text-center">
+        文章分類
+    </p>
+</dev>
+
+<div class="list-group">
+    {% if tempCurrentPageName == 'home' %}
+
+    <a href="{{ '/' | relative_url }}" class="list-group-item list-group-item-action list-group-item-primary">
+        All
+    </a>
+
+    {% else %}
+
+    <a href="{{ '/' | relative_url }}" class="list-group-item list-group-item-action">
+        All
+    </a>
+
+    {% endif %}
+
+    <!-- 判斷是否有其它Category -->
+    {% if site.tags.size > 1 %}
+
+    <!-- 掃描讀取所有Category -->
+    {% for tag in site.tags %}
+
+    {% assign tempTagName = tag[0] | downcase %}
+
+    <!-- 判斷讀出tag是否為當前選取分類tag -->
+    {% if tempTagName == currentTag %}
+
+    <span class="list-group-item list-group-item-action list-group-item-primary">
+        {{ currentTag }}
+    </span>
+
+    {% else %}
+
+    <!-- 產生分類頁面Path -->
+    {% assign tempPostUrl = '/category/' | append: tempTagName %}
+
+    <a href="{{ tempPostUrl | relative_url}}" class="list-group-item list-group-item-action">
+        {{ tempTagName }}
+    </a>
+
+    {% endif %}
+
+    {% endfor %}
+
+    {% endif %}
+</div>

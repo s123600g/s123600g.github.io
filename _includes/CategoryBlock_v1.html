@@ -1,15 +1,30 @@
+{% assign tempCurrentPageName = page.title | downcase %}
+
 <!-- Category 產生區塊 -->
-<div class="fs-5">
+<div class="fs-6">
     <span>
         文章分類：
     </span>
 
+    {% if tempCurrentPageName == 'home' %}
+
     <!-- 預設全部文章頁面 -->
-    <span class="badge badge bg-primary ">
+    <span class="badge badge bg-primary">
         <a class="link-style text-light" href="{{ '/' | relative_url }}">
             All
         </a>
     </span>
+
+    {% else %}
+
+    <!-- 預設全部文章頁面 -->
+    <span class="badge badge bg-warning">
+        <a class="link-style text-dark" href="{{ '/' | relative_url }}">
+            All
+        </a>
+    </span>
+
+    {% endif %}
 
     <!-- 判斷是否有其它Category -->
     {% if site.tags.size > 1 %}
@@ -18,6 +33,18 @@
     {% for tag in site.tags %}
 
     {% assign tempTagName = tag[0] | downcase %}
+
+    <!-- 判斷讀出tag是否為當前選取分類tag -->
+    {% if tempTagName == currentTag %}
+
+    <span class="badge badge bg-primary text-light">
+        {{ currentTag }}
+    </span>
+
+    <!-- 讀出tag非當前選取分類tag -->
+    {% else %}
+
+    <!-- 產生分類頁面Path -->
     {% assign tempPostUrl = '/category/' | append: tempTagName %}
 
     <span class="badge bg-warning mar" style="margin-left: 0.3em;">
@@ -25,6 +52,8 @@
             {{ tempTagName }}
         </a>
     </span>
+
+    {% endif %}
 
     {% endfor %}
 
