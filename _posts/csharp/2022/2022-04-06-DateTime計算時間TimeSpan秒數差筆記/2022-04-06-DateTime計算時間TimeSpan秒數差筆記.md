@@ -39,13 +39,12 @@ DateTime.Now
 
 ### 情境一 上限門檻為30秒
 
-![](csharp_01.jpg)
+<img src="csharp_01.jpg" class="img-fluid rounded mx-auto" >
 
 
 ### 情境二 上限門檻為65秒
 
-![](csharp_01-02.jpg)
-
+<img src="csharp_01-02.jpg" class="img-fluid rounded mx-auto" >
 
 依據測試輸出結果，兩個情境都會自動跳離迴圈，情境一是由`TimeSpan`內`Seconds`變數來判斷跳離，它是`int`變數，情境二是由`TimeSpan`內`TotalSeconds`變數來判斷跳離，它是`double`變數。
 

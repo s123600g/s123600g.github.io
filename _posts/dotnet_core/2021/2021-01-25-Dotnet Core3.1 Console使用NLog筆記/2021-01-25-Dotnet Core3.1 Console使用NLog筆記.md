@@ -88,11 +88,11 @@ excerpt_separator: <!--more-->
 
 ### Step 5. 建置專案並執行
 
-![](dotnet_core_02-1.png)
+<img src="dotnet_core_02-1.png" class="img-fluid rounded mx-auto" >
 
 在專案目錄`bin\Debug\netcoreapp3.1`底下可以看到`logs/`目錄，NLog產生記錄檔放置在此目錄底下
 
-![](dotnet_core_02-1-2.png)
+<img src="dotnet_core_02-1-2.png" class="img-fluid rounded mx-auto" >
 
 初步建置過程碰到下面問題，筆記解決方式
 

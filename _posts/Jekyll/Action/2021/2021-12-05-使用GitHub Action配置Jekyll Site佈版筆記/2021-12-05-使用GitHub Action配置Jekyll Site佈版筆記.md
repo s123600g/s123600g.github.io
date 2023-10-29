@@ -38,19 +38,19 @@ Blog更新規劃步驟如下
 * 登入GitHub
 * [GitHub Profile -> Developer settings -> Personal access tokens](https://github.com/settings/tokens)
   - 點選`Generate new token`
-  ![GitHubToken_Generate](GitHubToken_Generate.jpg)
+  <img src="GitHubToken_Generate.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_Generate">
   - `Note` 設定此Token名稱，自己命名可識別名稱。
   - `Expiration` 設定Token 效期
     - 如果要一直使用請設定 `No expiration`
   - `Select scopes` 設定此Token權限
     - **Public**儲存庫只需要repo區塊裡面三個權限，`repo:status`、`repo_deployment`、`public_repo`
-    ![GitHubToken_PublicScopes](GitHubToken_PublicScopes.jpg)
-    - **Private**儲存庫，需要勾`repo`  
-    ![GitHubToken_PrivateScopes](GitHubToken_PrivateScopes.jpg)
+    <img src="GitHubToken_PublicScopes.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PublicScopes">
+    - **Private**儲存庫，需要勾`repo`    
+    <img src="GitHubToken_PrivateScopes.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PrivateScopes">
     - 其餘權限如有需要再自行開啟。
   - 設定`Repository Secret`
-    - 在目標儲存庫Settings -> secrets 建立名為`GITHUBTOKEN` secret，並將前面建好GitHub Token設置到此secret。
-     ![GitHubToken_RepositorySecret](GitHubToken_RepositorySecret.jpg)
+    - 在目標儲存庫Settings -> secrets 建立名為`GITHUBTOKEN` secret，並將前面建好GitHub Token設置到此secret。     
+     <img src="GitHubToken_RepositorySecret.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_RepositorySecret">
 
 ### 確認Gemfile配置
 設定好用到的額外套件配置，在跑Action時，建置環境時會依據此檔案配置安裝所需套件。
@@ -104,14 +104,14 @@ on:
   - 回到儲存庫Actions確認由**push**事件做Build Jekyll site 是否成功執行完畢。
 * 在自訂分支建立一個**PR**
   - 在儲存庫pull_request確認由**PR**事件Action程序是否成功執行完畢。
-  ![GitHubToken_PRCheckBuild](GitHubToken_PRCheckBuild.jpg)
+  <img src="GitHubToken_PRCheckBuild.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRCheckBuild">
   - Done <br/>
-  ![GitHubToken_PRCheckBuildDone](GitHubToken_PRCheckBuildDone.jpg)
+  <img src="GitHubToken_PRCheckBuildDone.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRCheckBuildDone">
 * 將**PR**確認進行merge程序
   - 確認pull_request merge 程序完成並已closed。
-  ![GitHubToken_PRClosed](GitHubToken_PRClosed.jpg)
-  - 回到儲存庫Actions確認由**PR-closed**事件Action程序是否成功執行完畢。
-  ![GitHubToken_PRClosedDone](GitHubToken_PRClosedDone.jpg)
+  <img src="GitHubToken_PRClosed.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRClosed">
+  - 回到儲存庫Actions確認由**PR-closed**事件Action程序是否成功執行完畢。  
+  <img src="GitHubToken_PRClosedDone.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRClosedDone">
   - 如果成功執行完畢，在儲存庫分支會多一個`gh-pages`，此為佈版目標分支。
 
 ---

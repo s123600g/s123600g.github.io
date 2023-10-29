@@ -58,7 +58,7 @@ docker run  --name flask_restfulapi_base -p 8807:80 -v E:\Project\GitHub\FlaskDe
 http://localhost:8807/
 ```
 
-![](python_03-1.png)
+<img src="python_03-1.png" class="img-fluid rounded mx-auto" >
 
 這裡預設是顯示在`Server.py`內針對`/`路由位置內配置
 ```python
@@ -77,7 +77,7 @@ def index():
 http://localhost:8807/firstapi?title=Hello
 ```
 
-![](python_03-2.png)
+<img src="python_03-2.png" class="img-fluid rounded mx-auto" >
 
 **POST**
 ```
@@ -92,7 +92,7 @@ body參數
 }
 ```
 
-![](python_03-3.png)
+<img src="python_03-3.png" class="img-fluid rounded mx-auto" >
 
 ---
 

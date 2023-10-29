@@ -20,11 +20,11 @@ GitHub：[https://github.com/s123600g/asr_edgetpu_demo](https://github.com/s1236
 
 轉換之前在專案目錄內`model/model_pb/frozen_model.pb`模型大小為415.9kB
 
-![](edgetpu04-01.png)
+<img src="edgetpu04-01.png" class="img-fluid rounded mx-auto" >
 
 轉換成tflite模型`tflite_model/ASR_Model.tflite`大小為105.2kB
 
-![](edgetpu04-02.png)
+<img src="edgetpu04-02.png" class="img-fluid rounded mx-auto" >
 
 #### 執行程式分為兩種方式：
 
@@ -43,8 +43,9 @@ python Model_pb_to_tflite.py \
 ```
 
 ![](edgetpu04-03.png)
+<img src="" class="img-fluid rounded mx-auto" >
 
-![](edgetpu04-04.png)
+<img src="edgetpu04-04.png" class="img-fluid rounded mx-auto" >
 
 
 **2. 不指定輸入來源位置與輸出位置，自動抓取 Config.py 內部設置**
@@ -53,7 +54,7 @@ python Model_pb_to_tflite.py \
 python Model_pb_to_tflite.py
 ```
 
-![](edgetpu04-05.png)
+<img src="edgetpu04-05.png" class="img-fluid rounded mx-auto" >
 
 <script src="https://gist.github.com/s123600g/c9da16cabacc6d88ae1c8a57247d5516.js"></script>
 

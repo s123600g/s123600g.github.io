@@ -22,13 +22,13 @@ excerpt_separator: <!--more-->
 ```shell
 docker pull verdaccio/verdaccio
 ```
-![](docker_02_1.png)
+<img src="docker_02_1.png" class="img-fluid rounded mx-auto" >
 
 可以透過以下指令查看下載的Image
 ```shell
 docker images
 ```
-![](docker_02_1-2.png)
+<img src="docker_02_1-2.png" class="img-fluid rounded mx-auto" >
 
 可以看到Image名為`verdaccio/verdaccio`，並且Tag為`latest`，在運行Container指定的images來源正確名稱為`verdaccio/verdaccio:latest`。
 
@@ -42,11 +42,11 @@ docker run -it --rm --name verdaccio -p 4873:4873 verdaccio/verdaccio
 * `--rm` 當Container服務退出時，會把Container給清除掉。
 * `--it` 當執行運作Container指令時，會把當前終端機與Container做TTY連結，使其變成當前Container程序標準輸出入介面。
 
-![](docker_02_2.png)
+<img src="docker_02_2.png" class="img-fluid rounded mx-auto" >
 
 當有在瀏覽器上輸入網址進行瀏覽動作時，可以發現當前運行指令終端機準輸出入介面中，輸出了有瀏覽狀態紀錄。
 
-![](docker_02_2-2.png)
+<img src="docker_02_2-2.png" class="img-fluid rounded mx-auto" >
 
 預設執行模式為`Foreground`，當執行完畢後Container服務就結束，因為有加上`--rm`所以會清除掉該Container包含屬於內部相關anonymous volumes。
 
@@ -58,20 +58,20 @@ docker run --name verdaccio -p 4873:4873 -v F:\verdaccio\storage:/verdaccio/stor
 * `--restart always` 設置不管在什麼情況下導致Container退出，都強制讓Container服務重新啟動運作。
 * `-d` 指定將Container服務常駐運作在背景中。
 
-![](docker_02_2-3.png)
+<img src="docker_02_2-3.png" class="img-fluid rounded mx-auto" >
 
 運行下列指令確認Container服務狀態
 ```powershell
 docker ps -a
 ```
 
-![](docker_02_2-4.png)
+<img src="docker_02_2-4.png" class="img-fluid rounded mx-auto" >
 
 可以觀察到在`STATUS`是`Up About a minute`，代表Container服務正常運作中。
 
 在瀏覽器上輸入`http://127.0.0.1:4873/`進行瀏覽可以看到Server首頁。
 
-![](docker_02_2-5.png)
+<img src="docker_02_2-5.png" class="img-fluid rounded mx-auto" >
 
 ---
 
@@ -125,7 +125,7 @@ npm install PackageName --registry http://127.0.0.1:4873
 npm init
 ```
 
-![](docker_02_3.png)
+<img src="docker_02_3.png" class="img-fluid rounded mx-auto" >
 
 * Step 2. 建立`HelloTest.js`，並貼上以下內容
 ```javascript
@@ -135,7 +135,7 @@ function Helloworld() {
 module.exports = Helloworld;
 ```
 
-![](docker_02_3-2.png)
+<img src="docker_02_3-2.png" class="img-fluid rounded mx-auto" >
 
 ##### 建立User在NPM Server
 
@@ -145,14 +145,14 @@ npm adduser --registry http://127.0.0.1:4873
 ```
 出現輸入User帳號、密碼與信箱登入，輸入完畢都正確後即登入成功。
 
-![](docker_02_3-3.png)
+<img src="docker_02_3-3.png" class="img-fluid rounded mx-auto" >
 
 確認目前在NPM Server上登入User身份
 ```shell
 npm whoami --registry http://127.0.0.1:4873
 ```
 
-![](docker_02_3-4.png)
+<img src="docker_02_3-4.png" class="img-fluid rounded mx-auto" >
 
 * Step 2. 執行上傳Package
 ```shell
@@ -160,11 +160,11 @@ npm publish --registry http://127.0.0.1:4873
 ```
 **NPM Package** 名稱為當前目錄名稱，在上一個步驟中建立名為HelloTest目錄，並且在裡面建置Package內容檔案。
 
-![](docker_02_3-5.png)
+<img src="docker_02_3-5.png" class="img-fluid rounded mx-auto" >
 
 執行上傳完畢後，可以在NPM Server頁面中看到上傳的Package，名稱就如筆者所建立目錄名稱`HelloTest`。
 
-![](docker_02_3-6.png)
+<img src="docker_02_3-6.png" class="img-fluid rounded mx-auto" >
 
 
 * Step 3. 上傳完畢後登出目前登入使用者
@@ -183,8 +183,7 @@ npm install hellotest --registry http://127.0.0.1:4873
 
 下載完成後，Package會放置在該目錄底下`node_modules/`。
 
-![](docker_02_3-7.png)
-
+<img src="docker_02_3-7.png" class="img-fluid rounded mx-auto" >
 
 * Step 2. 建立`test.html`
 放置以下內容
@@ -194,7 +193,7 @@ npm install hellotest --registry http://127.0.0.1:4873
 </script>
 ```
 
-![](docker_02_3-8.png)
+<img src="docker_02_3-8.png" class="img-fluid rounded mx-auto" >
 
 可以看到在上方準備Sample Package步驟中建立測試Function輸出`Helloworld`結果。
 

@@ -52,9 +52,9 @@ edgetpu_compiler 專案實際執行指令：
 edgetpu_compiler -s /home/jyu/Program/Audio_Speech_Recognition_TPU_Demo/tflite_model/ASR_Model.tflite
 ```
 
-![](edgetpu05-01.png)
+<img src="edgetpu05-01.png" class="img-fluid rounded mx-auto" >
 
-![](edgetpu05-02.png)
+<img src="edgetpu05-02.png" class="img-fluid rounded mx-auto" >
 
 預設轉換後 EdgeTpu 模型位置會在終端機目前位置底下。
 
@@ -68,14 +68,14 @@ edgetpu_compiler -s /home/jyu/Program/Audio_Speech_Recognition_TPU_Demo/tflite_m
 cat ASR_Model_edgetpu.log
 ```
 
-![](edgetpu05-03.png)
+<img src="edgetpu05-03.png" class="img-fluid rounded mx-auto" >
 
 <script src="https://gist.github.com/s123600g/f5d89147ffd5a510aad3f4eed6b4cbed.js"></script>
 
 
 **2. `ASR_Model_edgetpu.tflite` - - > 轉換後EdgeTpu模型**
 
-![](edgetpu05-04.png)
+<img src="edgetpu05-04.png" class="img-fluid rounded mx-auto" >
 
 接下來就可以進行**(六) 進行 EdgeTpu 模型預測**。
 

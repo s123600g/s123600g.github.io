@@ -23,28 +23,28 @@ excerpt_separator: <!--more-->
 新增完畢產生Token會用在後面初次設定Agent程式。
 </P>
 
-![](Azure_Pipelines_01_1.jpg)
+<img src="Azure_Pipelines_01_1.jpg" class="img-fluid rounded mx-auto" >
 
 ### Step 2. 下載Agent程式
 
 * `Organization settings` -- > 選取 `Agent pools` --> 點擊 `Add pool` 按鈕
-![](Azure_Pipelines_01_2.jpg)
-![](Azure_Pipelines_01_2-1.jpg)
+<img src="Azure_Pipelines_01_2.jpg" class="img-fluid rounded mx-auto" >
+<img src="Azure_Pipelines_01_2-1.jpg" class="img-fluid rounded mx-auto" >
 
 * `Pool Type` 選擇`Self-hosted`，自訂`Name`內容設定該Agent集區名稱。
 <br/>
 
-![](Azure_Pipelines_01_2-2.jpg)
+<img src="Azure_Pipelines_01_2-2.jpg" class="img-fluid rounded mx-auto" >
 
 * 點進建立自訂Agent集區內，選取`Agents`區塊 --> 點擊`New agent`
 <br/>
 
-![](Azure_Pipelines_01_2-3.jpg)
+<img src="Azure_Pipelines_01_2-3.jpg" class="img-fluid rounded mx-auto" >
 
 * 選擇`Windows` --> `Download the agent` --> 點擊`Download` 按鈕
 <br/>
 
-![](Azure_Pipelines_01_2-4.jpg)
+<img src="Azure_Pipelines_01_2-4.jpg" class="img-fluid rounded mx-auto" >
 
 ### Step 3. 建立Agent程式存放目錄與解壓縮
 
@@ -82,7 +82,7 @@ excerpt_separator: <!--more-->
   7. 輸入設定自動登入並在啟動時執行代理程式? (Y/N)
     * 如果不需要請按下Enter，輸入視窗會提示`請為 否 按 Enter`
 
-![](Azure_Pipelines_01_3.jpg)
+<img src="Azure_Pipelines_01_3.jpg" class="img-fluid rounded mx-auto" >
 
 ### Step 5. 執行Agent代理程式
 
@@ -95,7 +95,7 @@ excerpt_separator: <!--more-->
 * 如果要終止程式，按下Ctrl + C即可。
 
 可在Agent Tool集區內檢視目前Agent程式是否有在運作中。
-![](Azure_Pipelines_01_4.jpg)
+<img src="Azure_Pipelines_01_4.jpg" class="img-fluid rounded mx-auto" >
 
 ---
 
@@ -105,4 +105,3 @@ excerpt_separator: <!--more-->
 3. [使用個人存取權杖進行驗證 (PAT) ](https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#authenticate-with-a-personal-access-token-pat)
 4. [移除並重新設定代理程式](https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#remove-and-re-configure-an-agent)
 5. [下載並設定代理程式](https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#download-and-configure-the-agent)
-
