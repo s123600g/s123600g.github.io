@@ -173,7 +173,7 @@ sudo reboot
 free
 ```
 
-![](google-01.png)
+<img src="google-01.png" class="img-fluid rounded mx-auto" >
 
 ---
 

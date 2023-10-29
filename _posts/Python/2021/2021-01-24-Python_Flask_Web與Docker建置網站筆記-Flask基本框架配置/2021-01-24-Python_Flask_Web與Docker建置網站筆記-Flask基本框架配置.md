@@ -97,15 +97,15 @@ Set DirPath=E:\Project\GitHub\FlaskDemoNotes\flask_base_framework\
 
 執行前:
 
-![](python_02.png)
+<img src="python_02.png" class="img-fluid rounded mx-auto" >
 
 執行中:
 
-![](python_02-2.png)
+<img src="python_02-2.png" class="img-fluid rounded mx-auto" >
 
 執行後:
 
-![](python_02-3.png)
+<img src="python_02-3.png" class="img-fluid rounded mx-auto" >
 
 
 ### Step 4.運行Docker 容器服務。
@@ -122,7 +122,7 @@ E:\Project\GitHub\FlaskDemoNotes\flask_base_framework
 
 ### Step 5.容器服務執行後在瀏覽器輸入 http://127.0.0.1:85/index
 
-![](python_02-4.png)
+<img src="python_02-4.png" class="img-fluid rounded mx-auto" >
 
 ---
 

@@ -174,7 +174,7 @@ columns: [
 
 最後Table呈現效果如下： <br/>
 
-![](frontend_01.jpg) <br/>
+<img src="frontend_01.jpg" class="img-fluid rounded mx-auto" > <br/>
 
 從這個例子中，你可以發現到資料欄位區塊(columns)內，不管有建立幾個欄位宣告，最後跟有幾筆(列)資料是無關的，它只跟有幾個欄位有關係，如果你建立的欄位宣告有缺少，或者不符合回傳的資料對應欄位key，會出現錯誤，需要注意這一點。
 

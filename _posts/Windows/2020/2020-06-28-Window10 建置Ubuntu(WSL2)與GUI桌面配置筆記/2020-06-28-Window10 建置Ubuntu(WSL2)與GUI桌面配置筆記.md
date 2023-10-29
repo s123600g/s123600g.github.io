@@ -85,19 +85,19 @@ sudo apt-get install xfce4
 
 回到Windows開啟VcXsrv主程式(XLaunch)
 
-![](windows_01-2-2.png)
+<img src="windows_01-2-2.png" class="img-fluid rounded mx-auto" >
 
 Display number 記得設置為0
 
-![](windows_01-2-3.png)
+<img src="windows_01-2-3.png" class="img-fluid rounded mx-auto" >
 
-![](windows_01-2-4.png)
+<img src="windows_01-2-4.png" class="img-fluid rounded mx-auto" >
 
-![](windows_01-2-5.png)
+<img src="windows_01-2-5.png" class="img-fluid rounded mx-auto" >
 
 點選完成，出現下面視窗畫面即可
 
-![](windows_01-2-6.png)
+<img src="windows_01-2-6.png" class="img-fluid rounded mx-auto" >
 
 ### Step 5.
 
@@ -106,9 +106,9 @@ Display number 記得設置為0
 startxfce4
 ```
 
-![](windows_01-2-7.png)
+<img src="windows_01-2-7.png" class="img-fluid rounded mx-auto" >
 
-![](windows_01-2-8.png)
+<img src="windows_01-2-8.png" class="img-fluid rounded mx-auto" >
 
 ---
 
@@ -121,13 +121,12 @@ Can't connect to display 172.21.96.1:0
 
 172.21.96.1是我的WSL區網虛擬主幹，可以在工作管理員看到
 
-![](windows_01-3.png)
+<img src="windows_01-3.png" class="img-fluid rounded mx-auto" >
 
 在筆者Ubuntu 20.04 LTS所取得IP是在屬於此虛擬區網主幹內，此主幹在防火牆預設使用防護規則屬於**公用網路**，筆者在執行VcXsrv過程中彈出的防火牆允許視窗中，只勾選了允許私人網路而沒勾到公用網路，摸索研究半天才發現這個問題。
 
 解決方式為去防火牆更設定**允許應用程式或功能通過Windows Defender防火牆**設定中，
 將 **VcXsrv windows xserver** 在公用項目打勾即可。
-
 
 ---
 

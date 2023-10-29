@@ -55,17 +55,17 @@ January 29, 2020](https://coral.ai/news/updates-01-2020/)
 .\install.bat
 ```
 
-![](edgetpu08-01.png)
+<img src="edgetpu08-01.png" class="img-fluid rounded mx-auto" >
 
 會出現是否安裝此裝置視窗訊息，點選安裝進行下一步，當看到以下畫面時，代表已經安裝完成。
 
-![](edgetpu08-02.png)
+<img src="edgetpu08-02.png" class="img-fluid rounded mx-auto" >
 
 ### Step 2. 建立虛擬環境(如果沒有使用Anaconda，可跳過此步驟)
 
 **1. 開啟Anaconda Prompt** <br/>
 
-![](edgetpu08-03.png)
+<img src="edgetpu08-03.png" class="img-fluid rounded mx-auto" >
 
 **2. 建立虛擬環境** <br/>
 
@@ -73,9 +73,9 @@ January 29, 2020](https://coral.ai/news/updates-01-2020/)
 conda create -n test_tfn python=3.6
 ```
 
-![](edgetpu08-04.png)
+<img src="edgetpu08-04.png" class="img-fluid rounded mx-auto" >
 
-![](edgetpu08-05.png)
+<img src="edgetpu08-05.png" class="img-fluid rounded mx-auto" >
 
 
 ### Step 3. 安裝TensorFlow Lite library
@@ -92,7 +92,7 @@ conda activate test_tfn
 conda deactivate
 ```
 
-![](edgetpu08-06.png)
+<img src="edgetpu08-06.png" class="img-fluid rounded mx-auto" >
 
 
 **2. 進行環境安裝**
@@ -103,7 +103,7 @@ conda deactivate
 pip install tensorflow==1.15.2
 ```
 
-![](edgetpu08-07.png)
+<img src="edgetpu08-07.png" class="img-fluid rounded mx-auto" >
 
 
 安裝 TensorFlow Lite interpreter
@@ -117,7 +117,7 @@ pip install tensorflow==1.15.2
 pip install https://dl.google.com/coral/python/tflite_runtime-2.1.0-cp36-cp36m-win_amd64.whl
 ```
 
-![](edgetpu08-08.png)
+<img src="edgetpu08-08.png" class="img-fluid rounded mx-auto" >
 
 
 ### Step 4. 安裝Edge TPU Python API
@@ -131,7 +131,7 @@ pip install https://dl.google.com/coral/python/tflite_runtime-2.1.0-cp36-cp36m-w
 pip install https://dl.google.com/coral/edgetpu_api/edgetpu-2.13.0-cp36-cp36m-win_amd64.whl
 ```
 
-![](edgetpu08-09.png)
+<img src="edgetpu08-09.png" class="img-fluid rounded mx-auto" >
 
 ---
 
@@ -152,7 +152,7 @@ pip install https://dl.google.com/coral/edgetpu_api/edgetpu-2.13.0-cp36-cp36m-wi
 python classify_image.py --model mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite --label inat_bird_labels.txt --input parrot.jpg
 ```
 
-![](edgetpu08-10.png)
+<img src="edgetpu08-10.png" class="img-fluid rounded mx-auto" >
 
 **object detection example** <br/>
 
@@ -160,7 +160,7 @@ python classify_image.py --model mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tf
 python detect_image.py --model mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite --labels coco_labels.txt --input grace_hopper.bmp --output grace_hopper_processed.bmp
 ```
 
-![](edgetpu08-11.png)
+<img src="edgetpu08-11.png" class="img-fluid rounded mx-auto" >
 
 ### Step 2. 使用 EdgeTPU API
 
@@ -173,7 +173,7 @@ python detect_image.py --model mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.t
 python classify_image.py --model mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite --label inat_bird_labels.txt --image parrot.jpg
 ```
 
-![](edgetpu08-12.png)
+<img src="edgetpu08-12.png" class="img-fluid rounded mx-auto" >
 
 **object detection example** <br/>
 
@@ -181,7 +181,7 @@ python classify_image.py --model mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tf
 python object_detection.py --model mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite --input face.jpg --output detection_results.jpg
 ```
 
-![](edgetpu08-13.png)
+<img src="edgetpu08-13.png" class="img-fluid rounded mx-auto" >
 
 ---
 ### 相關參考
