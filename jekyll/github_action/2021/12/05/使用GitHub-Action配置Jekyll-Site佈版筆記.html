@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - 使用GitHub Action配置Jekyll Site佈版筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">使用GitHub Action配置Jekyll Site佈版筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">使用GitHub Action配置Jekyll Site佈版筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2021-12-05 07:56:00
+      </span>
+    </div>
+
+    <p>此筆記紀錄筆者Blog網站，使用GitHub Action配置自動佈版程序。</p>
+
+<!--more-->
+
+<p>文章內以下單詞語會以簡稱代替</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">pull_request</code> –&gt; PR</li>
+  <li><code class="language-plaintext highlighter-rouge">GitHub Action</code> –&gt; Action</li>
+</ul>
+
+<hr />
+
+<h1 id="儲存庫內部佈版規劃">儲存庫內部佈版規劃</h1>
+
+<p>儲存庫最重要分支分別為</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">main</code>
+    <ul>
+      <li>主分支用來作為網站程式Base底層。</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">gh-pages</code>
+    <ul>
+      <li>依據<code class="language-plaintext highlighter-rouge">main</code>分支作為佈版來源套用至此分支，Blog呈現來源是以此分支為基礎呈現。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Blog更新規劃步驟如下</p>
+<ul>
+  <li>Step 1. 建立分支並將更動內容<strong>Push</strong>上去。</li>
+  <li>Step 2. 建立<strong>PR</strong>，確認Action內PR Build程序都成功。</li>
+  <li>Step 3. 確認PR更動內容進行merge到<code class="language-plaintext highlighter-rouge">main</code>，<strong>PR</strong>狀態切為<code class="language-plaintext highlighter-rouge">closed</code>，由Action進行佈版程序。</li>
+</ul>
+
+<hr />
+
+<h1 id="內部設定">內部設定</h1>
+
+<h3 id="github-token">GitHub Token</h3>
+<ul>
+  <li>登入GitHub</li>
+  <li><a href="https://github.com/settings/tokens">GitHub Profile -&gt; Developer settings -&gt; Personal access tokens</a>
+    <ul>
+      <li>點選<code class="language-plaintext highlighter-rouge">Generate new token</code>
+<img src="GitHubToken_Generate.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_Generate" /></li>
+      <li><code class="language-plaintext highlighter-rouge">Note</code> 設定此Token名稱，自己命名可識別名稱。</li>
+      <li><code class="language-plaintext highlighter-rouge">Expiration</code> 設定Token 效期
+        <ul>
+          <li>如果要一直使用請設定 <code class="language-plaintext highlighter-rouge">No expiration</code></li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">Select scopes</code> 設定此Token權限
+        <ul>
+          <li><strong>Public</strong>儲存庫只需要repo區塊裡面三個權限，<code class="language-plaintext highlighter-rouge">repo:status</code>、<code class="language-plaintext highlighter-rouge">repo_deployment</code>、<code class="language-plaintext highlighter-rouge">public_repo</code>
+<img src="GitHubToken_PublicScopes.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PublicScopes" /></li>
+          <li><strong>Private</strong>儲存庫，需要勾<code class="language-plaintext highlighter-rouge">repo</code>  <br />
+<img src="GitHubToken_PrivateScopes.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PrivateScopes" /></li>
+          <li>其餘權限如有需要再自行開啟。</li>
+        </ul>
+      </li>
+      <li>設定<code class="language-plaintext highlighter-rouge">Repository Secret</code>
+        <ul>
+          <li>在目標儲存庫Settings -&gt; secrets 建立名為<code class="language-plaintext highlighter-rouge">GITHUBTOKEN</code> secret，並將前面建好GitHub Token設置到此secret。   <br />
+ <img src="GitHubToken_RepositorySecret.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_RepositorySecret" /></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="確認gemfile配置">確認Gemfile配置</h3>
+<p>設定好用到的額外套件配置，在跑Action時，建置環境時會依據此檔案配置安裝所需套件。</p>
+
+<h3 id="建立pr事件action程序">建立<strong>PR</strong>事件Action程序</h3>
+
+<p>Yaml配置檔： <a href="https://github.com/s123600g/s123600g.github.io/blob/main/.github/workflows/github-pr_build.yml">github-pr_build.yml</a></p>
+
+<p>觸發此Action程序時機為<strong>PR-opened</strong>、<strong>PR-reopened</strong>，在Check Status區塊可以看到目前Action程序執行狀態。</p>
+
+<p>Yaml配置檔對應為<code class="language-plaintext highlighter-rouge">on</code>區塊</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">on</span><span class="pi">:</span>
+  <span class="na">pull_request</span><span class="pi">:</span>
+    <span class="na">types</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">opened</span><span class="pi">,</span> <span class="nv">reopened</span><span class="pi">]</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">types</code> 可設定指定<strong>PR</strong>內事件進行觸發。</li>
+</ul>
+
+<p>詳細可以參考
+<a href="https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#pull_request">https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#pull_request</a></p>
+
+<p>設定只進行Build程序，而不進行佈版，Yaml配置檔對應<code class="language-plaintext highlighter-rouge">with</code>區塊，內部參數</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">token</code> 對應前面設定GitHub Token環節，最後建立<code class="language-plaintext highlighter-rouge">Repository Secret</code> - <code class="language-plaintext highlighter-rouge">GITHUBTOKEN</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">build_only</code> 設置為<code class="language-plaintext highlighter-rouge">true</code>只進行Build程序，不進行佈版處理。</li>
+</ul>
+
+<p>詳細可以參考
+<a href="https://github.com/marketplace/actions/jekyll-actions#inputs">https://github.com/marketplace/actions/jekyll-actions#inputs</a></p>
+
+<h3 id="建立pr-closed事件action程序">建立<strong>PR-closed</strong>事件Action程序</h3>
+
+<p>Yaml配置檔： <a href="https://github.com/s123600g/s123600g.github.io/blob/main/.github/workflows/github-deployment.yml">github-deployment.yml</a></p>
+
+<p>觸發此Action程序時機為<strong>PR-closed</strong>，在Check Status區塊可以看到目前Action程序執行狀態。</p>
+
+<p>Yaml配置檔對應為<code class="language-plaintext highlighter-rouge">on</code>區塊</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">on</span><span class="pi">:</span>
+  <span class="na">pull_request</span><span class="pi">:</span>
+    <span class="na">types</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">closed</span><span class="pi">]</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">types</code> 可設定指定<strong>PR</strong>內事件進行觸發。</li>
+</ul>
+
+<p>設定進行Build與佈版程序，和前面建立<strong>PR</strong>事件Action程序差別在於<code class="language-plaintext highlighter-rouge">with</code>區塊參數配置，<code class="language-plaintext highlighter-rouge">build_only</code>並未設置，只設置以下參數</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">target_branch</code> 指定佈版目標分支，在這設定為<code class="language-plaintext highlighter-rouge">gh-pages</code>。</li>
+</ul>
+
+<h3 id="執行測試">執行測試</h3>
+
+<p>將設定好Yaml檔案在<code class="language-plaintext highlighter-rouge">main</code>分支Push上去，在建立自訂分支，依據以下步驟測試執行</p>
+<ul>
+  <li>建立一個Commit並透過自訂分支Push上去
+    <ul>
+      <li>回到儲存庫Actions確認由<strong>push</strong>事件做Build Jekyll site 是否成功執行完畢。</li>
+    </ul>
+  </li>
+  <li>在自訂分支建立一個<strong>PR</strong>
+    <ul>
+      <li>在儲存庫pull_request確認由<strong>PR</strong>事件Action程序是否成功執行完畢。
+<img src="GitHubToken_PRCheckBuild.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRCheckBuild" /></li>
+      <li>Done <br />
+<img src="GitHubToken_PRCheckBuildDone.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRCheckBuildDone" /></li>
+    </ul>
+  </li>
+  <li>將<strong>PR</strong>確認進行merge程序
+    <ul>
+      <li>確認pull_request merge 程序完成並已closed。
+<img src="GitHubToken_PRClosed.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRClosed" /></li>
+      <li>回到儲存庫Actions確認由<strong>PR-closed</strong>事件Action程序是否成功執行完畢。<br />
+<img src="GitHubToken_PRClosedDone.jpg" class="img-fluid rounded mx-auto" alt="GitHubToken_PRClosedDone" /></li>
+      <li>如果成功執行完畢，在儲存庫分支會多一個<code class="language-plaintext highlighter-rouge">gh-pages</code>，此為佈版目標分支。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+
+<ul>
+  <li><a href="https://github.com/marketplace/actions/jekyll-actions">Jekyll Actions</a></li>
+  <li><a href="https://docs.github.com/en/actions">GitHub Actions</a></li>
+  <li><a href="https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onpushpull_requestbranchestags">GitHub Actions Workflow-Syntax</a></li>
+  <li><a href="https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows">Events that trigger workflows</a></li>
+  <li><a href="https://blog.awesome-doge.org/githubaction+jekyll/">github action + jekyll</a></li>
+</ul>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

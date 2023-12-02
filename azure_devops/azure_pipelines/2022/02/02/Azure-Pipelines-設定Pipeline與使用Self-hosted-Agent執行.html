@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Azure Pipelines 設定Pipeline與使用Self-hosted Agent執行
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Azure Pipelines 設定Pipeline與使用Self-hosted Agent執行</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Azure Pipelines 設定Pipeline與使用Self-hosted Agent執行</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2022-02-02 10:05:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>參考官方教學 - Asp.Net.Core範例，搭配Self-hosted Windows Agent程式(參考3)。</p>
+
+<p>注意事項：</p>
+<ul>
+  <li>需要Azure DevOps，並且已經建立好組織和Project。
+    <ul>
+      <li><a href="https://azure.microsoft.com/en-us/services/devops/">Azure DevOps</a></li>
+      <li><a href="https://docs.microsoft.com/en-us/azure/devops/user-guide/sign-up-invite-teammates?view=azure-devops#sign-up-with-a-personal-microsoft-account">Sign up, sign in to Azure DevOps</a></li>
+    </ul>
+  </li>
+  <li>需要GitHub帳戶，筆記使用儲存庫來自GitHub。</li>
+  <li>Self-hosted windows agent需事前設置好並啟動監聽Job。</li>
+</ul>
+
+<hr />
+
+<h4 id="step-1-建立gitub儲存庫">Step 1. 建立Gitub儲存庫</h4>
+
+<p>將官方GitHub範例儲存庫Fork至自己Github底下儲存庫，點擊<code class="language-plaintext highlighter-rouge">Fork</code>按鈕進行複製操作。</p>
+<ul>
+  <li><a href="https://github.com/MicrosoftDocs/pipelines-dotnet-core">MicrosoftDocs/pipelines-dotnet-core</a></li>
+</ul>
+
+<p><img src="Azure_Pipelines_02_0.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<h4 id="step-2-建立pipeline">Step 2. 建立Pipeline</h4>
+
+<p>選擇使用專案 –&gt; Pipeline頁面點選<code class="language-plaintext highlighter-rouge">New Pipeline</code> <br />
+<img src="Azure_Pipelines_02_1.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p>儲存庫來源選擇<code class="language-plaintext highlighter-rouge">GitHub</code> <br />
+<img src="Azure_Pipelines_02_2.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p>選擇已經Fork至自己GitHub儲存庫</p>
+<ul>
+  <li>如果為初次設置情況(GitHub儲存庫從未授權過)
+    <ol>
+      <li>GitHub登入驗證。</li>
+      <li>選擇GitHub授權儲存庫來源。</li>
+      <li>授權GitHub安裝 Azure Pipelines 應用程式(核准安裝)。</li>
+    </ol>
+  </li>
+</ul>
+
+<p><img src="Azure_Pipelines_02_3.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p>選擇<code class="language-plaintext highlighter-rouge">Asp.Net.Core 管線範本</code> <br />
+<img src="Azure_Pipelines_02_4.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p>設定預設Yaml內容</p>
+<ul>
+  <li>針對<code class="language-plaintext highlighter-rouge">Pool</code>區塊內容
+    <ul>
+      <li>如果是使用Azure DevOps Services包裝好VM Image，必須以<code class="language-plaintext highlighter-rouge">vmImage</code>作為Key來設置。</li>
+      <li><strong>此筆記需設置使用自訂Agent Pool集區</strong>。</li>
+      <li>關於自訂Agent Pool集區是在<code class="language-plaintext highlighter-rouge">Organization settings</code> –&gt; <code class="language-plaintext highlighter-rouge">Agent pools</code>，列表顯示內容就是集區名稱。
+        <ul>
+          <li>Ex：自訂Agent Pool集區名稱為<code class="language-plaintext highlighter-rouge">My Windows Agent</code>
+            <ol>
+              <li>預設Pool設置為<code class="language-plaintext highlighter-rouge">vmImage: ubuntu-latest</code>更改為自訂Agent Pool集區名稱 <br />           <br />
+  <img src="Azure_Pipelines_02_5.jpg" class="img-fluid rounded mx-auto" /></li>
+              <li>將Pool設置改為使用自訂Agent Pool集區
+  <br />
+  <img src="Azure_Pipelines_02_6.jpg" class="img-fluid rounded mx-auto" />
+<script src="https://gist.github.com/s123600g/ea96c7b2aaa44fd805bd2c1347ad929e.js"></script></li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="step-3-執行pipeline">Step 3. 執行Pipeline</h4>
+
+<p>在前一個步驟設定完Yaml內容後，點擊<code class="language-plaintext highlighter-rouge">Save and run</code>執行，觸發動作如下</p>
+
+<ol>
+  <li>
+    <p>將設定好Yaml檔案推送至授權GitHub儲存庫，Yaml檔案名稱為<code class="language-plaintext highlighter-rouge">azure-pipelines.yml</code>  <br />
+<img src="Azure_Pipelines_02_7.jpg" class="img-fluid rounded mx-auto" /></p>
+  </li>
+  <li>
+    <p>Self-hosted windows agent 接收到新Job請求，開始執行Yaml內設置Job內容 <br />
+<img src="Azure_Pipelines_02_8.jpg" class="img-fluid rounded mx-auto" />   <br /><br />
+<img src="Azure_Pipelines_02_8-1.jpg" class="img-fluid rounded mx-auto" />   <br /><br />
+<img src="Azure_Pipelines_02_8-2.jpg" class="img-fluid rounded mx-auto" />   <br /></p>
+  </li>
+</ol>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+<ol>
+  <li><a href="https://docs.microsoft.com/zh-tw/azure/devops/pipelines/create-first-pipeline?view=azure-devops&amp;tabs=tfs-2018-2%2Cbrowser%2Cjava#create-your-first-pipeline-1">建立您的第一個管線</a></li>
+  <li><a href="https://github.com/MicrosoftDocs/pipelines-dotnet-core">pipelines-dotnet-core</a></li>
+  <li><a href="https://s123600g.github.io/azure%20devops/azure%20pipelines/2022/02/01/Azure-Pipelines-%E8%A8%AD%E7%BD%AESelf-hosted-Windows%E4%BB%A3%E7%90%86%E7%A8%8B%E5%BC%8F.html">Azure Pipelines 設置Self-hosted Windows代理程式</a></li>
+</ol>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

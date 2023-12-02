@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Window10 建置Ubuntu(WSL2)與GUI桌面配置筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Window10 建置Ubuntu(WSL2)與GUI桌面配置筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Window10 建置Ubuntu(WSL2)與GUI桌面配置筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2021-01-25 12:05:00
+      </span>
+    </div>
+
+    <p>此筆記內容為紀錄筆者在建置WSL2過程中操作與問題。</p>
+
+<!--more-->
+
+<p>關於 Windows 子系統 Linux 版 <a href="https://docs.microsoft.com/zh-tw/windows/wsl/about">https://docs.microsoft.com/zh-tw/windows/wsl/about</a></p>
+
+<p>要使用WSL2必須先符合以下條件</p>
+
+<ul>
+  <li>Windows 版本為 2004，組建為19041版本或更高。</li>
+  <li>開啟 Windows子系統Linux版 與 虛擬機器平台。</li>
+</ul>
+
+<p>官方安裝指南
+<a href="https://docs.microsoft.com/zh-tw/windows/wsl/install-win10">https://docs.microsoft.com/zh-tw/windows/wsl/install-win10</a></p>
+
+<hr />
+
+<h2 id="window10-建置ubuntuwsl2">Window10 建置Ubuntu(WSL2)</h2>
+
+<h3 id="step-1">Step 1.</h3>
+<p>設定使用WSL2為預設使用版本</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wsl <span class="nt">--set-default-version</span> 2
+</code></pre></div></div>
+
+<h3 id="step-2">Step 2.</h3>
+
+<p>需要去控制台—&gt;程式和功能—&gt;開啟或關Windows功能-&gt;勾選<code class="language-plaintext highlighter-rouge">Windows子系統Linux版與虛擬機器平台</code></p>
+
+<p><img src="windows_01-1.png" alt="" /></p>
+
+<p>開啟完畢後會跑更新，跑完更新之後會需要重開電腦。</p>
+
+<h3 id="step-3">Step 3.</h3>
+
+<p>下載X server連線工具，使用<code class="language-plaintext highlighter-rouge">VcXsrv</code> <br />
+<a href="https://sourceforge.net/projects/vcxsrv/">https://sourceforge.net/projects/vcxsrv/</a> <br />
+下載完畢後執行程式安裝完即可。</p>
+
+<hr />
+
+<h2 id="gui桌面配置">GUI桌面配置</h2>
+
+<p>開啟Ubuntu 20.04 LTS終端機</p>
+
+<h3 id="step-1-1">Step 1.</h3>
+
+<p>執行安裝 X Server 套件</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>x11-apps
+</code></pre></div></div>
+
+<h3 id="step-2-1">Step 2.</h3>
+
+<p>在家目錄(~/)底下建立一個.bash_login</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano ~/.bash_login
+</code></pre></div></div>
+
+<p>並輸入以下內容
+<script src="https://gist.github.com/s123600g/a9d262cd95ff6c6fbab339700e8047c8.js"></script></p>
+
+<p><img src="windows_01-2.png" alt="" /></p>
+
+<p>按Ctrl+x後再按Y最後在按Enter儲存。</p>
+
+<h3 id="step-3-1">Step 3.</h3>
+
+<p>執行安裝 xfce4 桌面</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>xfce4-terminal
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>xfce4
+</code></pre></div></div>
+
+<h3 id="step-4">Step 4.</h3>
+
+<p>回到Windows開啟VcXsrv主程式(XLaunch)</p>
+
+<p><img src="windows_01-2-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>Display number 記得設置為0</p>
+
+<p><img src="windows_01-2-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="windows_01-2-4.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="windows_01-2-5.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>點選完成，出現下面視窗畫面即可</p>
+
+<p><img src="windows_01-2-6.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="step-5">Step 5.</h3>
+
+<p>在Ubuntu 20.04 LTS終端機啟動X Server，輸入下面指令</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>startxfce4
+</code></pre></div></div>
+
+<p><img src="windows_01-2-7.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="windows_01-2-8.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+<h2 id="採雷筆記">採雷筆記</h2>
+
+<p>剛開始建立好啟動X Server時，並沒有預期那麼順利運作起來，碰到X Server運作不起來顯示下面訊息</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Can't connect to display 172.21.96.1:0
+</code></pre></div></div>
+
+<p>172.21.96.1是我的WSL區網虛擬主幹，可以在工作管理員看到</p>
+
+<p><img src="windows_01-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>在筆者Ubuntu 20.04 LTS所取得IP是在屬於此虛擬區網主幹內，此主幹在防火牆預設使用防護規則屬於<strong>公用網路</strong>，筆者在執行VcXsrv過程中彈出的防火牆允許視窗中，只勾選了允許私人網路而沒勾到公用網路，摸索研究半天才發現這個問題。</p>
+
+<p>解決方式為去防火牆更設定<strong>允許應用程式或功能通過Windows Defender防火牆</strong>設定中，
+將 <strong>VcXsrv windows xserver</strong> 在公用項目打勾即可。</p>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+
+<ol>
+  <li>關於WSL(Windows Subsystem for Linux)說明可參考
+    <ul>
+      <li><a href="https://wiki.ubuntu.com/WSL">https://wiki.ubuntu.com/WSL</a></li>
+      <li><a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a></li>
+      <li><a href="https://docs.microsoft.com/zh-tw/windows/wsl/install-win10">https://docs.microsoft.com/zh-tw/windows/wsl/install-win10</a></li>
+    </ul>
+  </li>
+  <li>其他
+    <ul>
+      <li><a href="https://github.com/microsoft/WSL/issues/4106">https://github.com/microsoft/WSL/issues/4106</a></li>
+      <li><a href="https://hackmd.io/@billsun/SyL3pzzQm?type=view">https://hackmd.io/@billsun/SyL3pzzQm?type=view</a></li>
+      <li><a href="https://github.com/QMonkey/wsl-tutorial/blob/master/README.wsl2.md">https://github.com/QMonkey/wsl-tutorial/blob/master/README.wsl2.md</a></li>
+      <li><a href="https://www.youtube.com/watch?v=6_mbd1hvUnE">https://www.youtube.com/watch?v=6_mbd1hvUnE</a></li>
+    </ul>
+  </li>
+</ol>
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

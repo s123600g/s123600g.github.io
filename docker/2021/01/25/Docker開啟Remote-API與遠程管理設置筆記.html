@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Docker開啟Remote API與遠程管理設置筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Docker開啟Remote API與遠程管理設置筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Docker開啟Remote API與遠程管理設置筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2021-01-25 15:01:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p><a href="https://docs.docker.com/engine/install/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections">Configure where the Docker daemon listens for connections</a></p>
+
+<p>在官方說明文件內有提到兩種方式</p>
+<ul>
+  <li>使用<strong>systemd unit file</strong> &lt;– 此筆記主要使用此方式</li>
+  <li>使用<strong>daemon.json</strong></li>
+</ul>
+
+<p>需要注意兩種方式一起設置使用的話，會造成<code class="language-plaintext highlighter-rouge">docker.service</code>啟動時衝突導致服務無法啟動。</p>
+
+<p>此筆記操作環境是在<code class="language-plaintext highlighter-rouge">Ubuntu 20.04 Server</code>環境下，在安裝系統設定中並未勾選預先裝<code class="language-plaintext highlighter-rouge">Docker</code>，而是事後系統安裝完畢啟動後，在執行手動安裝<code class="language-plaintext highlighter-rouge">Docker</code>。</p>
+
+<p>關於安裝<code class="language-plaintext highlighter-rouge">Docker</code>可參考
+https://docs.docker.com/engine/install/ubuntu/</p>
+
+<h2 id="step-1-編輯dockerservice--unit-file">Step 1. 編輯<code class="language-plaintext highlighter-rouge">docker.service  unit file</code></h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl edit docker.service
+</code></pre></div></div>
+
+<p>設置以下內容</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:4243
+</code></pre></div></div>
+<ul>
+  <li>官方預設TCP是配置127.0.0.1，筆者自己設置為<code class="language-plaintext highlighter-rouge">0.0.0.0</code>允許外部IP連入</li>
+  <li>官方預設是配置<em>2375</em> port，筆者自己使用的是<em>4243</em> port，可按照自己的需求設定。</li>
+</ul>
+
+<p>因是在<code class="language-plaintext highlighter-rouge">nano</code>編輯器底下設定，設置完成後請按<code class="language-plaintext highlighter-rouge">Ctrl+x</code>–&gt;<code class="language-plaintext highlighter-rouge">y</code>–&gt;<code class="language-plaintext highlighter-rouge">Enter</code>儲存內容。</p>
+
+<h2 id="step-2-重新啟動systemctl刷新配置檔案">Step 2. 重新啟動<code class="language-plaintext highlighter-rouge">systemctl</code>刷新配置檔案</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl daemon-reload
+</code></pre></div></div>
+
+<h2 id="step-3-重新啟動docker服務">Step 3. 重新啟動<code class="language-plaintext highlighter-rouge">Docker</code>服務</h2>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart docker.service
+</code></pre></div></div>
+
+<p>確認服務啟動狀態</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl status docker.service
+</code></pre></div></div>
+
+<p>當重新啟動完成後，可以用下列指令確認目前監聽狀態資訊</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>netstat <span class="nt">-lntp</span> | <span class="nb">grep </span>dockerd
+</code></pre></div></div>
+
+<h2 id="step-4-關於防火牆操作---ufw">Step 4. 關於防火牆操作 - <code class="language-plaintext highlighter-rouge">ufw</code></h2>
+
+<ul>
+  <li>確認Ubuntu Server 防火牆目前是否有啟動
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw status
+</code></pre></div>    </div>
+    <p>如果要在觀察更仔細資訊內容，可以加<code class="language-plaintext highlighter-rouge">verbose</code>參數</p>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw verbose
+</code></pre></div>    </div>
+  </li>
+  <li>啟動防火牆指令
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw <span class="nb">enable</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>如果需要其他參數說明幫助可用以下指令，來進一步查看可用的參數</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw <span class="nt">-h</span>
+</code></pre></div></div>
+
+<ul>
+  <li>設置防火牆規則為Default，並且拒絕掉所有的連入的請求只允許連出
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw default deny
+</code></pre></div>    </div>
+    <p>在<code class="language-plaintext highlighter-rouge">Default</code>的規則中內容可以看到如下</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Default: deny (incoming), allow (outgoing), deny (routed)
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="將docker-remote-api-port-在防火牆設置允許指定來源連入規則">將Docker Remote API Port 在防火牆設置允許指定來源連入規則</h3>
+<p>筆者習慣針對來源連線進行控管，在這裡只允許指定的IP來進行遠程連線，在此部分設定為只允許IP<code class="language-plaintext highlighter-rouge">10.0.0.10</code>(<em>筆者電腦在內部網路的 <strong>IP</strong></em>)透過<code class="language-plaintext highlighter-rouge">4243</code>Port來通過防火牆，進一步取得跟Docker Remote API溝通。</p>
+
+<ul>
+  <li>指令格式
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw allow from <span class="s1">'你的來源連線IP'</span> to any port <span class="s1">'開放允許使用的Port'</span>
+</code></pre></div>    </div>
+  </li>
+  <li>實際執行內容
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw allow from 10.0.0.10 to any port 4243
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>在設定完成此規則後，除了指定允許的IP之外，其他IP透過此Port連入至系統時，會被防火牆給擋掉不給予連入。</p>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

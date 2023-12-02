@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - EdgeTpu操作環境安裝配置筆記(二)-使用Google Coral USB Accelerator for Windows 10
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">EdgeTpu操作環境安裝配置筆記(二)-使用Google Coral USB Accelerator for Windows 10</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">EdgeTpu操作環境安裝配置筆記(二)-使用Google Coral USB Accelerator for Windows 10</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-02-08 16:00:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>根據官方在2020/01/29釋出消息來看，現在Windows 10也可以透過Google Coral USB Accelerator來運行EdgeTpu，消息來源可以參考 <br />
+<a href="https://coral.ai/news/updates-01-2020/">January 2020 Updates
+Edge TPU runtime now available for Mac and Windows
+January 29, 2020</a></p>
+
+<p>此筆記以目前釋出版本資訊內容進行設置操作與範例運行。</p>
+
+<hr />
+
+<h2 id="執行環境">執行環境</h2>
+
+<ul>
+  <li>作業系統：Windows10 專業版 1909</li>
+  <li>程式語言：Python3.6</li>
+  <li>Tensorflow版本：
+    <ul>
+      <li>tensorflow 1.15.2</li>
+      <li>tflite-runtime 2.1.0</li>
+    </ul>
+  </li>
+  <li>其他工具：Anaconda ，用來建立Python虛擬環境</li>
+  <li>其他設備：Google Coral USB Accelerator</li>
+</ul>
+
+<p>在開始之前你需要先在下方連結 <br />
+<a href="https://coral.ai/software/#edgetpu-python-api">https://coral.ai/software/#edgetpu-python-api</a></p>
+
+<p>下載好<code class="language-plaintext highlighter-rouge">download edgetpu_runtime_*.zip</code>並將檔案解壓縮完成</p>
+
+<p>使用範例–&gt;<code class="language-plaintext highlighter-rouge">download edgetpu_runtime_20200128.zip</code></p>
+
+<p>關於 tensorflow 1.15.2 來源可參考 <br />
+<a href="https://pypi.org/project/tensorflow/1.15.2/#files">https://pypi.org/project/tensorflow/1.15.2/#files</a></p>
+
+<p>關於Anaconda部份，沒有要求一定需要，可自行決定是否使用。</p>
+
+<hr />
+
+<h2 id="執行安裝設置">執行安裝設置</h2>
+
+<p><br /></p>
+
+<h3 id="step-1-安裝edge-tpu-runtime">Step 1. 安裝Edge TPU runtime</h3>
+
+<p>開啟PowerShell切換到下載好並解壓縮出來的<code class="language-plaintext highlighter-rouge">edgetpu_runtime</code>資料夾目錄內，並執行以下指令進行安裝</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.<span class="se">\i</span>nstall.bat
+</code></pre></div></div>
+
+<p><img src="edgetpu08-01.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>會出現是否安裝此裝置視窗訊息，點選安裝進行下一步，當看到以下畫面時，代表已經安裝完成。</p>
+
+<p><img src="edgetpu08-02.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="step-2-建立虛擬環境如果沒有使用anaconda可跳過此步驟">Step 2. 建立虛擬環境(如果沒有使用Anaconda，可跳過此步驟)</h3>
+
+<p><strong>1. 開啟Anaconda Prompt</strong> <br /></p>
+
+<p><img src="edgetpu08-03.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>2. 建立虛擬環境</strong> <br /></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda create <span class="nt">-n</span> test_tfn <span class="nv">python</span><span class="o">=</span>3.6
+</code></pre></div></div>
+
+<p><img src="edgetpu08-04.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="edgetpu08-05.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="step-3-安裝tensorflow-lite-library">Step 3. 安裝TensorFlow Lite library</h3>
+
+<p><strong>1. 進入虛擬環境</strong></p>
+
+<p>如果未使用Anaconda，請跳過此步驟</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Anaconda進入虛擬環境指令</span>
+conda activate test_tfn
+
+<span class="c"># 如果要離開Anaconda虛擬環境，指令如下</span>
+conda deactivate
+</code></pre></div></div>
+
+<p><img src="edgetpu08-06.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>2. 進行環境安裝</strong></p>
+
+<p>安裝 tensorflow，版本使用1.15.2</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span><span class="nv">tensorflow</span><span class="o">==</span>1.15.2
+</code></pre></div></div>
+
+<p><img src="edgetpu08-07.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>安裝 TensorFlow Lite interpreter</p>
+
+<p>如果是使用TensorFlowLiteAPI來調用EdgeTPU執行，需要完成此步驟安裝，它的功能就跟EdgeTPU runtime是一樣，需要有它才能進行運作。</p>
+
+<p>有關內容說明可以參考 <br />
+<a href="https://www.tensorflow.org/lite/guide/python#install_just_the_tensorflow_lite_interpreter">Python quickstart — Install just the TensorFlow Lite interpreter</a></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>https://dl.google.com/coral/python/tflite_runtime-2.1.0-cp36-cp36m-win_amd64.whl
+</code></pre></div></div>
+
+<p><img src="edgetpu08-08.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="step-4-安裝edge-tpu-python-api">Step 4. 安裝Edge TPU Python API</h3>
+
+<p>如果是使用 EdgeTPU API來調用EdgeTPU執行，需要完成此步驟安裝才能進行運作。</p>
+
+<p>安裝連結可至以下連結內參考 <br />
+<a href="https://coral.ai/software/#edgetpu-python-api">Edge TPU Python API for Mac and Windows</a></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>https://dl.google.com/coral/edgetpu_api/edgetpu-2.13.0-cp36-cp36m-win_amd64.whl
+</code></pre></div></div>
+
+<p><img src="edgetpu08-09.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+<h2 id="執行範例">執行範例</h2>
+
+<p>範例所使用模型與資料來源可參考以下連結取得 <br />
+<a href="https://github.com/google-coral/edgetpu/tree/master/test_data">https://github.com/google-coral/edgetpu/tree/master/test_data</a></p>
+
+<h3 id="step-1-使用-tensorflowliteapi">Step 1. 使用 TensorFlowLiteAPI</h3>
+
+<p>關於範例來源可參考</p>
+<ul>
+  <li><a href="https://github.com/google-coral/tflite/tree/master/python/examples">https://github.com/google-coral/tflite/tree/master/python/examples</a></li>
+  <li><a href="https://coral.ai/docs/edgetpu/tflite-python/">https://coral.ai/docs/edgetpu/tflite-python/</a></li>
+</ul>
+
+<p><strong>image classification example</strong> <br /></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python classify_image.py <span class="nt">--model</span> mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite <span class="nt">--label</span> inat_bird_labels.txt <span class="nt">--input</span> parrot.jpg
+</code></pre></div></div>
+
+<p><img src="edgetpu08-10.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>object detection example</strong> <br /></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python detect_image.py <span class="nt">--model</span> mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite <span class="nt">--labels</span> coco_labels.txt <span class="nt">--input</span> grace_hopper.bmp <span class="nt">--output</span> grace_hopper_processed.bmp
+</code></pre></div></div>
+
+<p><img src="edgetpu08-11.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="step-2-使用-edgetpu-api">Step 2. 使用 EdgeTPU API</h3>
+
+<p>可參考<a href="https://coral.ai/docs/edgetpu/api-intro/">Edge TPU API overview</a></p>
+
+<p><strong>image classification example</strong> <br /></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python classify_image.py <span class="nt">--model</span> mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite <span class="nt">--label</span> inat_bird_labels.txt <span class="nt">--image</span> parrot.jpg
+</code></pre></div></div>
+
+<p><img src="edgetpu08-12.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>object detection example</strong> <br /></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python object_detection.py <span class="nt">--model</span> mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite <span class="nt">--input</span> face.jpg <span class="nt">--output</span> detection_results.jpg
+</code></pre></div></div>
+
+<p><img src="edgetpu08-13.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+<h3 id="相關參考">相關參考</h3>
+<ul>
+  <li><a href="https://coral.ai/docs/accelerator/get-started/#1c-on-windows">https://coral.ai/docs/accelerator/get-started/#1c-on-windows</a></li>
+</ul>
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Kubernetes - minikube安裝Windows環境
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Kubernetes - minikube安裝Windows環境</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Kubernetes - minikube安裝Windows環境</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2023-08-27 07:20:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>Install Tools：<a href="https://kubernetes.io/docs/tasks/tools/">https://kubernetes.io/docs/tasks/tools/</a></p>
+
+<p>minikube start：<a href="https://minikube.sigs.k8s.io/docs/start/">https://minikube.sigs.k8s.io/docs/start/</a></p>
+
+<p>系統需求可參考：<a href="https://minikube.sigs.k8s.io/docs/start/#what-youll-need">https://minikube.sigs.k8s.io/docs/start/#what-youll-need</a></p>
+
+<p>minikube GitHub： <a href="https://github.com/kubernetes/minikube">https://github.com/kubernetes/minikube</a></p>
+
+<p>Install Docker Desktop on Windows：<a href="https://docs.docker.com/desktop/windows/install/">https://docs.docker.com/desktop/windows/install/</a></p>
+
+<p>安裝使用環境</p>
+<ul>
+  <li>Windows 11 Pro 10.0.22000 Build 22000</li>
+  <li>Docker</li>
+</ul>
+
+<p>安裝順序</p>
+<ol>
+  <li>kubectl</li>
+  <li>minikube</li>
+</ol>
+
+<h2 id="windows-安裝-kubectl">Windows 安裝 kubectl</h2>
+
+<p><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/">https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/</a></p>
+
+<p>下載 <strong>kubectl.exe</strong> 並執行安裝，不使用執行<code class="language-plaintext highlighter-rouge">curl</code>操作安裝方式。</p>
+
+<p><img src="kubernetes_minikube_1.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>測試安裝是否正確</p>
+<ul>
+  <li>顯示安裝版本資訊
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl version <span class="nt">--client</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><img src="kubernetes_minikube_2.png" class="img-fluid rounded mx-auto" /></p>
+
+<ul>
+  <li>顯示安裝版本資訊(詳細)
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl version <span class="nt">--client</span> <span class="nt">--output</span><span class="o">=</span>yaml  
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><img src="kubernetes_minikube_3.png" class="img-fluid rounded mx-auto" /></p>
+
+<h2 id="windows-安裝-minikube">Windows 安裝 minikube</h2>
+
+<p>GitHub Release，下載 <strong>minikube-installer.exe</strong> 並執行安裝
+<a href="https://github.com/kubernetes/minikube/releases">https://github.com/kubernetes/minikube/releases</a></p>
+
+<p><img src="kubernetes_minikube_4.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="kubernetes_minikube_5.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="執行啟動">執行啟動</h3>
+
+<p>開啟<strong>PowerShell</strong>進行以下操作</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube start
+</code></pre></div></div>
+
+<p><img src="kubernetes_minikube_6.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>在此階段會設定必要配置與下載執行啟動必要相關套件。</p>
+
+<p><img src="kubernetes_minikube_7.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>啟動完成後，打開<strong>Docker Desktop</strong>可以看到<strong>minikube</strong>容器運行中。</p>
+
+<p><img src="kubernetes_minikube_8.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="運行-minikube-dashboard">運行 minikube dashboard</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube dashboard
+</code></pre></div></div>
+
+<p><img src="kubernetes_minikube_10.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>預設會自動開啟瀏覽器瀏覽頁面</p>
+
+<p><img src="kubernetes_minikube_11.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>如果不要預設自動開啟瀏覽器，可加上<code class="language-plaintext highlighter-rouge">--url</code>參數</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube dashboard <span class="nt">--url</span>
+</code></pre></div></div>
+
+<p>使用kubectl指令可查看當前cluster資訊</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl cluster-info
+</code></pre></div></div>
+
+<p><img src="kubernetes_minikube_12.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

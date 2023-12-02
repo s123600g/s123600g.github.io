@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Dotnet Core3.1 Console使用NLog筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Dotnet Core3.1 Console使用NLog筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Dotnet Core3.1 Console使用NLog筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2021-01-25 12:05:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>範例程式：<a href="https://github.com/s123600g/DotnetCore_Console_NLog_Demo">https://github.com/s123600g/DotnetCore_Console_NLog_Demo</a></p>
+
+<hr />
+
+<h3 id="step-1-建立-net-core-console-app-專案">Step 1. 建立 .net core console app 專案</h3>
+
+<p>手動使用Microsoft Visual Studio建立.Net Core 3.1 Console專案。</p>
+
+<hr />
+
+<h3 id="step-2-對專案安裝相關套件使用nuget套件管理員進行">Step 2. 對專案安裝相關套件，使用Nuget套件管理員進行</h3>
+
+<ul>
+  <li>NLog.Extensions.Logging</li>
+  <li>Microsoft.Extensions.Configuration.FileExtensions</li>
+  <li>Microsoft.Extensions.Configuration.Json</li>
+  <li>Microsoft.Extensions.Configuration</li>
+</ul>
+
+<hr />
+
+<h3 id="step-3-建立組態設定檔-appsettingsjson">Step 3. 建立組態設定檔 <code class="language-plaintext highlighter-rouge">appsettings.json</code></h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"NLog"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"autoReload"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"throwConfigExceptions"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"internalLogLevel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"info"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"internalLogFile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${basedir}/logs/internal-nlog/internal-nlog.txt"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"targets"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"logfile"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"File"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"fileName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${basedir}/logs/NLogDeml${shortdate}.log"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"layout"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${date} [${uppercase:${level}}] ${message} ${exception}${newline}"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nl">"logconsole"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Console"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"layout"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${date} [${uppercase:${level}}] ${message} ${exception}"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"logger"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"minLevel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"writeTo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"logfile,logconsole"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>關於NLog設定參數可參考</p>
+<ul>
+  <li><a href="https://nlog-project.org/config/">https://nlog-project.org/config/</a></li>
+  <li><a href="https://github.com/nlog/nlog/wiki/Configuration-file">https://github.com/nlog/nlog/wiki/Configuration-file</a></li>
+</ul>
+
+<p>要設定紀錄輸出目的端是在<code class="language-plaintext highlighter-rouge">"targets"</code> 在上面設定中，有兩種輸出目的端一種是寫入到記錄檔(<code class="language-plaintext highlighter-rouge">File</code>)，另一種是輸出至Console畫面視窗中(<code class="language-plaintext highlighter-rouge">Console</code>)。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">"type"</code> 輸出目的類型</li>
+  <li><code class="language-plaintext highlighter-rouge">"fileName"</code> 如果是輸出記錄檔，跟此設置有關</li>
+  <li><code class="language-plaintext highlighter-rouge">"layout"</code> 跟輸出顯示格式有關</li>
+</ul>
+
+<p>有關內容參數值可參考 <a href="https://nlog-project.org/config/?tab=layout-renderers">https://nlog-project.org/config/?tab=layout-renderers</a></p>
+
+<p>要設定輸出規則是在<code class="language-plaintext highlighter-rouge">"rules"</code></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">"logger"</code> 可以設置紀錄內容樣式匹配，可參考 <a href="https://github.com/nlog/nlog/wiki/Configuration-file#logger-name-filter">Configuration-file#logger-name-filter</a></li>
+  <li><code class="language-plaintext highlighter-rouge">"minLevel"</code> 設置紀錄層級最低開始點，可參考<a href="https://github.com/nlog/nlog/wiki/Configuration-file#logger-level-filter">Configuration-file#logger-level-filter</a></li>
+  <li><code class="language-plaintext highlighter-rouge">"writeTo"</code> 設置規則匹配紀錄要將內容輸出至哪一個目的端，可參考<a href="https://github.com/nlog/nlog/wiki/Configuration-file#rules">Configuration-file#rules</a></li>
+</ul>
+
+<hr />
+
+<h3 id="step-4-完成programcs內容">Step 4. 完成Program.cs內容</h3>
+
+<script src="https://gist.github.com/s123600g/6472e224dd90d0a0131868a216cd1786.js"></script>
+
+<hr />
+
+<h3 id="step-5-建置專案並執行">Step 5. 建置專案並執行</h3>
+
+<p><img src="dotnet_core_02-1.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>在專案目錄<code class="language-plaintext highlighter-rouge">bin\Debug\netcoreapp3.1</code>底下可以看到<code class="language-plaintext highlighter-rouge">logs/</code>目錄，NLog產生記錄檔放置在此目錄底下</p>
+
+<p><img src="dotnet_core_02-1-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>初步建置過程碰到下面問題，筆記解決方式</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>嚴重性 程式碼 說明 專案 檔案 行 隱藏項目狀態
+錯誤 CS1061  'IConfigurationBuilder' 未包含 'AddJsonFile' 的定義，也找不到可接受類型 'IConfigurationBuilder' 第一個引數的可存取擴充方法 'AddJsonFile'(是否遺漏 using 指示詞或組件參考?) DotnetCore_Console_NLog_Demo E:\Project\DotnetCore_Console_NLog_Demo\Program.cs  16  作用中
+</code></pre></div></div>
+
+<p>根據 <a href="https://stackoverflow.com/a/27382878">https://stackoverflow.com/a/27382878</a>，在Nuget加入此套件 → <a href="https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Json/"><code class="language-plaintext highlighter-rouge">Microsoft.Extensions.Configuration.Json</code></a></p>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+
+<ol>
+  <li><a href="https://github.com/NLog/NLog">NLog</a></li>
+  <li><a href="https://github.com/nlog/nlog/wiki/Configuration-file#rules">NLog Configuration-file Rules</a></li>
+  <li><a href="https://nlog-project.org/download/">NLog Get Start</a></li>
+  <li><a href="https://github.com/NLog/NLog/wiki/Getting-started-with-.NET-Core-2---Console-application">Getting started with .NET Core 2 Console application</a></li>
+  <li><a href="https://github.com/NLog/NLog.Extensions.Logging/wiki/NLog-configuration-with-appsettings.json">NLog configuration with appsettings.json</a></li>
+</ol>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

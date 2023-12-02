@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - 使用OpenXml產生Excel筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">使用OpenXml產生Excel筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">使用OpenXml產生Excel筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2022-10-10 10:57:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>使用微軟官方提供<a href="https://github.com/OfficeDev/Open-XML-SDK">Open XML SDK</a>來產生Excel檔案，此篇筆記主要紀錄簡易產生操作。</p>
+
+<hr />
+
+<h2 id="簡易範例">簡易範例</h2>
+
+<p>專案範例：<a href="https://github.com/s123600g/jyu.demo.OpenXMLCreateExcel">jyu.demo.OpenXMLCreateExcel</a></p>
+
+<p>NuGet套件需要安裝 <a href="https://www.nuget.org/packages/DocumentFormat.OpenXml/">DocumentFormat.OpenXml</a></p>
+
+<p>簡易範例資料設置在<code class="language-plaintext highlighter-rouge">src/GenExcelFile/Program.cs</code>內<code class="language-plaintext highlighter-rouge">GetExcelContentSample()</code>。</p>
+
+<p>範例資料皆是以List集合為結構，每位置代表每列內容。</p>
+
+<hr />
+
+<h2 id="簡易理解概念">簡易理解概念</h2>
+
+<p>一個Excel產生操作步驟如下</p>
+
+<h3 id="step-1-建置一個內容實體與新活頁簿workbooksheets">Step 1. 建置一個內容實體與新活頁簿(WorkBook、Sheets)</h3>
+
+<p>透過<code class="language-plaintext highlighter-rouge">SpreadsheetDocument</code>來建立一個實體，在程式宣告會如下</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MemoryStream</span> <span class="n">memoryStream</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">MemoryStream</span><span class="p">();</span>
+
+<span class="k">using</span> <span class="p">(</span>
+    <span class="n">SpreadsheetDocument</span> <span class="n">spreadsheetDocument</span> <span class="p">=</span> <span class="n">SpreadsheetDocument</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span>
+                    <span class="n">memoryStream</span><span class="p">,</span>
+                    <span class="n">SpreadsheetDocumentType</span><span class="p">.</span><span class="n">Workbook</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="p">{</span>
+    <span class="err">#</span> <span class="n">Do</span> <span class="n">Something</span> <span class="p">.....</span>   
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>所有的操作都會應在此範圍內，當還未確認內容完成時，通常先放在記憶體內，透過<code class="language-plaintext highlighter-rouge">MemoryStream</code>來達成記憶體暫存。</p>
+
+<p>當有了實體不代表就有活頁簿，就像你開一個全新Excel時，不會看到一個空白活頁簿，需要使用者手動建置新空白活頁簿，所以，透過<code class="language-plaintext highlighter-rouge">WorkbookPart</code>來建置一個空白活頁簿，在程式宣告會如下</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">WorkbookPart</span> <span class="n">workbookPart</span> <span class="p">=</span> <span class="n">spreadsheetDocument</span><span class="p">.</span><span class="nf">AddWorkbookPart</span><span class="p">();</span>
+<span class="n">workbookPart</span><span class="p">.</span><span class="n">Workbook</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Workbook</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>有了活頁簿之後，我們還需要一個放置工作表單集合實體，這是用來存放每個新增的工作表單儲存區塊，所以，透過<code class="language-plaintext highlighter-rouge">Sheets</code>來建置集合實體，在程式宣告會如下</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Sheets</span> <span class="n">sheets</span> <span class="p">=</span> <span class="n">spreadsheetDocument</span><span class="p">.</span><span class="n">WorkbookPart</span><span class="p">.</span><span class="n">Workbook</span><span class="p">.</span><span class="n">AppendChild</span><span class="p">&lt;</span><span class="n">Sheets</span><span class="p">&gt;(</span>
+       <span class="k">new</span> <span class="nf">Sheets</span><span class="p">()</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="step-2-工作表單建置與實作內容worksheetpartsheetdata">Step 2. 工作表單建置與實作內容(WorksheetPart、SheetData)</h3>
+
+<p>當需要建置一個獨立工作表單實體時，透過<code class="language-plaintext highlighter-rouge">WorksheetPart</code>來建置獨立實體，在程式宣告會如下</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">WorksheetPart</span> <span class="n">worksheetPart</span> <span class="p">=</span> <span class="n">workbookPart</span><span class="p">.</span><span class="n">AddNewPart</span><span class="p">&lt;</span><span class="n">WorksheetPart</span><span class="p">&gt;();</span>
+</code></pre></div></div>
+
+<p>當工作表單建好實體後，初始化實體內容才能進行資料操作，透過<code class="language-plaintext highlighter-rouge">SheetData</code>來初始化實體內容，在程式宣告會如下</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">SheetData</span> <span class="n">sheetData</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">SheetData</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>工作表單內容結構其實就是列表資料概念，所以，操作上會是先建置一列，針對建置好的一列補上欄位內容，簡單來看就是一個List集合概念。</p>
+
+<p>透過<code class="language-plaintext highlighter-rouge">Row</code>來初始化列，在程式宣告會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Row</span> <span class="n">sheetRow</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Row</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>每列都是一個集合，所以，可以一直依序新增每個欄位資料，在程式操作如下</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sheetRow</span><span class="p">.</span><span class="nf">Append</span><span class="p">(</span><span class="n">cells</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">cells</code> 可以是一個List集合，也就是可以先把欄位資料先集合起來，一次送進來，也可以單獨一個資料送進來。</li>
+</ul>
+
+<p>透過<code class="language-plaintext highlighter-rouge">Cell</code>來初始化欄位，在程式宣告會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Cell</span> <span class="n">tempCell</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Cell</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>設置欄位內容，在程式操作會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tempCell</span><span class="p">.</span><span class="n">CellValue</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">CellValue</span><span class="p">(</span><span class="n">cellValue</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>設置欄位資料類型，在程式操作會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tempCell</span><span class="p">.</span><span class="n">DataType</span> <span class="p">=</span> <span class="n">CellValues</span><span class="p">.</span><span class="n">String</span><span class="p">;</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">CellValues</code> 這是一個Enum，有其他類型的屬性，並非只有<code class="language-plaintext highlighter-rouge">String</code>。</li>
+</ul>
+
+<p>當一列內容建置好後，我們需要將它更新進工作表單內容(<code class="language-plaintext highlighter-rouge">SheetData</code>)內，在程式操作會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sheetData</span><span class="p">.</span><span class="nf">AppendChild</span><span class="p">(</span><span class="n">sheetRow</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>此時還尚未完成一個工作表單建置，當確認完成工作表單內容後，還需更新進工作表單實體(<code class="language-plaintext highlighter-rouge">WorksheetPart</code>)，在程式操作會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">worksheetPart</span><span class="p">.</span><span class="n">Worksheet</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Worksheet</span><span class="p">(</span><span class="n">sheetData</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>最後，再將此工作表單實體(<code class="language-plaintext highlighter-rouge">WorksheetPart</code>)註冊進工作表單儲存區塊(<code class="language-plaintext highlighter-rouge">Sheets</code>)，這樣才是一個工作表單建立操作步驟，在程式操作會如下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sheets</span><span class="p">.</span><span class="nf">Append</span><span class="p">(</span><span class="k">new</span> <span class="nf">Sheet</span><span class="p">()</span>
+<span class="p">{</span>
+     <span class="n">Id</span> <span class="p">=</span> <span class="n">spreadsheetDocument</span><span class="p">.</span><span class="n">WorkbookPart</span><span class="p">.</span><span class="nf">GetIdOfPart</span><span class="p">(</span><span class="n">worksheetPart</span><span class="p">),</span> 
+     <span class="n">SheetId</span> <span class="p">=</span> <span class="m">1</span><span class="p">,</span>
+     <span class="n">Name</span> <span class="p">=</span> <span class="s">"Sheet1"</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>從以上操作內容敘述，簡單來看操作流程如下</p>
+<ol>
+  <li>建立<code class="language-plaintext highlighter-rouge">Worksheet</code>。</li>
+  <li>建立<code class="language-plaintext highlighter-rouge">SheetData</code>。</li>
+  <li>建立<code class="language-plaintext highlighter-rouge">Row</code>與<code class="language-plaintext highlighter-rouge">Cell</code>產生每列內容。</li>
+  <li>建置好每列內容更新進<code class="language-plaintext highlighter-rouge">SheetData</code>。</li>
+  <li>將<code class="language-plaintext highlighter-rouge">SheetData</code>更新進<code class="language-plaintext highlighter-rouge">Worksheet</code>。</li>
+  <li>將<code class="language-plaintext highlighter-rouge">Worksheet</code>新增進<code class="language-plaintext highlighter-rouge">Sheets</code>完成一個工作表單建置。</li>
+</ol>
+
+<p>當有多個工作表單要建置時，依序重複上面六個操作。</p>
+
+<p>可以在範例<code class="language-plaintext highlighter-rouge">lib/ExcelGenerator/ExcelGenerator.cs</code>內參考整體流程。</p>
+
+<script src="https://gist.github.com/s123600g/6a03a5e303eab4b62800d7f307c3120d.js"></script>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+
+<ol>
+  <li><a href="https://blog.johnwu.cc/article/asp-net-core-export-to-excel.html">ASP.NET Core 教學 - Open XML SDK 匯出 Excel</a></li>
+  <li><a href="https://learn.microsoft.com/en-us/office/open-xml/how-to-create-a-spreadsheet-document-by-providing-a-file-name#sample-code">Create a spreadsheet document by providing a file name (Open XML SDK)</a></li>
+  <li><a href="https://stackoverflow.com/a/22230453">OpenXML Multiple Sheets</a></li>
+</ol>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

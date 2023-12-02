@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Python使用Lotify建立簡單LINE Notify筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Python使用Lotify建立簡單LINE Notify筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Python使用Lotify建立簡單LINE Notify筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-10-30 09:01:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<h2 id="前言">前言</h2>
+
+<p>參加今年MOPCON 2020 剛好聽到LINE自家工程師演講開發Python套件Lotify，此套件已經整合LINE API呼叫操作部份， 來試試看發送基本文字訊息與訂閱基本實作。</p>
+
+<p>此筆記範例 GitHub: <a href="https://github.com/s123600g/LINENotifyDemo_Lotify">https://github.com/s123600g/LINENotifyDemo_Lotify</a></p>
+
+<hr />
+
+<h2 id="環境建置">環境建置</h2>
+
+<p>使用Flask做一個簡單網站框架，搭配<a href="https://vuejs.org/">Vue3</a>來做一個簡單資料操作(這只是作者個人自己還在學習Vue，套入簡單練習應用)，在Ubuntu 20.04環境下實作。</p>
+
+<h4 id="第一步-安裝python-套件">第一步 安裝Python 套件</h4>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div></div>
+
+<p>因應Flask框架設置，所有靜態檔案預設都放置在static/底下，其實是對應在Config.py內設置</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">static_folder</span> <span class="o">=</span> <span class="s">'static'</span>
+</code></pre></div></div>
+
+<p>設置一個指定放置靜態檔案目錄名稱，也就是<code class="language-plaintext highlighter-rouge">static/</code></p>
+
+<h4 id="第二步-下載npm-package">第二步 下載NPM Package</h4>
+
+<p>package.json在專案目錄內static底下</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm i
+</code></pre></div></div>
+
+<p>前面說到所有靜態檔案都在static底下，所以package.json也會在裡面，必須要先在終端機切換位置至static/，在做上面指令進行Package檔案下載補齊，完成後就會在static底下產生一個node_modules目錄。</p>
+
+<h4 id="第三步-設定line-notify個人服務">第三步 設定LINE Notify個人服務</h4>
+
+<p>要前往<a href="https://notify-bot.line.me/zh_TW/">LINE Notify</a>進行服務建立，進去後需要登入個人的LINE帳號，然後建立起服務設置大概如下</p>
+
+<p><img src="python_01.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p>其中需要注意的是<strong>Callback URL</strong>這個項目，它會跟用戶訂閱動作有相關，在用戶訂閱完成後，LINE Notify會根據這個項目設定的網址進行導向，而我們需要透過這個網址去接收LINE Notify所回傳的用戶訂閱授權token，也就是說我們提供一個管道讓LINE Notify去將頁面導向，同一時間導向完畢後面就由我們這邊接手處理後面事情，在這範例中設置了 <strong>/api/user_callback</strong> 連結，進行接收授權token後再自動導向到首頁去。</p>
+
+<script src="https://gist.github.com/s123600g/bbcb0379a72a51f7f383d54817278783.js"></script>
+
+<p>在導向回來過程URL為，<strong>http://127.0.0.1:8080/api/user_callback?code=</strong>，用戶授權token會放在url參數code，將其取回後再放入SQLite DB存放，完成後再透過redirect導向回去首頁。</p>
+
+<h4 id="第四步-設定client-idclient-secretredirect_uri">第四步 設定Client ID、Client Secret、Redirect_uri</h4>
+
+<p>這部份在Config.py內設置</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CLIENT_ID</span> <span class="o">=</span> <span class="s">"Vf.........................v"</span>
+<span class="n">SECRET</span> <span class="o">=</span> <span class="s">"0l.............................N6"</span>
+<span class="n">URI</span> <span class="o">=</span> <span class="s">"http://127.0.0.1:8080/api/user_callback"</span>
+</code></pre></div></div>
+
+<p><img src="python_01-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<h4 id="啟動測試伺服器">啟動測試伺服器</h4>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>sh StartServer.sh
+</code></pre></div></div>
+
+<p><img src="python_01-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>在網址列輸入 <code class="language-plaintext highlighter-rouge">http://127.0.0.1:8080/</code>即可看到下面畫面</p>
+
+<p><img src="python_01-4.png" class="img-fluid rounded mx-auto" /></p>
+
+<h4 id="用戶訂閱">用戶訂閱</h4>
+
+<p><img src="python_01-5.png" class="img-fluid rounded mx-auto" /></p>
+
+<h4 id="發送訊息給用戶">發送訊息給用戶</h4>
+
+<p><img src="python_01-6.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="python_01-7.jpeg" class="img-fluid rounded mx-auto" /></p>
+
+<p>發送訊息功能不單單只有基本文字訊息，還可以傳圖片(檔案、圖片連結)、貼圖，有興趣讀者可以去看看Lotify了解。</p>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+
+<ol>
+  <li><a href="https://github.com/louis70109/lotify">lotify</a></li>
+  <li><a href="https://notify-bot.line.me/doc/en/">LINE Notify API Document</a></li>
+  <li><a href="https://notify-bot.line.me/zh_TW/">LINE Notify</a></li>
+  <li><a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a></li>
+  <li><a href="https://flask-script.readthedocs.io/en/latest/">flask-script</a></li>
+</ol>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

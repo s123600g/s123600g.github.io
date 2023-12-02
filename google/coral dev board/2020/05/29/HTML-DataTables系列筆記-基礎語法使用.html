@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Google Coral Dev Board系列筆記 - 虛擬記憶體配置
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Google Coral Dev Board系列筆記 - 虛擬記憶體配置</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Google Coral Dev Board系列筆記 - 虛擬記憶體配置</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-05-29 16:00:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>Google Coral Dev Board預設配置只有1G記憶體，在使用上可能會碰到記憶體吃盡情況下，就需要在建立一個虛擬記憶體來進行分配，在空間使用上透過外接SD卡來建立一個分割磁區，放置Swap使用來源空間配置。</p>
+
+<p>需要做的配置動作有：</p>
+<ol>
+  <li>外接掛載SD卡上分割緩衝記憶體空間。</li>
+  <li>建立虛擬記憶體。</li>
+  <li>設置開機登入自動掛載虛擬記憶體。</li>
+</ol>
+
+<h2 id="外接掛載sd卡上分割緩衝記憶體空間">外接掛載SD卡上分割緩衝記憶體空間</h2>
+
+<p>Step 1.查看目前磁區掛載狀態</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>fdisk <span class="nt">-l</span>
+</code></pre></div></div>
+
+<p>Step 2.選擇SD卡磁區進行操作管理</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>fdisk /dev/mmcblk1p1
+</code></pre></div></div>
+
+<p>Step 3.刪除SD卡磁區</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Command <span class="o">(</span>m <span class="k">for </span><span class="nb">help</span><span class="o">)</span>: d
+</code></pre></div></div>
+
+<p>Step 4.新增SD卡磁區</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Command <span class="o">(</span>m <span class="k">for </span><span class="nb">help</span><span class="o">)</span>: n
+
+Partition <span class="nb">type
+   </span>p   primary <span class="o">(</span>0 primary, 0 extended, 4 free<span class="o">)</span>
+   e   extended <span class="o">(</span>container <span class="k">for </span>logical partitions<span class="o">)</span>
+Select <span class="o">(</span>default p<span class="o">)</span>: p
+
+Partition number <span class="o">(</span>1-4, default 1<span class="o">)</span>: <span class="o">(</span>預設就好，直接按Enter下一步<span class="o">)</span>
+
+First sector <span class="o">(</span>2048-20971519, default 2048<span class="o">)</span>: <span class="o">(</span>預設就好，直接按Enter下一步<span class="o">)</span>
+
+Last sector, +/-sectors or +/-size<span class="o">{</span>K,M,G,T,P<span class="o">}</span> <span class="o">(</span>2048-20971519, default 20971519<span class="o">)</span>: +5G <span class="o">(</span>這裡我設定使用5G<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Step 5.儲存建立動作</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Command <span class="o">(</span>m <span class="k">for </span><span class="nb">help</span><span class="o">)</span>: w
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="建立虛擬記憶體">建立虛擬記憶體</h2>
+
+<p>SD卡磁區掛載對應在 Dev Board內<code class="language-plaintext highlighter-rouge">/swapfile</code>，如果沒有存在<code class="language-plaintext highlighter-rouge">/swapfile</code>，請先執行以下指令建立此位置。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mkdir</span> /swapfile
+</code></pre></div></div>
+
+<p>操作之前記得要先掛載SD卡磁區至<code class="language-plaintext highlighter-rouge">/swapfile</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mount  /dev/mmcblk1p1  /swapfile
+</code></pre></div></div>
+
+<p>Step 1.建立Swap設定區塊檔</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /swapfile
+<span class="nb">sudo dd </span><span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>./mem_5G.swp <span class="nv">bs</span><span class="o">=</span>1024 <span class="nv">count</span><span class="o">=</span>5120000
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">if</code> → 來源配置區塊，此處設為/dev/zero代表沒有使用的來源區塊。</li>
+  <li><code class="language-plaintext highlighter-rouge">of</code> → 輸出配置區塊設定檔，為虛擬記憶體配置檔。</li>
+  <li><code class="language-plaintext highlighter-rouge">bs</code> → 區塊配置單位大小，假設為1024代表一個區塊單位為1024 byte，也就是1KB。</li>
+  <li><code class="language-plaintext highlighter-rouge">count</code> → 總共有幾個區塊數量，如果要設定為5G換算為5000(MB)*1024 = 5120000 (KB)。</li>
+</ul>
+
+<p>Step 2.轉換Swap設定區塊檔為系統檔</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mkswap /swapfile/mem_5G.swp
+</code></pre></div></div>
+
+<p>Step 3.啟用Swap</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>swapon /swapfile/mem_5G.swp
+</code></pre></div></div>
+
+<p>啟用來源為已經轉換為系統檔的Swap設定區塊檔。</p>
+
+<p>Step 4.確認Swap啟用狀態</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>free
+</code></pre></div></div>
+
+<h2 id="設置開機登入自動掛載虛擬記憶體">設置開機登入自動掛載虛擬記憶體</h2>
+
+<p>Step 1.在<code class="language-plaintext highlighter-rouge">/usr/local/sbin/</code>建立一個<code class="language-plaintext highlighter-rouge">swapon.sh</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /usr/local/sbin/swapon.sh
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">swapon.sh</code>內容：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash# 掛載SD卡進/swapfile</span>
+<span class="nb">sudo </span>mount /dev/mmcblk1p1 /swapfile
+<span class="c"># 啟用虛擬記憶體</span>
+<span class="nb">sudo </span>swapon /swapfile/mem_5G.swp
+</code></pre></div></div>
+
+<p>Step 2.在<code class="language-plaintext highlighter-rouge">/etc/systemd/system/</code>建立一個<code class="language-plaintext highlighter-rouge">swapon.service</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/systemd/system/swapon.service
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">swapon.service</code>內容:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[<span class="n">Unit</span>]
+<span class="n">Description</span>=<span class="n">Swap</span> <span class="n">On</span>
+<span class="n">After</span>=<span class="n">getty</span>.<span class="n">target</span>
+
+[<span class="n">Service</span>]
+<span class="n">ExecStart</span>=/<span class="n">usr</span>/<span class="n">local</span>/<span class="n">sbin</span>/<span class="n">swapon</span>.<span class="n">sh</span>
+<span class="n">Type</span>=<span class="n">notify</span>
+<span class="n">NotifyAccess</span>=<span class="n">all</span>
+<span class="n">StandardError</span>=<span class="n">syslog</span>
+
+[<span class="n">Install</span>]
+<span class="n">WantedBy</span>=<span class="n">multi</span>-<span class="n">user</span>.<span class="n">target</span>
+</code></pre></div></div>
+
+<p>Step 3.啟用服務(開機登入會自動啟用服務)</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable</span> /etc/systemd/system/swapon.service
+</code></pre></div></div>
+
+<p>Step 4.查看服務狀態</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl status swapon.service
+</code></pre></div></div>
+
+<p>Step 5.重開機Dev Board，並且登入查看是否有自動正常掛載Swap</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>reboot
+</code></pre></div></div>
+
+<p>開完機登入後，執行以下指令查看是否有正確掛載虛擬記憶體</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>free
+</code></pre></div></div>
+
+<p><img src="google-01.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

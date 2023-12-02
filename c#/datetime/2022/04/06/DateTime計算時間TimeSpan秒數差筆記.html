@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - DateTime計算時間TimeSpan秒數差筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">DateTime計算時間TimeSpan秒數差筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">DateTime計算時間TimeSpan秒數差筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2022-04-06 13:36:00
+      </span>
+    </div>
+
+    <p>紀錄筆者在工作上遇到計算時間秒數差比對問題。</p>
+
+<!--more-->
+
+<p>工作上剛好協助檢視發送請求並等待回應情境，限制預設等待3分鐘情況下，遇到了超過三分鐘情況，卻不會自己中斷跳出等待迴圈，一開始追問題時，都會想說奇怪，都已經能取得當下時間與最開始執行時間計算時間差，並且都能夠取得算出來結果，怎麼可能還會出錯呢?</p>
+
+<p>這時候，就必須去看處理方式和比對屬性欄位是否有陷阱，往往魔鬼藏在細節裡面，在此情境中是使用秒數去做比對。</p>
+
+<hr />
+
+<h2 id="問題">問題</h2>
+
+<p>為了模擬情境，使用Dotnet Core 3.1建立一個Console專案，並且內容如下</p>
+
+<script src="https://gist.github.com/s123600g/3bd6b64cdb094d155fd5b647ebdc0df1.js"></script>
+
+<p>首先，針對取得一開始執行時間、迴圈取得當下時間使用方法都是<code class="language-plaintext highlighter-rouge">DateTime</code>內建屬性<code class="language-plaintext highlighter-rouge">Now</code>來取得</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">DateTime</span><span class="p">.</span><span class="n">Now</span>
+</code></pre></div></div>
+
+<p>設定一個上限門檻變數<code class="language-plaintext highlighter-rouge">maxSec</code>，<strong>當一開始執行時間</strong>與<strong>迴圈取得當下時間</strong>計算時間差秒數已超過此門檻，預期程式會跳出迴圈並結束。 <br /></p>
+
+<p>計算時間差使用<code class="language-plaintext highlighter-rouge">DateTime</code>內建方法<code class="language-plaintext highlighter-rouge">Subtract</code>，它可以將執行主要日期時間實體去減掉指定日期時間，取得中間日期時間差結果。  <br /></p>
+
+<p>將取得日期時間差結果取出秒數實體和上限門檻變數<code class="language-plaintext highlighter-rouge">maxSec</code>比對。  <br /></p>
+
+<p>在迴圈當中每10秒輸出顯示一次訊息，並測試以下兩種情境。</p>
+
+<h3 id="情境一-上限門檻為30秒">情境一 上限門檻為30秒</h3>
+
+<p><img src="csharp_01.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="情境二-上限門檻為65秒">情境二 上限門檻為65秒</h3>
+
+<p><img src="csharp_01-02.jpg" class="img-fluid rounded mx-auto" /></p>
+
+<p>依據測試輸出結果，兩個情境都會自動跳離迴圈，情境一是由<code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">Seconds</code>變數來判斷跳離，它是<code class="language-plaintext highlighter-rouge">int</code>變數，情境二是由<code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">TotalSeconds</code>變數來判斷跳離，它是<code class="language-plaintext highlighter-rouge">double</code>變數。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">Seconds</code>變數，對應範例程式變數 <code class="language-plaintext highlighter-rouge">sec</code></li>
+  <li><code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">TotalSeconds</code>變數，對應範例程式變數 <code class="language-plaintext highlighter-rouge">sec2</code></li>
+</ul>
+
+<p>情境一跳出迴圈條件式為以下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">sec</span> <span class="p">&gt;=</span> <span class="n">maxSec</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">$"Max：</span><span class="p">{</span><span class="n">maxSec</span><span class="p">}</span><span class="s"> , Current double sec： </span><span class="p">{</span><span class="n">sec2</span><span class="p">}</span><span class="s">s , Current int sec： </span><span class="p">{</span><span class="n">sec</span><span class="p">}</span><span class="s">s"</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Exit while loop by timespan int sec."</span><span class="p">);</span>
+
+    <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>情境二跳出迴圈條件式為以下</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">if</span> <span class="p">(</span><span class="n">sec2</span> <span class="p">&gt;=</span> <span class="n">maxSec</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">$"Max：</span><span class="p">{</span><span class="n">maxSec</span><span class="p">}</span><span class="s"> , Current double sec： </span><span class="p">{</span><span class="n">sec2</span><span class="p">}</span><span class="s">s , Current int sec： </span><span class="p">{</span><span class="n">sec</span><span class="p">}</span><span class="s">s"</span><span class="p">);</span>
+    <span class="n">Console</span><span class="p">.</span><span class="nf">WriteLine</span><span class="p">(</span><span class="s">"Exit while loop by timespan double sec."</span><span class="p">);</span>
+
+    <span class="k">break</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>依據兩個情境輸出結果，可以觀察到當門檻秒數是在一分鐘(60秒)內，迴圈跳離會由情境一跳出條件執行，相反地，超過一分鐘(60秒)則由情境二跳出條件執行。</p>
+
+<p>可以從情境二輸出結果看到當<code class="language-plaintext highlighter-rouge">sec2</code>為<code class="language-plaintext highlighter-rouge">60.01</code>秒，<code class="language-plaintext highlighter-rouge">sec</code>為<code class="language-plaintext highlighter-rouge">0</code>秒，當<code class="language-plaintext highlighter-rouge">sec2</code>為<code class="language-plaintext highlighter-rouge">65</code>秒，<code class="language-plaintext highlighter-rouge">sec</code>為<code class="language-plaintext highlighter-rouge">4</code>秒。</p>
+
+<p>使用情境一跳出條件式，<code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">Seconds</code>變數來判斷時，碰到60秒情況int值會變成0重新開始計算，永遠不會觸發秒數門檻為65秒情況。</p>
+
+<p>使用情境二跳出條件式，<code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">TotalSeconds</code>變數則會繼續從60秒接續計算下去，所以可以從輸出畫面看到出現65秒內容，並觸發秒數門檻為65秒跳出迴圈門檻。</p>
+
+<p>關於<code class="language-plaintext highlighter-rouge">TimeSpan</code>內<code class="language-plaintext highlighter-rouge">Seconds</code>變數，依據官方文件說明，其回傳範圍為 -59 到 59，之後針對秒數比對需特別使用比對來源內容。</p>
+
+<hr />
+
+<p>相關參考：</p>
+<ul>
+  <li><a href="https://docs.microsoft.com/zh-tw/dotnet/api/system.datetime.subtract?view=net-6.0">DateTime.Subtract 方法</a></li>
+  <li><a href="https://stackoverflow.com/questions/5177002/how-to-subtract-a-datetime-from-another-datetime">how-to-subtract-a-datetime-from-another-datetime</a></li>
+  <li><a href="https://dotblogs.com.tw/skyline0217/2011/04/21/23269">關於 DateTime 時間差計算</a></li>
+  <li><a href="https://docs.microsoft.com/zh-tw/dotnet/api/system.timespan.seconds?view=net-6.0">TimeSpan.Seconds 屬性</a></li>
+  <li><a href="https://docs.microsoft.com/zh-tw/dotnet/api/system.timespan.totalseconds?view=net-6.0">TimeSpan.TotalSeconds 屬性</a></li>
+</ul>
+
+<hr />
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

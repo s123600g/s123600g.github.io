@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Python_Flask_Web與Docker建置網站筆記-使用Docker運行Nginx與uWSGI容器服務
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Python_Flask_Web與Docker建置網站筆記-使用Docker運行Nginx與uWSGI容器服務</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Python_Flask_Web與Docker建置網站筆記-使用Docker運行Nginx與uWSGI容器服務</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-06-27 13:01:00
+      </span>
+    </div>
+
+    <p>此筆記內容記錄著依據Nginx整合uWSGI Server服務映像檔，建立一個運行Nginx與uWSGI容器服務。</p>
+
+<!--more-->
+
+<p>GitHub: <a href="https://github.com/s123600g/FlaskDemoNotes/tree/master/flask_base_framework">https://github.com/s123600g/FlaskDemoNotes/tree/master/flask_base_framework</a></p>
+
+<p>配合筆記： <a href="https://s123600g.github.io/python/flask/docker/nginx/uwsgi/2020/06/27/Python_Flask_Web%E8%88%87Docker%E5%BB%BA%E7%BD%AE%E7%B6%B2%E7%AB%99%E7%AD%86%E8%A8%98-%E4%BD%BF%E7%94%A8Docker%E5%BB%BA%E7%BD%AENginx%E7%B5%90%E5%90%88uWSGI%E6%98%A0%E5%83%8F%E6%AA%94.html">Python_Flask_Web與Docker建置網站筆記-使用Docker建置Nginx結合uWSGI映像檔</a></p>
+
+<hr />
+
+<h2 id="建立一個容器服務">建立一個容器服務</h2>
+
+<p>語法格式:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run  --name 自定義容器名稱 --restart always -p 容器對外port:容器內部port -v 本機掛載目錄:容器內部目錄 -d 使用image名稱
+</code></pre></div></div>
+
+<p>關於詳細參數項目資訊可參考：
+<a href="https://docs.docker.com/engine/reference/commandline/run/#options">https://docs.docker.com/engine/reference/commandline/run/#options</a></p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">-–name</code>
+給予此容器一個自訂識別名稱，可在docker ps -a資訊內看到。</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">-–restart always</code>
+設定為當Docker運行時，自動啟動此容器服務，不管容器狀態是如何都會被Docker嘗試重新啟動。</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">-p</code>
+設置主機host port對應容器內部port，當有連線需要跟容器對接時，透過設置host port導向到容器內部port。
+假設要開放host 8080 port對應容器內部80 port，可以參考下面方式
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-p 8080:80
+</code></pre></div>    </div>
+    <p>或</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-p 127.0.0.1:8080:80
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">-v</code>
+設置在本機上網站目錄掛載進容器內部網站目錄，在內部/web/web_data底下檔案會跟本機上實體網站目錄同步一樣。</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">-d</code>
+設置容器要以指定映像檔來建置運作環境。</li>
+</ul>
+
+<hr />
+
+<h2 id="實際建立一個容器服務範例">實際建立一個容器服務範例</h2>
+
+<p>運行一個容器服務以Nginx整合uWSGI Server服務映像檔作為建立依據</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run  <span class="nt">--name</span> flask_helloworld <span class="nt">--restart</span> always <span class="nt">-p</span> 85:80 <span class="nt">-v</span> E:<span class="se">\P</span>roject<span class="se">\f</span>lask_helloworld:/web/web_data <span class="nt">-d</span> nginx_flask_server
+</code></pre></div></div>
+
+<ol>
+  <li>運行一個容器服務識別標籤為 flask_helloworld</li>
+  <li>設置總是隨著Docker主程序啟動時，自動啟動容器服</li>
+  <li>Host 85 Port對接容器內部 80 Port</li>
+  <li>掛載一個本機實體位置 E:\Project\flask_helloworld 至容器內部 /web/web_data</li>
+  <li>使用映像檔 nginx_flask_server 為容器內容建置基礎</li>
+</ol>
+
+<p>關於掛載範例Flask程式檔案
+<a href="https://github.com/s123600g/FlaskDemoNotes/tree/master/my_flask_web">https://github.com/s123600g/FlaskDemoNotes/tree/master/my_flask_web</a></p>
+
+<p>下載完畢放置在掛載本機實體位置內，並手動建立一個名為uwsgi空目錄即可。<br /></p>
+
+<p>執行完可在瀏覽器視窗輸入位址: <code class="language-plaintext highlighter-rouge">http://127.0.0.1:85/helloworld</code></p>
+
+<p>可透過下面指令查看容器資訊</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps -a
+</code></pre></div></div>
+
+<p>有關於docker ps指令可參考： <a href="https://docs.docker.com/engine/reference/commandline/ps/">https://docs.docker.com/engine/reference/commandline/ps/</a></p>
+
+<p>如果要進入容器內部環境可執行以下指令</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> 容器識別名稱 bash
+</code></pre></div></div>
+
+<p>用以上範例容器名稱 flask_helloworld</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> flask_helloworld bash
+</code></pre></div></div>
+
+<p>有關於docker exec指令可參考： <a href="https://docs.docker.com/engine/reference/commandline/exec/">https://docs.docker.com/engine/reference/commandline/exec/</a></p>
+
+<hr />
+
+<h2 id="其他容器服務">其他容器服務</h2>
+
+<p><strong>portainer</strong> <br />
+方便控管容器GUI介面工具</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">-p</span> 9000:9000 <span class="nt">-p</span> 8000:8000 <span class="nt">--name</span> portainer <span class="nt">--restart</span> always <span class="nt">-v</span> /var/run/docker.sock:/var/run/docker.sock <span class="nt">-v</span> E:<span class="se">\a</span>pp<span class="se">\D</span>ocker<span class="se">\p</span>ortainer_data:/data portainer/portainer
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://www.portainer.io/">https://www.portainer.io/</a></li>
+  <li><a href="https://www.portainer.io/installation/">https://www.portainer.io/installation/</a></li>
+  <li><a href="https://alanhou.org/portainer-gui-docker/">https://alanhou.org/portainer-gui-docker/</a></li>
+  <li><a href="https://xupeiyao.github.io/2019/05/02/ubuntu_install_docker_and_portainer/">https://xupeiyao.github.io/2019/05/02/ubuntu_install_docker_and_portainer/</a></li>
+</ul>
+
+<p><strong>MySQL</strong></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--name</span> jyu-mysql <span class="nt">-e</span> <span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span>password <span class="nt">-d</span> mysql:latest
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://hub.docker.com/_/mysql">docker hub mysql</a></li>
+</ul>
+
+<p>後面範例實作會用到此容器服務MYSQL，因為是範例實作所以MySQL Root密碼會用簡單password來設置，實際狀況下使用時請謹慎設置Root密碼。</p>
+
+<hr />
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

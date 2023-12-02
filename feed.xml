@@ -1,0 +1,1291 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.1">Jekyll</generator><link href="https://s123600g.github.io//feed.xml" rel="self" type="application/atom+xml" /><link href="https://s123600g.github.io//" rel="alternate" type="text/html" /><updated>2023-12-02T09:36:51+00:00</updated><id>https://s123600g.github.io//feed.xml</id><title type="html">JYU Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>JYUN YU LI</name></author><entry><title type="html">Visual Studio偵錯WSL內.Net Core API容器無Docker Desktop輔助</title><link href="https://s123600g.github.io//docker/wsl/visual%20studio/2023/12/02/Visual-Studio%E5%81%B5%E9%8C%AFWSL%E5%85%A7.Net-Core-API%E5%AE%B9%E5%99%A8%E7%84%A1Docker-Desktop%E8%BC%94%E5%8A%A9.html" rel="alternate" type="text/html" title="Visual Studio偵錯WSL內.Net Core API容器無Docker Desktop輔助" /><published>2023-12-02T08:46:00+00:00</published><updated>2023-12-02T08:46:00+00:00</updated><id>https://s123600g.github.io//docker/wsl/visual%20studio/2023/12/02/Visual%20Studio%E5%81%B5%E9%8C%AFWSL%E5%85%A7.Net%20Core%20API%E5%AE%B9%E5%99%A8%E7%84%A1Docker%20Desktop%E8%BC%94%E5%8A%A9</id><content type="html" xml:base="https://s123600g.github.io//docker/wsl/visual%20studio/2023/12/02/Visual-Studio%E5%81%B5%E9%8C%AFWSL%E5%85%A7.Net-Core-API%E5%AE%B9%E5%99%A8%E7%84%A1Docker-Desktop%E8%BC%94%E5%8A%A9.html">&lt;!--more--&gt;
+
+&lt;p&gt;Windows環境未安裝Docker Desktop，運行&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WSL2&lt;/code&gt;+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ubuntu&lt;/code&gt;子系統有安裝&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Docker Enginer&lt;/code&gt;環境下，Visual studio附加串接至容器進行偵錯配置筆記。&lt;/p&gt;
+
+&lt;p&gt;如果使用情境比較複雜，此筆記紀錄方法不確定是否可適用，需再自行評估是否還是需要Docker Desktop來輔助。&lt;/p&gt;
+
+&lt;p&gt;使用環境：&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Windows作業系統。&lt;/li&gt;
+  &lt;li&gt;WSL2使用Ubuntu 22.04。&lt;/li&gt;
+  &lt;li&gt;Visual Studio 2022。&lt;/li&gt;
+  &lt;li&gt;Docker Engine，無安裝Docker Desktop。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;事前準備&quot;&gt;事前準備&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Step 1. WSL安裝設置&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用Winodws內WSL(Windows Subsystem for Linux)功能，使用版本為V2 –&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WSL2&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;關於&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WSL2&lt;/code&gt;安裝可以參考 &lt;a href=&quot;https://learn.microsoft.com/en-us/windows/wsl/install&quot;&gt;How to install Linux on Windows with WSL&lt;/a&gt;，安裝過程也會順便創建最新版Ubuntu子系統，後面操作以此Linux環境操作。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;再此紀錄時間點下，使用Ubuntu最新版本為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ubuntu Jammy 22.04 (LTS)&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;Step 2. 安裝Docker Engine&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Docker容器是放置在Linux環境下，需要在Ubuntu終端機介面下，進行&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Docker Enginer&lt;/code&gt;安裝，可以參考&lt;a href=&quot;https://docs.docker.com/engine/install/ubuntu/&quot;&gt;Install Docker Engine on Ubuntu&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;此筆記是Windows不安裝Docker Desktop，如果Windows要使用Docker容器的話，常見介紹作法是安裝Docker Desktop，可以參考&lt;a href=&quot;https://docs.docker.com/desktop/install/windows-install/&quot;&gt;Install Docker Desktop on Windows&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;因為安裝過程會自動幫你透過WSL建置Docker Enginer相關設定和實體，算是懶人包操作處理，透過Docker Desktop來管理整個Docker Enginer運作。&lt;/p&gt;
+
+&lt;p&gt;簡單來說，Windows實際上還是運行Linux環境操作Docker容器(預設使用Linux Container情況)。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Step 3. 安裝SSH Server&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OpenSSH Server&lt;/code&gt;工具，可以參考&lt;a href=&quot;https://ubuntu.com/server/docs/service-openssh&quot;&gt;OpenSSH Server&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;根據&lt;a href=&quot;https://learn.microsoft.com/en-us/visualstudio/debugger/attach-to-process-running-in-docker-container?view=vs-2022#prerequisites&quot;&gt;Attach to a process running on a Docker container - Prerequisites&lt;/a&gt;，透過以下指令進行安裝&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openssh-server&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssh-server unzip curl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;確認SSH Server服務狀態&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service ssh status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;安裝完之後，SSH Server服務是未啟動狀態，需再手動將其服務啟動&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service ssh start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Windows環境測試SSH連接&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh &amp;lt;username&amp;gt;@&amp;lt;ip-address&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;username&amp;gt;&lt;/code&gt; –&amp;gt; WSL下Ubuntu的User Name&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;ip-address&amp;gt;&lt;/code&gt; –&amp;gt; WSL下Ubuntu的IP，使用127.0.0.1即可&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;EX：&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;username&amp;gt;&lt;/code&gt; = test01&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh test01@127.0.0.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;當終端機顯示以下訊息，請輸入&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;按下Enter送出&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Are you sure you want to continue connecting (yes/no/[fingerprint])?
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;之後會出現輸入登入密碼，輸入成功後即可成功連到SSH Server。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Step 4. 掛載專案存放位置&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;WSL底下Ubuntu預設使用者目錄內沒有對應Windows本機上專案存放目錄，可以將Windows存放專案目錄做一個軟連結(link)。&lt;/p&gt;
+
+&lt;p&gt;WSL底下Ubuntu預設有跟Windows本機檔案目錄做一個掛載地方–&amp;gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/mnt&lt;/code&gt;，如果用&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ls&lt;/code&gt;顯示該目錄底下內容，可以看到以Windows上磁碟曹代號目錄。&lt;/p&gt;
+
+&lt;p&gt;假設Windows上存放專案目錄在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\Project&lt;/code&gt;，對應&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/mnt/c/project&lt;/code&gt;，依據此位置在使用者根目錄(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~&lt;/code&gt;)下建軟連結目錄。&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /mnt/c/project /home/jyu
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;將&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/mnt/c/project&lt;/code&gt;建立軟連結在使用者目錄底下–&amp;gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/jyu&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ls&lt;/code&gt;查看根目錄(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~&lt;/code&gt;)底下內容，可以發現多了一個&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;project&lt;/code&gt;名稱目錄。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_1.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;執行偵錯&quot;&gt;執行偵錯&lt;/h2&gt;
+
+&lt;p&gt;使用Visual Studio建立預設API專案作為範例。&lt;/p&gt;
+
+&lt;p&gt;專案需要有docker相關運作配置，可以參考&lt;a href=&quot;https://learn.microsoft.com/en-us/visualstudio/containers/overview?view=vs-2022#adding-docker-support&quot;&gt;Adding Docker support&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;運行container&quot;&gt;運行Container&lt;/h4&gt;
+
+&lt;p&gt;以docker-compose做範例，docker-compose相關yaml配置檔在WSL內Ubuntu底下位置–&amp;gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~/project/Local/WebApplication1&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;以下指令皆在WSL內Ubuntu終端機介面執行。&lt;/p&gt;
+
+&lt;p&gt;切換至專案目錄底下&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; ~/project/Local/WebApplication1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;~&lt;/code&gt;代表在當前使用者家目錄。
+範例專案名稱為WebApplication1。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;執行運作&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker-compose &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; docker-compose.yml &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; docker-compose.override.yml  up &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-f&lt;/code&gt; 代表要引用的yaml配置檔案。
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-d&lt;/code&gt; 代表運作起來在背景常駐執行，當前終端機不持續追蹤運行容器程序之中。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;範例API專案預設配置Port為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;5015&lt;/code&gt;(不一定都是)，開啟Swagger介面位址–&amp;gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://127.0.0.1:5015/swagger/index.html&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_2.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;連接container偵錯&quot;&gt;連接Container偵錯&lt;/h4&gt;
+
+&lt;p&gt;開始偵錯前需要確認以下事項&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;WSL底下Ubuntu內SSH Server服務是啟用正常運作中。&lt;/li&gt;
+  &lt;li&gt;專案Container是否有運作起來。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Step 1. Visual Studio內點擊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Debug&lt;/code&gt;–&amp;gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Attach to Process&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_3.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Connection Type 選擇&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Docker(Linux Container)&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;Step 2. 點擊Connection target旁邊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Find&lt;/code&gt;按鈕&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_4.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;點選&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Add&lt;/code&gt;按鈕，出現登入SSH介面&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_5.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Host Name輸入&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;，因為是在本機內WSL底下Ubuntu。
+Port使用SSH預設&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;22&lt;/code&gt;。
+Authentication type選擇&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Password&lt;/code&gt;。
+User Name和Password輸入WSL底下Ubuntu使用者帳戶登入名稱和密碼。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;點擊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Connect&lt;/code&gt;正常連到之後，可以看到WSL內Ubuntu底下運行Container清單，找到範例專案&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;webapplication1_demoapi_1&lt;/code&gt;並選取按&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OK&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_6.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;之後回到&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Attach to Process&lt;/code&gt;介面，可以看到被選取的容器專案，按下&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Attach&lt;/code&gt;後Visual Studio即會開始進行連結偵錯。&lt;/p&gt;
+
+&lt;p&gt;找到範例API下中斷點，回到Swagger介面測試該API呼叫，可以發現中斷點可執行運作。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;docker_20231202_7.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果更改程式還需要在重新連結偵錯，需要把Conatiner刪除重新在建置運行一次，Visual Studio需要再透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Attach to Process&lt;/code&gt;操作來執行。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;相關參考&quot;&gt;相關參考&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dotnetting.net/2022/01/how-to-use-visual-studio-without-docker-desktop-to-debug-a-.net-core-application-running-in-a-container-inside-wsl/&quot;&gt;How to use Visual Studio without Docker Desktop to debug a .NET Core application running in a container inside WSL&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.microsoft.com/zh-tw/visualstudio/debugger/attach-to-process-running-in-docker-container?view=vs-2022#attach-to-a-process-running-on-a-linux-docker-container&quot;&gt;附加至於 Linux Docker 容器執行的處理序&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://askubuntu.com/questions/205841/how-do-i-mount-a-folder-from-another-partition&quot;&gt;How do I mount a folder from another partition?&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>JYUN YU LI</name></author><category term="docker" /><category term="wsl" /><category term="visual studio" /><category term="docker" /><summary type="html"></summary></entry><entry><title type="html">Kubernetes - Pod基本概念操作</title><link href="https://s123600g.github.io//kubernetes/pod/2023/08/27/Kubernetes-Pod%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E6%93%8D%E4%BD%9C.html" rel="alternate" type="text/html" title="Kubernetes - Pod基本概念操作" /><published>2023-08-27T12:20:00+00:00</published><updated>2023-08-27T12:20:00+00:00</updated><id>https://s123600g.github.io//kubernetes/pod/2023/08/27/Kubernetes-Pod%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E6%93%8D%E4%BD%9C</id><content type="html" xml:base="https://s123600g.github.io//kubernetes/pod/2023/08/27/Kubernetes-Pod%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E6%93%8D%E4%BD%9C.html">&lt;!--more--&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/pods/&quot;&gt;Kubernetes - Pod&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Pod是Kubernetes中附屬於Node節點，也是整體架構最基礎底層單位，它負責運行我們熟知容器(Container)，一個Pod可運載多個容器裡面也有共用資源(Volumes、NetWork)，整個Pod內部容器都都是共享這些資源，有共享檔案空間就使用Volumes，在NetWork方面Pod會有一組IP和Port作為代表，針對不同Pod之間容器溝通，就是使用這些IP和Port進行溝通。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;運行實例種類&quot;&gt;運行實例種類&lt;/h2&gt;
+
+&lt;p&gt;Pod我們所知可以運作單個或多個容器，所以在Pod內部容器規劃可以分成以下&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;單個容器Pod
+    &lt;ul&gt;
+      &lt;li&gt;一個Pod只運作一個容器，將Pod視為服務容器個體，而不是容器運作環境。&lt;/li&gt;
+      &lt;li&gt;目前最常見規劃使用方式，在管理面上是針對Pod而不是容器，因容器是由Pod驅使運作，只要Pod實體建置起來，服務基本上就隨著建置完成而開始運行。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;多個容器Pod
+    &lt;ul&gt;
+      &lt;li&gt;一個Pod內運作多個容器，將Pod視為運作容器基底環。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;通常會由Pod Template和工作附載控制器(Ex：Deployment)搭配，管理設置整體服務運作。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/pods/#workload-resources-for-managing-pods&quot;&gt;Workload resources for managing pods&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Pod規劃還是需要按照實際需求做設計，依據官方文件說明，Pod除了可執行多個容器之外，也有設計Pod只單獨運行一個容器，也就是Pod即是容器概念，這是普遍最常見規劃方式，除非你的容器應用之間有緊密耦合關係，才有可能使用Pod內有多個容器這種進階規劃。&lt;/p&gt;
+
+&lt;p&gt;假設有兩個服務分別是A和B，各服務所需應用組成如下：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;A服務是一個檔案存取下載服務
+    &lt;ul&gt;
+      &lt;li&gt;Web Server&lt;/li&gt;
+      &lt;li&gt;File Storge&lt;/li&gt;
+      &lt;li&gt;File Server&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;B服務是一個單純資訊查詢服務
+    &lt;ul&gt;
+      &lt;li&gt;Web Server&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;依照上述，在同一個Node節點情況下，兩種規劃建置各自如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;單個容器Pod&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;我們將需要用到應用服務視為獨立個體，A服務會有兩個獨立個體來滿足需求，B服務只需要一個獨立個體滿足需求。&lt;/p&gt;
+
+&lt;p&gt;A服務規劃上會有兩個Pod進行，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-A&lt;/code&gt;是Web應用服務，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-A-1&lt;/code&gt;是一個檔案存取功能，檔案存放使用該Pod內部Volume進行檔案存放。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_1.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;每個Pod都會有獨立NetWork IP和Port，讓Pod與Pod之間能進行溝通，當User使用A服務存取檔案時，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-A&lt;/code&gt;透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-A-1&lt;/code&gt;NetWork IP和Port去發送存取檔案請求。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/pods/#pod-networking&quot;&gt;Pod networking&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;B服務規劃上只有單獨Pod進行，由&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-B&lt;/code&gt;來滿足服務需求。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;多個容器Pod&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Node裡面Pod分別是Pod-A和Pod-B，各自內容容器結構如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_2.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我們可以將Pod視為一個服務相關應用集合體，針對A服務對應&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-A&lt;/code&gt;，因為是一個檔案存取功能，所以組成除了Web Server之外，檔案存放使用Pod內部Volume進行檔案存放，搭配一個File Server提供檔案管理介面，整體組成才會形成一個完整服務，對於B服務對應&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pod-B&lt;/code&gt;，它只是單純資訊查詢瀏覽服務，所以只需一個Web Server就可組成完整服務。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;pod-簡易操作---查詢&quot;&gt;Pod 簡易操作 - 查詢&lt;/h2&gt;
+
+&lt;p&gt;搭配&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl get&lt;/code&gt;指令來查詢當前Pod運作清單。&lt;/p&gt;
+
+&lt;p&gt;關於指令詳細可參考：&lt;br /&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get&quot;&gt;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;基本查詢&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get pods
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_3.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;加入&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-o wide&lt;/code&gt;參數可以在額外增加顯示資訊&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get pods &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; wide
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_4.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;假設想將Name為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mybusybox&lt;/code&gt;Pod輸出其Yaml配置內容在本地，Yaml配置檔為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mybusybox.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get pod mybusybox &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; yaml &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; mybusybox.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;關於&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-o&lt;/code&gt; 參數詳細可參考： &lt;br /&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/kubectl/#output-options&quot;&gt;https://kubernetes.io/docs/reference/kubectl/#output-options&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;pod-簡易操作---建置&quot;&gt;Pod 簡易操作 - 建置&lt;/h2&gt;
+
+&lt;p&gt;Pod的建立有兩種操作方式&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Imperative commands，直接透過指令方式即時生成。&lt;/li&gt;
+  &lt;li&gt;Declarative commands，一樣透過指令方式生成，但是還需搭配Yaml配置檔聲明如何建置。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;使用minikube單節點進行範例實作。&lt;br /&gt;
+&lt;a href=&quot;https://minikube.sigs.k8s.io/docs/&quot;&gt;https://minikube.sigs.k8s.io/docs/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;imperative-command&quot;&gt;Imperative command&lt;/h3&gt;
+
+&lt;p&gt;搭配&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl run&lt;/code&gt;指令來建立Pod運行。&lt;/p&gt;
+
+&lt;p&gt;關於指令詳細可參考&lt;br /&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run&quot;&gt;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;執行指令建立Pod&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl run mybusybox &lt;span class=&quot;nt&quot;&gt;--image&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;busybox &lt;span class=&quot;nt&quot;&gt;--command&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; bin/sh &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sleep 100000&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--image&lt;/code&gt; 指定使用哪種image建置容器&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--command&lt;/code&gt; 設置當容器運行啟動內部需執行指令&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;透過以下指令可在終端機查看Pod清單&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get pods &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; wide&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_5.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;declarative-command&quot;&gt;Declarative command&lt;/h3&gt;
+
+&lt;p&gt;搭配&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl create&lt;/code&gt;指令和Yaml配置檔建立Pod運行。&lt;/p&gt;
+
+&lt;p&gt;關於指令詳細可參考
+&lt;a href=&quot;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#create&quot;&gt;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#create&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Yaml配置檔使用官方教材範例 - &lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/pods/#using-pods&quot;&gt;Pod templates&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Yaml檔案內容：&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 定義版本&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# 定義此為Pod設定檔&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Pod&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# 定義此Pod Name&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# 設定容器&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# 使用Nginx容器&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx:1.14.2&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;containerPort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;執行指令建立Pod，Yaml配置檔來源為網路&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; https://k8s.io/examples/pods/simple-pod.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;OR&lt;/p&gt;
+
+&lt;p&gt;執行指令建立Pod，Yaml配置檔來源為本地&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; ./MyFirstPod.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;透過以下指令可在終端機查看Pod清單&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get pods &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; wide&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_7.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;minikube Dashboard 管理介面
+&lt;img src=&quot;kubernetes_pod_8.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;pod-簡易操作---刪除&quot;&gt;Pod 簡易操作 - 刪除&lt;/h3&gt;
+
+&lt;p&gt;搭配&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl delete&lt;/code&gt;指令來刪除特定運行中Pod。&lt;/p&gt;
+
+&lt;p&gt;關於指令詳細可參考：&lt;br /&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#delete&quot;&gt;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#delete&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;假設要刪除Name為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nginx&lt;/code&gt;的Pod&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_7.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;執行指令刪除Pod&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl delete pod nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl get pods&lt;/code&gt;來確認&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_pod_9.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;</content><author><name>JYUN YU LI</name></author><category term="kubernetes" /><category term="Pod" /><category term="kubernetes" /><summary type="html"></summary></entry><entry><title type="html">Kubernetes - Pod生命週期</title><link href="https://s123600g.github.io//kubernetes/pod/2023/08/27/Kubernetes-Pod%E7%94%9F%E5%91%BD%E9%80%B1%E6%9C%9F.html" rel="alternate" type="text/html" title="Kubernetes - Pod生命週期" /><published>2023-08-27T12:20:00+00:00</published><updated>2023-08-27T12:20:00+00:00</updated><id>https://s123600g.github.io//kubernetes/pod/2023/08/27/Kubernetes-Pod%E7%94%9F%E5%91%BD%E9%80%B1%E6%9C%9F</id><content type="html" xml:base="https://s123600g.github.io//kubernetes/pod/2023/08/27/Kubernetes-Pod%E7%94%9F%E5%91%BD%E9%80%B1%E6%9C%9F.html">&lt;!--more--&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/&quot;&gt;Kubernetes - Pod Lifecycle&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Pod的運行都會有對應執行階段，這些可稱為執行狀態讓使用者清楚當前Pod是否還活著，同樣地，Pod內部的也會運行單一或多個容器，這些容器也會有執行狀態，兩者是相互有關係驅動整體執行狀態識別。&lt;/p&gt;
+
+&lt;p&gt;當使用者詢問Pod當前執行狀態流程如下：&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;詢問Kubernetes API Server(Master)，並轉送Pod所在Node內Kubelet。&lt;/li&gt;
+  &lt;li&gt;Kubelet收到詢問請求，開始確認Pod運作狀態並回覆。&lt;/li&gt;
+  &lt;li&gt;Kubernetes API Server收到回覆轉送回應。&lt;/li&gt;
+  &lt;li&gt;使用者看到當前Pod狀態資訊。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Pod與內部Container執行階段對應&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_podlifecycle_1.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;pod-終止執行&quot;&gt;Pod 終止執行&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination&quot;&gt;Termination of Pods&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;使用者下達刪除Pod指令後，實際上kubelet發送給Node告知請刪除某Pod目標，有時可能不會馬上就刪除完畢，因給予命令並不是強制終止，而是請進行終止作業程序，預設等待30秒給予完成，如果逾期還未終止則進行強制終止，不管終止作業是否還在進行。&lt;/p&gt;
+
+&lt;p&gt;關於刪除指令參數可參考： &lt;br /&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#delete&quot;&gt;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#delete&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;當執行刪除操作時，調整預設等待時間從30秒變為10秒&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;指令刪除透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--grace-period&lt;/code&gt;參數&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl delete pod &amp;lt;name&amp;gt; &lt;span class=&quot;nt&quot;&gt;--grace-period&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;OR&lt;/p&gt;
+
+&lt;p&gt;Yaml配置檔在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spec&lt;/code&gt;內新增&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terminationGracePeriodSeconds&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 定義版本&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# 定義此為Pod設定檔&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Pod&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# 定義此Pod Name&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;myfirstpod2&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# 設置當容器終止時，預設等待作業完成限制時間&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;terminationGracePeriodSeconds&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# 設定容器&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx:1.14.2&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;containerPort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mybusybox&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;busybox&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sh&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;-c&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;1000000&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;當執行刪除操作時，不想要等待終止作業需要立即強制刪除&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;指令刪除透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--force&lt;/code&gt;和&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--grace-period&lt;/code&gt;參數&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl delete pod &amp;lt;name&amp;gt; &lt;span class=&quot;nt&quot;&gt;--force&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--grace-period&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;</content><author><name>JYUN YU LI</name></author><category term="kubernetes" /><category term="Pod" /><category term="kubernetes" /><summary type="html"></summary></entry><entry><title type="html">Kubernetes - minikube安裝Windows環境</title><link href="https://s123600g.github.io//kubernetes/minikube/2023/08/27/Kubernetes-minikube%E5%AE%89%E8%A3%9DWindows%E7%92%B0%E5%A2%83.html" rel="alternate" type="text/html" title="Kubernetes - minikube安裝Windows環境" /><published>2023-08-27T07:20:00+00:00</published><updated>2023-08-27T07:20:00+00:00</updated><id>https://s123600g.github.io//kubernetes/minikube/2023/08/27/Kubernetes-minikube%E5%AE%89%E8%A3%9DWindows%E7%92%B0%E5%A2%83</id><content type="html" xml:base="https://s123600g.github.io//kubernetes/minikube/2023/08/27/Kubernetes-minikube%E5%AE%89%E8%A3%9DWindows%E7%92%B0%E5%A2%83.html">&lt;!--more--&gt;
+
+&lt;p&gt;Install Tools：&lt;a href=&quot;https://kubernetes.io/docs/tasks/tools/&quot;&gt;https://kubernetes.io/docs/tasks/tools/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;minikube start：&lt;a href=&quot;https://minikube.sigs.k8s.io/docs/start/&quot;&gt;https://minikube.sigs.k8s.io/docs/start/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;系統需求可參考：&lt;a href=&quot;https://minikube.sigs.k8s.io/docs/start/#what-youll-need&quot;&gt;https://minikube.sigs.k8s.io/docs/start/#what-youll-need&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;minikube GitHub： &lt;a href=&quot;https://github.com/kubernetes/minikube&quot;&gt;https://github.com/kubernetes/minikube&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Install Docker Desktop on Windows：&lt;a href=&quot;https://docs.docker.com/desktop/windows/install/&quot;&gt;https://docs.docker.com/desktop/windows/install/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;安裝使用環境&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Windows 11 Pro 10.0.22000 Build 22000&lt;/li&gt;
+  &lt;li&gt;Docker&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;安裝順序&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;kubectl&lt;/li&gt;
+  &lt;li&gt;minikube&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;windows-安裝-kubectl&quot;&gt;Windows 安裝 kubectl&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/&quot;&gt;https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;下載 &lt;strong&gt;kubectl.exe&lt;/strong&gt; 並執行安裝，不使用執行&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;操作安裝方式。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_1.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;測試安裝是否正確&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;顯示安裝版本資訊
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl version &lt;span class=&quot;nt&quot;&gt;--client&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_2.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;顯示安裝版本資訊(詳細)
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl version &lt;span class=&quot;nt&quot;&gt;--client&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--output&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;yaml  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_3.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;windows-安裝-minikube&quot;&gt;Windows 安裝 minikube&lt;/h2&gt;
+
+&lt;p&gt;GitHub Release，下載 &lt;strong&gt;minikube-installer.exe&lt;/strong&gt; 並執行安裝
+&lt;a href=&quot;https://github.com/kubernetes/minikube/releases&quot;&gt;https://github.com/kubernetes/minikube/releases&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_4.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_5.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;執行啟動&quot;&gt;執行啟動&lt;/h3&gt;
+
+&lt;p&gt;開啟&lt;strong&gt;PowerShell&lt;/strong&gt;進行以下操作&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;minikube start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_6.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在此階段會設定必要配置與下載執行啟動必要相關套件。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_7.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;啟動完成後，打開&lt;strong&gt;Docker Desktop&lt;/strong&gt;可以看到&lt;strong&gt;minikube&lt;/strong&gt;容器運行中。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_8.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;運行-minikube-dashboard&quot;&gt;運行 minikube dashboard&lt;/h3&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;minikube dashboard
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_10.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;預設會自動開啟瀏覽器瀏覽頁面&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_11.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果不要預設自動開啟瀏覽器，可加上&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--url&lt;/code&gt;參數&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;minikube dashboard &lt;span class=&quot;nt&quot;&gt;--url&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;使用kubectl指令可查看當前cluster資訊&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl cluster-info
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;kubernetes_minikube_12.png&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;</content><author><name>JYUN YU LI</name></author><category term="kubernetes" /><category term="minikube" /><category term="kubernetes" /><summary type="html"></summary></entry><entry><title type="html">使用OpenXml產生Excel筆記</title><link href="https://s123600g.github.io//dotnet_core/2022/10/10/%E4%BD%BF%E7%94%A8OpenXml%E7%94%A2%E7%94%9FExcel%E7%AD%86%E8%A8%98.html" rel="alternate" type="text/html" title="使用OpenXml產生Excel筆記" /><published>2022-10-10T10:57:00+00:00</published><updated>2022-10-10T10:57:00+00:00</updated><id>https://s123600g.github.io//dotnet_core/2022/10/10/%E4%BD%BF%E7%94%A8OpenXml%E7%94%A2%E7%94%9FExcel%E7%AD%86%E8%A8%98</id><content type="html" xml:base="https://s123600g.github.io//dotnet_core/2022/10/10/%E4%BD%BF%E7%94%A8OpenXml%E7%94%A2%E7%94%9FExcel%E7%AD%86%E8%A8%98.html">&lt;!--more--&gt;
+
+&lt;p&gt;使用微軟官方提供&lt;a href=&quot;https://github.com/OfficeDev/Open-XML-SDK&quot;&gt;Open XML SDK&lt;/a&gt;來產生Excel檔案，此篇筆記主要紀錄簡易產生操作。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;簡易範例&quot;&gt;簡易範例&lt;/h2&gt;
+
+&lt;p&gt;專案範例：&lt;a href=&quot;https://github.com/s123600g/jyu.demo.OpenXMLCreateExcel&quot;&gt;jyu.demo.OpenXMLCreateExcel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;NuGet套件需要安裝 &lt;a href=&quot;https://www.nuget.org/packages/DocumentFormat.OpenXml/&quot;&gt;DocumentFormat.OpenXml&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;簡易範例資料設置在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;src/GenExcelFile/Program.cs&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetExcelContentSample()&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;範例資料皆是以List集合為結構，每位置代表每列內容。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;簡易理解概念&quot;&gt;簡易理解概念&lt;/h2&gt;
+
+&lt;p&gt;一個Excel產生操作步驟如下&lt;/p&gt;
+
+&lt;h3 id=&quot;step-1-建置一個內容實體與新活頁簿workbooksheets&quot;&gt;Step 1. 建置一個內容實體與新活頁簿(WorkBook、Sheets)&lt;/h3&gt;
+
+&lt;p&gt;透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SpreadsheetDocument&lt;/code&gt;來建立一個實體，在程式宣告會如下&lt;/p&gt;
+
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;MemoryStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memoryStream&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;MemoryStream&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;SpreadsheetDocument&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spreadsheetDocument&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SpreadsheetDocument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;memoryStream&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;SpreadsheetDocumentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Workbook&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Do&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Something&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.....&lt;/span&gt;   
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;所有的操作都會應在此範圍內，當還未確認內容完成時，通常先放在記憶體內，透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemoryStream&lt;/code&gt;來達成記憶體暫存。&lt;/p&gt;
+
+&lt;p&gt;當有了實體不代表就有活頁簿，就像你開一個全新Excel時，不會看到一個空白活頁簿，需要使用者手動建置新空白活頁簿，所以，透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WorkbookPart&lt;/code&gt;來建置一個空白活頁簿，在程式宣告會如下&lt;/p&gt;
+
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;WorkbookPart&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;workbookPart&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spreadsheetDocument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AddWorkbookPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;workbookPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Workbook&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Workbook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;有了活頁簿之後，我們還需要一個放置工作表單集合實體，這是用來存放每個新增的工作表單儲存區塊，所以，透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sheets&lt;/code&gt;來建置集合實體，在程式宣告會如下&lt;/p&gt;
+
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Sheets&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sheets&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spreadsheetDocument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WorkbookPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Workbook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AppendChild&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sheets&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;(&lt;/span&gt;
+       &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Sheets&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;step-2-工作表單建置與實作內容worksheetpartsheetdata&quot;&gt;Step 2. 工作表單建置與實作內容(WorksheetPart、SheetData)&lt;/h3&gt;
+
+&lt;p&gt;當需要建置一個獨立工作表單實體時，透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WorksheetPart&lt;/code&gt;來建置獨立實體，在程式宣告會如下&lt;/p&gt;
+
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;WorksheetPart&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;worksheetPart&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;workbookPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AddNewPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WorksheetPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;當工作表單建好實體後，初始化實體內容才能進行資料操作，透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SheetData&lt;/code&gt;來初始化實體內容，在程式宣告會如下&lt;/p&gt;
+
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;SheetData&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sheetData&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SheetData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;工作表單內容結構其實就是列表資料概念，所以，操作上會是先建置一列，針對建置好的一列補上欄位內容，簡單來看就是一個List集合概念。&lt;/p&gt;
+
+&lt;p&gt;透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Row&lt;/code&gt;來初始化列，在程式宣告會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Row&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sheetRow&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;每列都是一個集合，所以，可以一直依序新增每個欄位資料，在程式操作如下&lt;/p&gt;
+
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;sheetRow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cells&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cells&lt;/code&gt; 可以是一個List集合，也就是可以先把欄位資料先集合起來，一次送進來，也可以單獨一個資料送進來。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;透過&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cell&lt;/code&gt;來初始化欄位，在程式宣告會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tempCell&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;設置欄位內容，在程式操作會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tempCell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CellValue&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CellValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cellValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;設置欄位資料類型，在程式操作會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tempCell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataType&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CellValues&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CellValues&lt;/code&gt; 這是一個Enum，有其他類型的屬性，並非只有&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;String&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;當一列內容建置好後，我們需要將它更新進工作表單內容(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SheetData&lt;/code&gt;)內，在程式操作會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;sheetData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AppendChild&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sheetRow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;此時還尚未完成一個工作表單建置，當確認完成工作表單內容後，還需更新進工作表單實體(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WorksheetPart&lt;/code&gt;)，在程式操作會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;worksheetPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Worksheet&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Worksheet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sheetData&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;最後，再將此工作表單實體(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WorksheetPart&lt;/code&gt;)註冊進工作表單儲存區塊(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sheets&lt;/code&gt;)，這樣才是一個工作表單建立操作步驟，在程式操作會如下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;sheets&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Sheet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;Id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spreadsheetDocument&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WorkbookPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;GetIdOfPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;worksheetPart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+     &lt;span class=&quot;n&quot;&gt;SheetId&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Sheet1&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;從以上操作內容敘述，簡單來看操作流程如下&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;建立&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Worksheet&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;建立&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SheetData&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;建立&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Row&lt;/code&gt;與&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Cell&lt;/code&gt;產生每列內容。&lt;/li&gt;
+  &lt;li&gt;建置好每列內容更新進&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SheetData&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;將&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SheetData&lt;/code&gt;更新進&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Worksheet&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;將&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Worksheet&lt;/code&gt;新增進&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sheets&lt;/code&gt;完成一個工作表單建置。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;當有多個工作表單要建置時，依序重複上面六個操作。&lt;/p&gt;
+
+&lt;p&gt;可以在範例&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lib/ExcelGenerator/ExcelGenerator.cs&lt;/code&gt;內參考整體流程。&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/s123600g/6a03a5e303eab4b62800d7f307c3120d.js&quot;&gt;&lt;/script&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;相關參考&quot;&gt;相關參考&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.johnwu.cc/article/asp-net-core-export-to-excel.html&quot;&gt;ASP.NET Core 教學 - Open XML SDK 匯出 Excel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.microsoft.com/en-us/office/open-xml/how-to-create-a-spreadsheet-document-by-providing-a-file-name#sample-code&quot;&gt;Create a spreadsheet document by providing a file name (Open XML SDK)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/a/22230453&quot;&gt;OpenXML Multiple Sheets&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>JYUN YU LI</name></author><category term="dotnet_core" /><category term="dotnet_core" /><summary type="html"></summary></entry><entry><title type="html">DateTime計算時間TimeSpan秒數差筆記</title><link href="https://s123600g.github.io//c%23/datetime/2022/04/06/DateTime%E8%A8%88%E7%AE%97%E6%99%82%E9%96%93TimeSpan%E7%A7%92%E6%95%B8%E5%B7%AE%E7%AD%86%E8%A8%98.html" rel="alternate" type="text/html" title="DateTime計算時間TimeSpan秒數差筆記" /><published>2022-04-06T13:36:00+00:00</published><updated>2022-04-06T13:36:00+00:00</updated><id>https://s123600g.github.io//c%23/datetime/2022/04/06/DateTime%E8%A8%88%E7%AE%97%E6%99%82%E9%96%93TimeSpan%E7%A7%92%E6%95%B8%E5%B7%AE%E7%AD%86%E8%A8%98</id><content type="html" xml:base="https://s123600g.github.io//c%23/datetime/2022/04/06/DateTime%E8%A8%88%E7%AE%97%E6%99%82%E9%96%93TimeSpan%E7%A7%92%E6%95%B8%E5%B7%AE%E7%AD%86%E8%A8%98.html">&lt;p&gt;紀錄筆者在工作上遇到計算時間秒數差比對問題。&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;工作上剛好協助檢視發送請求並等待回應情境，限制預設等待3分鐘情況下，遇到了超過三分鐘情況，卻不會自己中斷跳出等待迴圈，一開始追問題時，都會想說奇怪，都已經能取得當下時間與最開始執行時間計算時間差，並且都能夠取得算出來結果，怎麼可能還會出錯呢?&lt;/p&gt;
+
+&lt;p&gt;這時候，就必須去看處理方式和比對屬性欄位是否有陷阱，往往魔鬼藏在細節裡面，在此情境中是使用秒數去做比對。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;問題&quot;&gt;問題&lt;/h2&gt;
+
+&lt;p&gt;為了模擬情境，使用Dotnet Core 3.1建立一個Console專案，並且內容如下&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/s123600g/3bd6b64cdb094d155fd5b647ebdc0df1.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;首先，針對取得一開始執行時間、迴圈取得當下時間使用方法都是&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DateTime&lt;/code&gt;內建屬性&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Now&lt;/code&gt;來取得&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;DateTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Now&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;設定一個上限門檻變數&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maxSec&lt;/code&gt;，&lt;strong&gt;當一開始執行時間&lt;/strong&gt;與&lt;strong&gt;迴圈取得當下時間&lt;/strong&gt;計算時間差秒數已超過此門檻，預期程式會跳出迴圈並結束。 &lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;計算時間差使用&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DateTime&lt;/code&gt;內建方法&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Subtract&lt;/code&gt;，它可以將執行主要日期時間實體去減掉指定日期時間，取得中間日期時間差結果。  &lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;將取得日期時間差結果取出秒數實體和上限門檻變數&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maxSec&lt;/code&gt;比對。  &lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;在迴圈當中每10秒輸出顯示一次訊息，並測試以下兩種情境。&lt;/p&gt;
+
+&lt;h3 id=&quot;情境一-上限門檻為30秒&quot;&gt;情境一 上限門檻為30秒&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;csharp_01.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;情境二-上限門檻為65秒&quot;&gt;情境二 上限門檻為65秒&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;csharp_01-02.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;依據測試輸出結果，兩個情境都會自動跳離迴圈，情境一是由&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Seconds&lt;/code&gt;變數來判斷跳離，它是&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;int&lt;/code&gt;變數，情境二是由&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TotalSeconds&lt;/code&gt;變數來判斷跳離，它是&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;double&lt;/code&gt;變數。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Seconds&lt;/code&gt;變數，對應範例程式變數 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sec&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TotalSeconds&lt;/code&gt;變數，對應範例程式變數 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sec2&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;情境一跳出迴圈條件式為以下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sec&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maxSec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$&quot;Max：&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxSec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; , Current double sec： &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sec2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s , Current int sec： &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Exit while loop by timespan int sec.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;情境二跳出迴圈條件式為以下&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sec2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maxSec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$&quot;Max：&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maxSec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; , Current double sec： &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sec2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s , Current int sec： &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Exit while loop by timespan double sec.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;依據兩個情境輸出結果，可以觀察到當門檻秒數是在一分鐘(60秒)內，迴圈跳離會由情境一跳出條件執行，相反地，超過一分鐘(60秒)則由情境二跳出條件執行。&lt;/p&gt;
+
+&lt;p&gt;可以從情境二輸出結果看到當&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sec2&lt;/code&gt;為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;60.01&lt;/code&gt;秒，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sec&lt;/code&gt;為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0&lt;/code&gt;秒，當&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sec2&lt;/code&gt;為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;65&lt;/code&gt;秒，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sec&lt;/code&gt;為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4&lt;/code&gt;秒。&lt;/p&gt;
+
+&lt;p&gt;使用情境一跳出條件式，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Seconds&lt;/code&gt;變數來判斷時，碰到60秒情況int值會變成0重新開始計算，永遠不會觸發秒數門檻為65秒情況。&lt;/p&gt;
+
+&lt;p&gt;使用情境二跳出條件式，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TotalSeconds&lt;/code&gt;變數則會繼續從60秒接續計算下去，所以可以從輸出畫面看到出現65秒內容，並觸發秒數門檻為65秒跳出迴圈門檻。&lt;/p&gt;
+
+&lt;p&gt;關於&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TimeSpan&lt;/code&gt;內&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Seconds&lt;/code&gt;變數，依據官方文件說明，其回傳範圍為 -59 到 59，之後針對秒數比對需特別使用比對來源內容。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;相關參考：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/dotnet/api/system.datetime.subtract?view=net-6.0&quot;&gt;DateTime.Subtract 方法&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/5177002/how-to-subtract-a-datetime-from-another-datetime&quot;&gt;how-to-subtract-a-datetime-from-another-datetime&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dotblogs.com.tw/skyline0217/2011/04/21/23269&quot;&gt;關於 DateTime 時間差計算&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/dotnet/api/system.timespan.seconds?view=net-6.0&quot;&gt;TimeSpan.Seconds 屬性&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/dotnet/api/system.timespan.totalseconds?view=net-6.0&quot;&gt;TimeSpan.TotalSeconds 屬性&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;</content><author><name>JYUN YU LI</name></author><category term="c#" /><category term="datetime" /><category term="csharp" /><summary type="html">紀錄筆者在工作上遇到計算時間秒數差比對問題。</summary></entry><entry><title type="html">Azure Pipelines 設定Pipeline與使用Self-hosted Agent執行</title><link href="https://s123600g.github.io//azure_devops/azure_pipelines/2022/02/02/Azure-Pipelines-%E8%A8%AD%E5%AE%9APipeline%E8%88%87%E4%BD%BF%E7%94%A8Self-hosted-Agent%E5%9F%B7%E8%A1%8C.html" rel="alternate" type="text/html" title="Azure Pipelines 設定Pipeline與使用Self-hosted Agent執行" /><published>2022-02-02T10:05:00+00:00</published><updated>2022-02-02T10:05:00+00:00</updated><id>https://s123600g.github.io//azure_devops/azure_pipelines/2022/02/02/Azure%20Pipelines%20%E8%A8%AD%E5%AE%9APipeline%E8%88%87%E4%BD%BF%E7%94%A8Self-hosted%20Agent%E5%9F%B7%E8%A1%8C</id><content type="html" xml:base="https://s123600g.github.io//azure_devops/azure_pipelines/2022/02/02/Azure-Pipelines-%E8%A8%AD%E5%AE%9APipeline%E8%88%87%E4%BD%BF%E7%94%A8Self-hosted-Agent%E5%9F%B7%E8%A1%8C.html">&lt;!--more--&gt;
+
+&lt;p&gt;參考官方教學 - Asp.Net.Core範例，搭配Self-hosted Windows Agent程式(參考3)。&lt;/p&gt;
+
+&lt;p&gt;注意事項：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;需要Azure DevOps，並且已經建立好組織和Project。
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://azure.microsoft.com/en-us/services/devops/&quot;&gt;Azure DevOps&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/en-us/azure/devops/user-guide/sign-up-invite-teammates?view=azure-devops#sign-up-with-a-personal-microsoft-account&quot;&gt;Sign up, sign in to Azure DevOps&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;需要GitHub帳戶，筆記使用儲存庫來自GitHub。&lt;/li&gt;
+  &lt;li&gt;Self-hosted windows agent需事前設置好並啟動監聽Job。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;step-1-建立gitub儲存庫&quot;&gt;Step 1. 建立Gitub儲存庫&lt;/h4&gt;
+
+&lt;p&gt;將官方GitHub範例儲存庫Fork至自己Github底下儲存庫，點擊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Fork&lt;/code&gt;按鈕進行複製操作。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/MicrosoftDocs/pipelines-dotnet-core&quot;&gt;MicrosoftDocs/pipelines-dotnet-core&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_02_0.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;step-2-建立pipeline&quot;&gt;Step 2. 建立Pipeline&lt;/h4&gt;
+
+&lt;p&gt;選擇使用專案 –&amp;gt; Pipeline頁面點選&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;New Pipeline&lt;/code&gt; &lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_1.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;儲存庫來源選擇&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GitHub&lt;/code&gt; &lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_2.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;選擇已經Fork至自己GitHub儲存庫&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;如果為初次設置情況(GitHub儲存庫從未授權過)
+    &lt;ol&gt;
+      &lt;li&gt;GitHub登入驗證。&lt;/li&gt;
+      &lt;li&gt;選擇GitHub授權儲存庫來源。&lt;/li&gt;
+      &lt;li&gt;授權GitHub安裝 Azure Pipelines 應用程式(核准安裝)。&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_02_3.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;選擇&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Asp.Net.Core 管線範本&lt;/code&gt; &lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_4.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;設定預設Yaml內容&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;針對&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pool&lt;/code&gt;區塊內容
+    &lt;ul&gt;
+      &lt;li&gt;如果是使用Azure DevOps Services包裝好VM Image，必須以&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vmImage&lt;/code&gt;作為Key來設置。&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;此筆記需設置使用自訂Agent Pool集區&lt;/strong&gt;。&lt;/li&gt;
+      &lt;li&gt;關於自訂Agent Pool集區是在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Organization settings&lt;/code&gt; –&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent pools&lt;/code&gt;，列表顯示內容就是集區名稱。
+        &lt;ul&gt;
+          &lt;li&gt;Ex：自訂Agent Pool集區名稱為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;My Windows Agent&lt;/code&gt;
+            &lt;ol&gt;
+              &lt;li&gt;預設Pool設置為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vmImage: ubuntu-latest&lt;/code&gt;更改為自訂Agent Pool集區名稱 &lt;br /&gt;           &lt;br /&gt;
+  &lt;img src=&quot;Azure_Pipelines_02_5.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/li&gt;
+              &lt;li&gt;將Pool設置改為使用自訂Agent Pool集區
+  &lt;br /&gt;
+  &lt;img src=&quot;Azure_Pipelines_02_6.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;
+&lt;script src=&quot;https://gist.github.com/s123600g/ea96c7b2aaa44fd805bd2c1347ad929e.js&quot;&gt;&lt;/script&gt;&lt;/li&gt;
+            &lt;/ol&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;step-3-執行pipeline&quot;&gt;Step 3. 執行Pipeline&lt;/h4&gt;
+
+&lt;p&gt;在前一個步驟設定完Yaml內容後，點擊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Save and run&lt;/code&gt;執行，觸發動作如下&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;將設定好Yaml檔案推送至授權GitHub儲存庫，Yaml檔案名稱為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;azure-pipelines.yml&lt;/code&gt;  &lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_7.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Self-hosted windows agent 接收到新Job請求，開始執行Yaml內設置Job內容 &lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_8.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;   &lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_8-1.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;   &lt;br /&gt;&lt;br /&gt;
+&lt;img src=&quot;Azure_Pipelines_02_8-2.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;   &lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;相關參考&quot;&gt;相關參考&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/azure/devops/pipelines/create-first-pipeline?view=azure-devops&amp;amp;tabs=tfs-2018-2%2Cbrowser%2Cjava#create-your-first-pipeline-1&quot;&gt;建立您的第一個管線&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/MicrosoftDocs/pipelines-dotnet-core&quot;&gt;pipelines-dotnet-core&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://s123600g.github.io/azure%20devops/azure%20pipelines/2022/02/01/Azure-Pipelines-%E8%A8%AD%E7%BD%AESelf-hosted-Windows%E4%BB%A3%E7%90%86%E7%A8%8B%E5%BC%8F.html&quot;&gt;Azure Pipelines 設置Self-hosted Windows代理程式&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>JYUN YU LI</name></author><category term="azure_devops" /><category term="azure_pipelines" /><category term="azure_devops" /><summary type="html"></summary></entry><entry><title type="html">Azure Pipelines 設置Self-hosted Windows代理程式</title><link href="https://s123600g.github.io//azure_devops/azure_pipelines/2022/02/01/Azure-Pipelines-%E8%A8%AD%E7%BD%AESelf-hosted-Windows%E4%BB%A3%E7%90%86%E7%A8%8B%E5%BC%8F.html" rel="alternate" type="text/html" title="Azure Pipelines 設置Self-hosted Windows代理程式" /><published>2022-02-01T11:20:00+00:00</published><updated>2022-02-01T11:20:00+00:00</updated><id>https://s123600g.github.io//azure_devops/azure_pipelines/2022/02/01/Azure%20Pipelines%20%E8%A8%AD%E7%BD%AESelf-hosted%20Windows%E4%BB%A3%E7%90%86%E7%A8%8B%E5%BC%8F</id><content type="html" xml:base="https://s123600g.github.io//azure_devops/azure_pipelines/2022/02/01/Azure-Pipelines-%E8%A8%AD%E7%BD%AESelf-hosted-Windows%E4%BB%A3%E7%90%86%E7%A8%8B%E5%BC%8F.html">&lt;!--more--&gt;
+
+&lt;p&gt;注意事項：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;需要確認裝載電腦環境是否有運作必要套件，Ex：執行Asp.Net.Core範本就需要安裝Dotnet SDK。&lt;/li&gt;
+  &lt;li&gt;需要設定PAT(Personal Access Tokens)許可權證，讓Self-hosted Agent能夠與遠端連線操作。&lt;/li&gt;
+  &lt;li&gt;如果需要重新配置Agent代理程式，需要刪除掉原始配置，才能在進行配置操作。 (參考4)&lt;/li&gt;
+  &lt;li&gt;開啟&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PowerShell&lt;/code&gt;執行操作指令。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;step-1-新增patpersonal-access-tokens許可權證&quot;&gt;Step 1. 新增PAT(Personal Access Tokens)許可權證&lt;/h3&gt;
+
+&lt;p&gt;
+新增完畢產生Token會用在後面初次設定Agent程式。
+&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_01_1.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;step-2-下載agent程式&quot;&gt;Step 2. 下載Agent程式&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Organization settings&lt;/code&gt; – &amp;gt; 選取 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agent pools&lt;/code&gt; –&amp;gt; 點擊 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Add pool&lt;/code&gt; 按鈕
+&lt;img src=&quot;Azure_Pipelines_01_2.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;
+&lt;img src=&quot;Azure_Pipelines_01_2-1.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pool Type&lt;/code&gt; 選擇&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Self-hosted&lt;/code&gt;，自訂&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Name&lt;/code&gt;內容設定該Agent集區名稱。
+&lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_01_2-2.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;點進建立自訂Agent集區內，選取&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Agents&lt;/code&gt;區塊 –&amp;gt; 點擊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;New agent&lt;/code&gt;
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_01_2-3.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;選擇&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Windows&lt;/code&gt; –&amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Download the agent&lt;/code&gt; –&amp;gt; 點擊&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Download&lt;/code&gt; 按鈕
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_01_2-4.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;step-3-建立agent程式存放目錄與解壓縮&quot;&gt;Step 3. 建立Agent程式存放目錄與解壓縮&lt;/h3&gt;
+
+&lt;p&gt;此筆記在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PowerShell&lt;/code&gt;進行操作，也可手動進行建置存放目錄與解壓縮至指定目錄。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\&lt;/code&gt;底下操作指令，建立存放目錄並切換至該目錄底下
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mkdir agent ; cd agent
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;將下載Agent程式壓縮檔解壓縮至 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\agent&lt;/code&gt;
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory(&quot;$HOME\Downloads\vsts-agent-win-x64-2.198.2.zip&quot;, &quot;$PWD&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;ul&gt;
+      &lt;li&gt;此筆記下載壓縮檔名稱為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vsts-agent-win-x64-2.198.2.zip&lt;/code&gt;，每一次下載可能都會不一樣，需再注意壓縮檔案名稱。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;step-4-設定agent程式初次執行前須設置一次此步驟&quot;&gt;Step 4. 設定Agent程式(初次執行前須設置一次此步驟)&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PowerShell&lt;/code&gt;需再Agent程式放置目錄位置底下。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;執行設定指令：
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;.\config.cmd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;設定伺服器 URL
+    &lt;ul&gt;
+      &lt;li&gt;預設格式：https://dev.azure.com/&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{your-organization}&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;{your-organization}&lt;/code&gt; 輸入自己組織名稱&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PwoerShell&lt;/code&gt;執行指令期間進行以下設定
+    &lt;ol&gt;
+      &lt;li&gt;預設使用PAT權杖驗證(輸入視窗會提示&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;請為 PAT 按 Enter&lt;/code&gt;)&lt;/li&gt;
+      &lt;li&gt;輸入建置PAT Token&lt;/li&gt;
+      &lt;li&gt;輸入代理程式集區(Agent Tool內設定集區名稱)&lt;/li&gt;
+      &lt;li&gt;輸入代理程式名稱(自訂命名)&lt;/li&gt;
+      &lt;li&gt;輸入工作資料夾(輸入視窗會提示&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;請為 _work 按 Enter&lt;/code&gt;)&lt;/li&gt;
+      &lt;li&gt;輸入將代理程式作為服務執行? (Y/N)
+        &lt;ul&gt;
+          &lt;li&gt;如果不需要請按下Enter，輸入視窗會提示&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;請為 否 按 Enter&lt;/code&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;輸入設定自動登入並在啟動時執行代理程式? (Y/N)
+        &lt;ul&gt;
+          &lt;li&gt;如果不需要請按下Enter，輸入視窗會提示&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;請為 否 按 Enter&lt;/code&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;Azure_Pipelines_01_3.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;step-5-執行agent代理程式&quot;&gt;Step 5. 執行Agent代理程式&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PowerShell&lt;/code&gt;需再Agent程式放置目錄位置底下。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;執行設定指令：
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;.\run.cmd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;如果要終止程式，按下Ctrl + C即可。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;可在Agent Tool集區內檢視目前Agent程式是否有在運作中。
+&lt;img src=&quot;Azure_Pipelines_01_4.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;相關參考&quot;&gt;相關參考&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#download-and-configure-the-agent&quot;&gt;參考自我裝載 Windows 代理程式 - 非Service運作模式&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#check-prerequisites&quot;&gt;確認檢查必要條件&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#authenticate-with-a-personal-access-token-pat&quot;&gt;使用個人存取權杖進行驗證 (PAT) &lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#remove-and-re-configure-an-agent&quot;&gt;移除並重新設定代理程式&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/azure/devops/pipelines/agents/v2-windows?view=azure-devops#download-and-configure-the-agent&quot;&gt;下載並設定代理程式&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>JYUN YU LI</name></author><category term="azure_devops" /><category term="azure_pipelines" /><category term="azure_devops" /><summary type="html"></summary></entry><entry><title type="html">IHttpClientFactory基本用法筆記</title><link href="https://s123600g.github.io//dotnet_core/2022/01/02/IHttpClientFactory%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95%E7%AD%86%E8%A8%98.html" rel="alternate" type="text/html" title="IHttpClientFactory基本用法筆記" /><published>2022-01-02T14:05:00+00:00</published><updated>2022-01-02T14:05:00+00:00</updated><id>https://s123600g.github.io//dotnet_core/2022/01/02/IHttpClientFactory%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95%E7%AD%86%E8%A8%98</id><content type="html" xml:base="https://s123600g.github.io//dotnet_core/2022/01/02/IHttpClientFactory%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95%E7%AD%86%E8%A8%98.html">&lt;!--more--&gt;
+
+&lt;p&gt;此筆記為紀錄工作上碰到開發需要，使用&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IHttpClientFactory&lt;/code&gt;來建立管控&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HttpClient&lt;/code&gt;生命週期。&lt;/p&gt;
+
+&lt;p&gt;依據官方文件(相關參考2)敘述，如果單純使用&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HttpClient&lt;/code&gt;進行Http請求，一般作法建立&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HttpClient&lt;/code&gt;新實體，再透過此建立實體來進行Http請求動作。&lt;/p&gt;
+
+&lt;p&gt;正常使用完畢後，我們都會認為會自動釋放，因為該類別內部有繼承&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IDisposable&lt;/code&gt;特性，但是，系統背後通訊端Socket資源佔用問題，卻不會隨著當下實體用完銷毀就跟著被釋放，而後還有其他關於DNS異動調整問題，可以參考相關連結了解詳細。&lt;/p&gt;
+
+&lt;p&gt;根據上述狀況，使用官方推薦以&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IHttpClientFactory&lt;/code&gt;方式來進行&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HttpClient&lt;/code&gt;管控，在此筆記紀錄基本用法與單一實體在生命週期內重複利用。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;主要專案&quot;&gt;主要專案&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;.Net Core 3.1 Console 範例主程式
+    &lt;ul&gt;
+      &lt;li&gt;以此Console進行呼叫Web API。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Asp.Net 6 範例Web API
+    &lt;ul&gt;
+      &lt;li&gt;Sample API供應範例Console呼叫。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;範例console主程式&quot;&gt;範例Console主程式&lt;/h2&gt;
+
+&lt;h3 id=&quot;安裝相關nutget套件&quot;&gt;安裝相關NutGet套件&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Microsoft.Extensions.DependencyInjection&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Microsoft.Extensions.Http&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;建立di與註冊ihttpclientfactory&quot;&gt;建立DI與註冊IHttpClientFactory&lt;/h3&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ServiceCollection&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serviceCollection&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ServiceCollection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;serviceCollection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AddHttpClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serviceBuilder&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serviceCollection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;BuildServiceProvider&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;httpClientFactory&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;serviceBuilder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GetService&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IHttpClientFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;實作http請求範例內容&quot;&gt;實作Http請求範例內容&lt;/h3&gt;
+
+&lt;p&gt;依據註入&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HttpClientFactory&lt;/code&gt;方法&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CreateClient&lt;/code&gt;搭配&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;using&lt;/code&gt;進行範例實作&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;IHttpClientFactory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;httpClientFactory&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;GetHttpClientFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;baseAddress&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Uri&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;http://localhost:5030/&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestUrl&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;WeatherForecast&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;httpClientFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;CreateClient&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;SampleHttpClient&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;c1&quot;&gt;// 設定Time Out&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Timeout&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TimeSpan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;FromSeconds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BaseAddress&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;baseAddress&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+   &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;GetAsync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;contentStr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAsStringAsync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;contentStr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TaskCanceledException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;TaskCanceledException&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Call Second Api&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;postContent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;StringContent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;PostAsync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;?name=jyu&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;postContent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+      &lt;span class=&quot;kt&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;contentStr2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ReadAsStringAsync&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;contentStr2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Exception&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Exception&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;WriteLine&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CreateClient&lt;/code&gt;可以使用命名模式，參數可帶入自訂命名，如果有在Service註冊時，設定指定命名HttpClient配置實體，可以在實際使用時，依據指定命名取得對應已配置好設定實體，如果未有對應則會建立新實體。&lt;/p&gt;
+
+&lt;p&gt;詳細可參考 &lt;a href=&quot;https://docs.microsoft.com/zh-tw/aspnet/core/fundamentals/http-requests?view=aspnetcore-6.0#named-clients&quot;&gt;具名用戶端&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;上述Http請求行為如下&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;設定逾時秒數。&lt;/li&gt;
+  &lt;li&gt;設定Base Address。
+    &lt;ul&gt;
+      &lt;li&gt;所有呼叫API都在此基底位址下。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;呼叫第一支API，當逾時發生時，拋出&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskCanceledException&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;try-catch攔截到&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TaskCanceledException&lt;/code&gt;發生，進行呼叫第二支API。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;範例web-api&quot;&gt;範例Web API&lt;/h2&gt;
+
+&lt;p&gt;使用預設建置&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WeatherForecast&lt;/code&gt; Controller模板，原始預設產生&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetWeatherForecast&lt;/code&gt; API調整如下。&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;HttpGet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;GetWeatherForecast&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IEnumerable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WeatherForecast&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;c1&quot;&gt;// 加入此行當收到Request就先等待10秒再進行後續&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Delay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Enumerable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Select&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WeatherForecast&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Date&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DateTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;AddDays&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;TemperatureC&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Shared&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(-&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;55&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;Summary&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Summaries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Shared&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;Next&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Summaries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;ToArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在同樣Controller新增第二支API&lt;/p&gt;
+&lt;div class=&quot;language-csharp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;HttpPost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;PostSecondApi&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ActionResult&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FromQuery&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$&quot;Hello &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; !!!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;相關參考&quot;&gt;相關參考&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/s123600g/jyu.demo.HttpClientFactory&quot;&gt;筆記Demo程式碼 - jyu.demo.HttpClientFactory&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/aspnet/core/fundamentals/http-requests?view=aspnetcore-3.1#consumption-patterns&quot;&gt;在 ASP.NET Core 中使用 IHttpClientFactory 發出 HTTP 要求&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.microsoft.com/zh-tw/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests&quot;&gt;使用 HttpClientFactory 實作復原 HTTP 要求&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://iter01.com/604146.html&quot;&gt;把HttpClient換成IHttpClientFactory之後，放心多了&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://tiaohsun.netlify.app/posts/%E5%B9%BE%E7%A8%AE%E4%BD%BF%E7%94%A8ihttpclientfactory%E6%96%B9%E6%B3%95/&quot;&gt;幾種使用IHttpClientFactory方法&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>JYUN YU LI</name></author><category term="dotnet_core" /><category term="dotnet_core" /><summary type="html"></summary></entry><entry><title type="html">使用GitHub Action配置Jekyll Site佈版筆記</title><link href="https://s123600g.github.io//jekyll/github_action/2021/12/05/%E4%BD%BF%E7%94%A8GitHub-Action%E9%85%8D%E7%BD%AEJekyll-Site%E4%BD%88%E7%89%88%E7%AD%86%E8%A8%98.html" rel="alternate" type="text/html" title="使用GitHub Action配置Jekyll Site佈版筆記" /><published>2021-12-05T07:56:00+00:00</published><updated>2021-12-05T07:56:00+00:00</updated><id>https://s123600g.github.io//jekyll/github_action/2021/12/05/%E4%BD%BF%E7%94%A8GitHub%20Action%E9%85%8D%E7%BD%AEJekyll%20Site%E4%BD%88%E7%89%88%E7%AD%86%E8%A8%98</id><content type="html" xml:base="https://s123600g.github.io//jekyll/github_action/2021/12/05/%E4%BD%BF%E7%94%A8GitHub-Action%E9%85%8D%E7%BD%AEJekyll-Site%E4%BD%88%E7%89%88%E7%AD%86%E8%A8%98.html">&lt;p&gt;此筆記紀錄筆者Blog網站，使用GitHub Action配置自動佈版程序。&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;文章內以下單詞語會以簡稱代替&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pull_request&lt;/code&gt; –&amp;gt; PR&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GitHub Action&lt;/code&gt; –&amp;gt; Action&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;儲存庫內部佈版規劃&quot;&gt;儲存庫內部佈版規劃&lt;/h1&gt;
+
+&lt;p&gt;儲存庫最重要分支分別為&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;主分支用來作為網站程式Base底層。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;依據&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt;分支作為佈版來源套用至此分支，Blog呈現來源是以此分支為基礎呈現。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Blog更新規劃步驟如下&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Step 1. 建立分支並將更動內容&lt;strong&gt;Push&lt;/strong&gt;上去。&lt;/li&gt;
+  &lt;li&gt;Step 2. 建立&lt;strong&gt;PR&lt;/strong&gt;，確認Action內PR Build程序都成功。&lt;/li&gt;
+  &lt;li&gt;Step 3. 確認PR更動內容進行merge到&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt;，&lt;strong&gt;PR&lt;/strong&gt;狀態切為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;closed&lt;/code&gt;，由Action進行佈版程序。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;內部設定&quot;&gt;內部設定&lt;/h1&gt;
+
+&lt;h3 id=&quot;github-token&quot;&gt;GitHub Token&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;登入GitHub&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/settings/tokens&quot;&gt;GitHub Profile -&amp;gt; Developer settings -&amp;gt; Personal access tokens&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;點選&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Generate new token&lt;/code&gt;
+&lt;img src=&quot;GitHubToken_Generate.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_Generate&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Note&lt;/code&gt; 設定此Token名稱，自己命名可識別名稱。&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Expiration&lt;/code&gt; 設定Token 效期
+        &lt;ul&gt;
+          &lt;li&gt;如果要一直使用請設定 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;No expiration&lt;/code&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Select scopes&lt;/code&gt; 設定此Token權限
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;Public&lt;/strong&gt;儲存庫只需要repo區塊裡面三個權限，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repo:status&lt;/code&gt;、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repo_deployment&lt;/code&gt;、&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;public_repo&lt;/code&gt;
+&lt;img src=&quot;GitHubToken_PublicScopes.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_PublicScopes&quot; /&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Private&lt;/strong&gt;儲存庫，需要勾&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;repo&lt;/code&gt;  &lt;br /&gt;
+&lt;img src=&quot;GitHubToken_PrivateScopes.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_PrivateScopes&quot; /&gt;&lt;/li&gt;
+          &lt;li&gt;其餘權限如有需要再自行開啟。&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;設定&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Repository Secret&lt;/code&gt;
+        &lt;ul&gt;
+          &lt;li&gt;在目標儲存庫Settings -&amp;gt; secrets 建立名為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GITHUBTOKEN&lt;/code&gt; secret，並將前面建好GitHub Token設置到此secret。   &lt;br /&gt;
+ &lt;img src=&quot;GitHubToken_RepositorySecret.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_RepositorySecret&quot; /&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;確認gemfile配置&quot;&gt;確認Gemfile配置&lt;/h3&gt;
+&lt;p&gt;設定好用到的額外套件配置，在跑Action時，建置環境時會依據此檔案配置安裝所需套件。&lt;/p&gt;
+
+&lt;h3 id=&quot;建立pr事件action程序&quot;&gt;建立&lt;strong&gt;PR&lt;/strong&gt;事件Action程序&lt;/h3&gt;
+
+&lt;p&gt;Yaml配置檔： &lt;a href=&quot;https://github.com/s123600g/s123600g.github.io/blob/main/.github/workflows/github-pr_build.yml&quot;&gt;github-pr_build.yml&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;觸發此Action程序時機為&lt;strong&gt;PR-opened&lt;/strong&gt;、&lt;strong&gt;PR-reopened&lt;/strong&gt;，在Check Status區塊可以看到目前Action程序執行狀態。&lt;/p&gt;
+
+&lt;p&gt;Yaml配置檔對應為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on&lt;/code&gt;區塊&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pull_request&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;opened&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;reopened&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;types&lt;/code&gt; 可設定指定&lt;strong&gt;PR&lt;/strong&gt;內事件進行觸發。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;詳細可以參考
+&lt;a href=&quot;https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#pull_request&quot;&gt;https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#pull_request&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;設定只進行Build程序，而不進行佈版，Yaml配置檔對應&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;with&lt;/code&gt;區塊，內部參數&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;token&lt;/code&gt; 對應前面設定GitHub Token環節，最後建立&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Repository Secret&lt;/code&gt; - &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GITHUBTOKEN&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build_only&lt;/code&gt; 設置為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;true&lt;/code&gt;只進行Build程序，不進行佈版處理。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;詳細可以參考
+&lt;a href=&quot;https://github.com/marketplace/actions/jekyll-actions#inputs&quot;&gt;https://github.com/marketplace/actions/jekyll-actions#inputs&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;建立pr-closed事件action程序&quot;&gt;建立&lt;strong&gt;PR-closed&lt;/strong&gt;事件Action程序&lt;/h3&gt;
+
+&lt;p&gt;Yaml配置檔： &lt;a href=&quot;https://github.com/s123600g/s123600g.github.io/blob/main/.github/workflows/github-deployment.yml&quot;&gt;github-deployment.yml&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;觸發此Action程序時機為&lt;strong&gt;PR-closed&lt;/strong&gt;，在Check Status區塊可以看到目前Action程序執行狀態。&lt;/p&gt;
+
+&lt;p&gt;Yaml配置檔對應為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on&lt;/code&gt;區塊&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pull_request&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;closed&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;types&lt;/code&gt; 可設定指定&lt;strong&gt;PR&lt;/strong&gt;內事件進行觸發。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;設定進行Build與佈版程序，和前面建立&lt;strong&gt;PR&lt;/strong&gt;事件Action程序差別在於&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;with&lt;/code&gt;區塊參數配置，&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build_only&lt;/code&gt;並未設置，只設置以下參數&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;target_branch&lt;/code&gt; 指定佈版目標分支，在這設定為&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;執行測試&quot;&gt;執行測試&lt;/h3&gt;
+
+&lt;p&gt;將設定好Yaml檔案在&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main&lt;/code&gt;分支Push上去，在建立自訂分支，依據以下步驟測試執行&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;建立一個Commit並透過自訂分支Push上去
+    &lt;ul&gt;
+      &lt;li&gt;回到儲存庫Actions確認由&lt;strong&gt;push&lt;/strong&gt;事件做Build Jekyll site 是否成功執行完畢。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;在自訂分支建立一個&lt;strong&gt;PR&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;在儲存庫pull_request確認由&lt;strong&gt;PR&lt;/strong&gt;事件Action程序是否成功執行完畢。
+&lt;img src=&quot;GitHubToken_PRCheckBuild.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_PRCheckBuild&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;Done &lt;br /&gt;
+&lt;img src=&quot;GitHubToken_PRCheckBuildDone.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_PRCheckBuildDone&quot; /&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;將&lt;strong&gt;PR&lt;/strong&gt;確認進行merge程序
+    &lt;ul&gt;
+      &lt;li&gt;確認pull_request merge 程序完成並已closed。
+&lt;img src=&quot;GitHubToken_PRClosed.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_PRClosed&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;回到儲存庫Actions確認由&lt;strong&gt;PR-closed&lt;/strong&gt;事件Action程序是否成功執行完畢。&lt;br /&gt;
+&lt;img src=&quot;GitHubToken_PRClosedDone.jpg&quot; class=&quot;img-fluid rounded mx-auto&quot; alt=&quot;GitHubToken_PRClosedDone&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;如果成功執行完畢，在儲存庫分支會多一個&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt;，此為佈版目標分支。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;相關參考&quot;&gt;相關參考&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/marketplace/actions/jekyll-actions&quot;&gt;Jekyll Actions&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/actions&quot;&gt;GitHub Actions&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onpushpull_requestbranchestags&quot;&gt;GitHub Actions Workflow-Syntax&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows&quot;&gt;Events that trigger workflows&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.awesome-doge.org/githubaction+jekyll/&quot;&gt;github action + jekyll&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>JYUN YU LI</name></author><category term="jekyll" /><category term="gitHub_action" /><category term="jekyll" /><summary type="html">此筆記紀錄筆者Blog網站，使用GitHub Action配置自動佈版程序。</summary></entry></feed>

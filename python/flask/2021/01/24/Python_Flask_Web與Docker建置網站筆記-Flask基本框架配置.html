@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Python Flask Web與Docker建置網站筆記-Flask 基本框架配置
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Python Flask Web與Docker建置網站筆記-Flask 基本框架配置</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Python Flask Web與Docker建置網站筆記-Flask 基本框架配置</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2021-01-24 12:01:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>GitHub: <a href="https://github.com/s123600g/FlaskDemoNotes/">https://github.com/s123600g/FlaskDemoNotes/</a></p>
+
+<p>在Flask網站基礎框架上預設會有以下結構:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+├── BaseData
+│   ├── BaseData.py
+│   ├── __init__.py
+│   
+├── Config.py
+├── DB_initialize.bat
+├── DB_initialize.sh
+├── Manage.py
+├── Server.py
+├── Startup.py
+├── migrations
+│   ├── README
+│   ├── __pycache__
+│   │   └── env.cpython-36.pyc
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+│       ├── 8c1ac1a960d2_.py
+│       └── __pycache__
+│           └── 8c1ac1a960d2_.cpython-36.pyc
+├── static
+│   ├── css
+│   │   └── base.css
+│   └── js
+│       └── base.js
+├── templates
+│   └── index.html
+├── uwsgi
+│   └── uwsgi.log
+└── uwsgi.ini
+</code></pre></div></div>
+<ul>
+  <li>Config.py –&gt; 網站整體參數配置</li>
+  <li>Startup.py –&gt; 啟動初始化</li>
+  <li>Server.py –&gt; 路由與動作控制中心</li>
+  <li>BaseData –&gt; 資料模型</li>
+  <li>Manage.py –&gt; 執行命令控管</li>
+  <li>uwsgi.ini –&gt; uWSGi配置檔</li>
+  <li>static/ –&gt; 靜態檔案目錄</li>
+  <li>templates/ –&gt; HTML與模板目錄</li>
+  <li>DB_initialize.bat、DB_initialize.sh –&gt; 資料模型更新腳本</li>
+</ul>
+
+<hr />
+
+<h1 id="快速使用建置">快速使用建置</h1>
+
+<h3 id="step-1下載好專案包放置在自己指定位置">Step 1.下載好專案包，放置在自己指定位置。</h3>
+
+<p><a href="https://github.com/s123600g/FlaskDemoNotes/tree/master/flask_base_framework">https://github.com/s123600g/FlaskDemoNotes/tree/master/flask_base_framework</a></p>
+
+<p>建立完成後請記得在專案目錄內新增一個uwsgi目錄。</p>
+
+<h3 id="step-2建立好docker-映像檔">Step 2.建立好Docker 映像檔。</h3>
+
+<p>關於容器建置使用映像檔可參考</p>
+
+<h3 id="step-3資料模型初始化">Step 3.資料模型初始化</h3>
+
+<p>資料模型實體檔放置在 <strong>baseData/</strong> 底下，實體檔為 <code class="language-plaintext highlighter-rouge">BaseData.py</code>。</p>
+
+<p>範例資料庫使用MySQL，在進行資料模型初始化之前必須要先完成</p>
+
+<ul>
+  <li>建立資料庫 –&gt; <code class="language-plaintext highlighter-rouge">flask</code></li>
+  <li>建立使用者 –&gt; <code class="language-plaintext highlighter-rouge">myflask / myflask</code> (user / password)</li>
+  <li>設定使用者與資料庫之間權限</li>
+</ul>
+
+<p>Config.py內設定好資料庫連接參數
+<script src="https://gist.github.com/s123600g/23a7d1cada9cd1111ae906270e224057.js"></script></p>
+
+<p>db_host為資料庫連接位址，因筆者使用Docker MySQL，在連接port上設置會跟預設3306不一樣。</p>
+
+<p>關於Docker MySQL可參考 [https://hub.docker.com/<em>/mysql](https://hub.docker.com/</em>/mysql)</p>
+
+<p>將<code class="language-plaintext highlighter-rouge">DB_initialize.bat</code>內部參數 <strong>DirPath</strong></p>
+<div class="language-bat highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">Set</span> <span class="kd">DirPath</span><span class="o">=</span><span class="kd">E</span>:\Project\GitHub\FlaskDemoNotes\flask_base_framework\
+</code></pre></div></div>
+<p>更改為專案放置位置資訊，在點擊執行即可。</p>
+
+<p>執行前:</p>
+
+<p><img src="python_02.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>執行中:</p>
+
+<p><img src="python_02-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>執行後:</p>
+
+<p><img src="python_02-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<h3 id="step-4運行docker-容器服務">Step 4.運行Docker 容器服務。</h3>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">docker</span><span class="w"> </span><span class="nx">run</span><span class="w">  </span><span class="nt">--name</span><span class="w"> </span><span class="nx">flask_base_framework</span><span class="w"> </span><span class="nt">-p</span><span class="w"> </span><span class="nx">85:80</span><span class="w"> </span><span class="nt">-v</span><span class="w"> </span><span class="nx">E:\Project\GitHub\FlaskDemoNotes\flask_base_framework:/web/web_data</span><span class="w"> </span><span class="nt">-d</span><span class="w"> </span><span class="nx">nginx_flask_server</span><span class="w">
+</span></code></pre></div></div>
+
+<p>將參數 -v 內</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>E:\Project\GitHub\FlaskDemoNotes\flask_base_framework
+</code></pre></div></div>
+<p>換成讀者自己放置的位置即可。</p>
+
+<h3 id="step-5容器服務執行後在瀏覽器輸入-http12700185index">Step 5.容器服務執行後在瀏覽器輸入 http://127.0.0.1:85/index</h3>
+
+<p><img src="python_02-4.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+<h1 id="配置說明">配置說明</h1>
+
+<h3 id="configpy-網站整體參數配置">Config.py 網站整體參數配置</h3>
+
+<p>重要整體參數配置都會設置在此檔案內，有運作模式、網站模板與靜態檔案目錄、資料庫連接字串、使用者自訂參數…等等。</p>
+
+<p>配置檔內容需要包含下面三個重要類別:</p>
+<ol>
+  <li>BaseConfig</li>
+  <li>DevelopermentConfig</li>
+  <li>ProductionConfig</li>
+</ol>
+
+<p>除了上面三個重要類別之外，其餘開發者也可以在自行增加配置參數區塊。</p>
+
+<h3 id="baseconfig類別內部配置">BaseConfig類別內部配置</h3>
+
+<p>靜態目錄與模板目錄位置</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">static_url_path</span> <span class="o">=</span> <span class="s">'/static'</span>
+<span class="n">static_folder</span> <span class="o">=</span> <span class="s">'static'</span>
+<span class="n">template_folder</span> <span class="o">=</span> <span class="s">'templates'</span>
+</code></pre></div></div>
+
+<h3 id="資料庫連接配置語法參數">資料庫連接配置語法參數</h3>
+
+<p>相關參考:</p>
+<ul>
+  <li><a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/">Flask-SQLAlchemy</a></li>
+  <li><a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/">Flask-SQLAlchemy Configuration</a></li>
+  <li><a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/config/#connection-uri-format">Flask-SQLAlchemy Connection URI Format</a></li>
+  <li><a href="https://docs.sqlalchemy.org/en/13/orm/tutorial.html">SQLAlchemy ORM Object Relational Tutorial</a></li>
+</ul>
+
+<p>資料庫連接語法以MySQL為例
+<script src="https://gist.github.com/s123600g/b35395880e354192235040d58b51e1a1.js"></script></p>
+
+<h3 id="developermentconfigproductionconfig類別內部配置">DevelopermentConfig、ProductionConfig類別內部配置</h3>
+
+<p>兩者類別是管理網站運作時，運行模式為開發或正式環境，Session Data加密金鑰設置。</p>
+
+<p>各自都繼承上面BaseConfig類別，在網站啟動時選擇哪一種模式運行時，會自動加載我們在BaseConfig類別中基本設置。</p>
+
+<script src="https://gist.github.com/s123600g/ab0a6c46bc9227b5fbd61c4333dcc7de.js"></script>
+
+<h3 id="developermentconfigproductionconfig模式選擇項目清單">DevelopermentConfig、ProductionConfig模式選擇項目清單</h3>
+
+<p>這是給網站主體控制中心在初始化啟動時，選擇運作模式來源開關。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="s">'developermentConfig'</span><span class="p">:</span> <span class="n">DevelopermentConfig</span><span class="p">,</span>
+    <span class="s">'productionConfig'</span><span class="p">:</span> <span class="n">ProductionConfig</span><span class="p">,</span>
+    <span class="s">'run_mode_dev'</span><span class="p">:</span><span class="bp">True</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p><strong>run_mode_dev</strong> 管控網站運作是否為開發模式，用在Flask初始化載入封裝模式選擇。</p>
+
+<h3 id="startuppy-啟動初始化">Startup.py 啟動初始化</h3>
+
+<p>Startup.py為網站剛開始啟動時，會先初始化必要運作模組與參數配置載入，例如以下模組</p>
+<ul>
+  <li>Flask</li>
+  <li>Flask-SQLALchemy</li>
+  <li>Flask Restful-API</li>
+  <li>Flask-Admin</li>
+  <li>Flask-Login</li>
+  <li>Flask-CSRF</li>
+</ul>
+
+<p>都會在此做載入初始化本體動作，後面其他自訂模組要運用時，只要從Startup匯入該模組變數即可。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">Startup</span> <span class="kn">import</span> <span class="n">app</span>
+</code></pre></div></div>
+
+<h3 id="flask主體初始載入">Flask主體初始載入</h3>
+
+<p>建置一個app，後面許多控制模組都會用到此變數。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>載入網站運作模式(<strong>developermentConfig</strong> / <strong>productionConfig</strong>)
+<script src="https://gist.github.com/s123600g/c964c5a595ec0502573ea52129e425a1.js"></script></p>
+
+<h3 id="flask-sqlalchemy資料模組初始載入">Flask-SQLALchemy資料模組初始載入</h3>
+
+<p>建置一個<strong>db</strong>，後面許多控制模組如果要調用資料庫都會用到此變數，在資料模型建立資料表時，也會用到此變數。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>註冊資料模型</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">BaseData.BaseData</span> <span class="kn">import</span> <span class="n">Base_Data</span>
+</code></pre></div></div>
+
+<p>如果要建立一個新的資料表時，透過在BaseData內建立好該資料表模型檔後，記得要來此註冊該模型這樣才會被建立起來，如果忘記這一步資料控制模組不會知道有新增一筆資料表模型，自然就不會在資料庫中建立該資料表。</p>
+
+<h3 id="serverpy路由與動作控制中心">Server.py路由與動作控制中心</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Server.py</code>為網站運作主要程式，包含了頁面控制項與路由導向處理。</p>
+
+<p><strong>匯入網站主要模組</strong> <br />
+從Startup匯入主要運作模組變數</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">Startup</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">db</span>
+</code></pre></div></div>
+
+<p><strong>匯入建好的資料模型</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">Model</span> <span class="kn">import</span> <span class="n">Base_Data</span>
+</code></pre></div></div>
+
+<p>在之後開發如果要在頁面控制項調用Base_Data資料表，必須要完成這一步驟才能進行。</p>
+
+<p><strong>頁面控制項配置</strong> <br />
+開發頁面控制項功能會搭一個路由導向配置</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">"自訂路由"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'自訂可接收Http Request Type'</span><span class="p">])</span>
+</code></pre></div></div>
+<p>形成一個完整響應請求處理端，基本頁面網址會配置一個響應請求處理端。建立一個網址為 <code class="language-plaintext highlighter-rouge">http:localhost:85/index</code> 響應請求處理端頁面控制項範例。</p>
+
+<script src="https://gist.github.com/s123600g/ad9535dfcdcc8a57fbcc9009faeef494.js"></script>
+
+<p>範例中建置了一個網站位置為<code class="language-plaintext highlighter-rouge">/index</code>，並且可接收請求型態為<code class="language-plaintext highlighter-rouge">GET</code>。 <br /></p>
+
+<p>更詳細說明內容可參考: <a href="https://flask.palletsprojects.com/en/1.1.x/api/#url-route-registrations">https://flask.palletsprojects.com/en/1.1.x/api/#url-route-registrations</a></p>
+
+<p></p>
+
+<p><strong>控制項</strong> <br /></p>
+
+<p>用Python建立功能函式形式，函式名稱可自訂並且最後會回傳一個Html模板，最後此模板會渲染成我們所看到的網站介面(View)。</p>
+
+<script src="https://gist.github.com/s123600g/70782e4c58e31b5f7e8e1906b2f83a8f.js"></script>
+
+<h3 id="basedata資料模型">BaseData資料模型</h3>
+
+<p>Flask利用物件關聯對映(ORM)方式來進行資料處理，在此之前需要建立資料庫中每個資料表類別，在做資料查詢新增修改上，才能夠用物件形式來對資料表進行操作。 <br /></p>
+
+<p>相關參考:</p>
+
+<ul>
+  <li><a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/">Flask-SQLAlchemy</a></li>
+  <li><a href="https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/#simple-example">Flask-SQLAlchemy Declaring Models</a></li>
+  <li><a href="https://docs.sqlalchemy.org/en/13/">SQLAlchemy ORM</a></li>
+  <li><a href="https://docs.sqlalchemy.org/en/13/orm/extensions/declarative/index.html">SQLAlchemy Declarative</a></li>
+</ul>
+
+<p>Flask-SQLAlchemy是Flask預設封裝基本SQLAlchemy使用模組，其內容功能都與SQLAlchemy ORM是一樣的，在Flask-SQLAlchemy官方說明也有提到SQLAlchemy ORM。 <br /></p>
+
+<p>建置模型套件來源筆者使用SQLAlchemy ORM，在運作上都相容能夠使用。 <br /></p>
+
+<p>在官方預設教學上，會看到是使用一個Model.py來放置資料表類別模型，如果在此筆記框架下，內容類似下方 <br /></p>
+
+<script src="https://gist.github.com/s123600g/dd35b05ce745cc1b4d4919658546faf0.js"></script>
+
+<p>雖然這樣是可以正常運行的操作資料，但是如果是很多個資料表的情況下，都建立在同一個Model.py裡面的話，對於日後維護和開發更動肯定會帶來不便。</p>
+
+<p>在此筆記框架規劃是建立一個BaseData目錄，內容放置各資料表模型單獨程式檔案，例如有一個資料表叫做Base_Data，建立步驟如下</p>
+
+<ul>
+  <li>在BaseData目錄內建立一個模型檔<code class="language-plaintext highlighter-rouge">BaseData.py</code>。</li>
+  <li>在<code class="language-plaintext highlighter-rouge">BaseData.py</code>內建立一個名為<code class="language-plaintext highlighter-rouge">Base_Data</code>類別。</li>
+  <li>規劃該類別內變數，每一個變數代表一個欄位，可參考上方程式內容。</li>
+  <li>資料表名稱
+    <ul>
+      <li>
+        <p>在建置資料表時，如果沒設置<code class="language-plaintext highlighter-rouge">__tablename__</code>的值就會依照類別名稱來命名，需要注意的是如果有設置<code class="language-plaintext highlighter-rouge">__tablename__</code>，英文必須為小寫不然migrate在MySQL部份操作會出問題。</p>
+
+        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">__tablename__</span> <span class="o">=</span> <span class="s">'base_data'</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>欄位名稱</li>
+</ul>
+
+<p>用變數宣告建立方式來進行</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>欄位名稱 = Column(型態,屬性設定)
+</code></pre></div></div>
+
+<p>建立一個欄位<strong>BASE_ID</strong>，型態為整數，屬性為主鍵、自動遞增</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">BASE_ID</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>建立一個欄位<strong>Base_Text</strong>，型態為文字，屬性為不可空值</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Base_Text</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>建立一個欄位<strong>Base_Text2</strong>，型態為長度20字串，屬性為可空值</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Base_Text2</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>建立一個欄位<strong>Base_Num</strong>，型為整數，屬性為可空值</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Base_Num</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span> <span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>建立一個欄位<strong>InertDate</strong>，型態為日期時間，屬性為不可空值</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">InertDate</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>其餘更進階欄位設定請參考相關參考內容或在搜尋關鍵字去了解。</p>
+
+<h3 id="managepy執行命令控管">Manage.py執行命令控管</h3>
+
+<p>Flask也有一個動作腳本管理執行方式，透過Flask-Script套件我們可以開發一個動作管理器。</p>
+
+<p>在這裡是建置一個更新資料庫動作，透過Flask-Migrate套件來完成更新修改資料表。</p>
+
+<p>相關參考:</p>
+<ul>
+  <li><a href="https://flask-script.readthedocs.io/en/latest/">Flask-Script</a></li>
+  <li><a href="https://flask-migrate.readthedocs.io/en/latest/">Flask-Migrate</a></li>
+</ul>
+
+<p>建立一個更新資料庫動作管理
+<script src="https://gist.github.com/s123600g/902e3d3d7d5544624765be8a9d730ee9.js"></script></p>
+
+<p>主要程式行，增加一個可識別參數，並設置此參數對應處理的模組。</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">manager</span><span class="p">.</span><span class="n">add_command</span><span class="p">(</span><span class="s">'db'</span><span class="p">,</span> <span class="n">MigrateCommand</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>當執行Manage.py程式時，偵測到一個可識別參數為<code class="language-plaintext highlighter-rouge">db</code>，將此參數值給予Flask-Migrate底下模組MigrateCommand執行對應動作處理。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py db init
+</code></pre></div></div>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py db migrate
+</code></pre></div></div>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py db upgrade
+</code></pre></div></div>
+
+<p>可用來搭配下方 資料模型更新腳本 章節所使用腳本。</p>
+
+<h3 id="uwsgi配置檔">uWSGi配置檔</h3>
+
+<p>uWSGI是一種通信閘道介面應用程式，它是Web服務與後端應用程式之間橋梁，本身也可作為一個Web Server，但是在性能表現上兩者同時兼顧效果還是有限，這時候就有分工情形規劃，在Server配置上使用Nginx負責做Web服務器工作，uWSGI主要負責管理後端應用程序執行，接收Nginx處理好請求內容，分配給對應的後端程序執行完，再回傳結果給Nginx響應即可。</p>
+
+<p>相關參考:</p>
+<ul>
+  <li><a href="https://kknews.cc/code/lzqaobz.html">淺談cgi、wsgi、uwsgi 與 uWSGI的區別及應用</a></li>
+  <li><a href="https://zhuanlan.zhihu.com/p/36448645">uWSGI详解</a></li>
+  <li><a href="https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#configuring-uwsgi">Configuring uWSGI</a></li>
+</ul>
+
+<p><strong>配置檔內容</strong> <br />
+<script src="https://gist.github.com/s123600g/6ec1723b977bdf198b4d132fef5ccbaa.js"></script></p>
+
+<p><strong>網站根目錄設置</strong> <br /></p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">chdir</span><span class="p">=</span><span class="s">/web/web_data/</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">/web/web_data</code>為容器內部位置，在執行容器服務時會將我們指定本機位置掛載在此位置底下，uwsgi.ini必須放在指定本機位置內跟著被掛載進來，否則無法進行運作。</p>
+
+<p>在工作負載配置方面 <br />
+設置一個主程序(master)，負責管理底下子程序(worker)</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">master</span><span class="p">=</span><span class="s">true</span>
+</code></pre></div></div>
+
+<p>設置二個處理子程序(worker)</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">processes</span><span class="p">=</span><span class="s">2</span>
+</code></pre></div></div>
+
+<p>每一個處理子程序各分配一個執行緒</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">threads</span><span class="p">=</span><span class="s">1</span>
+</code></pre></div></div>
+
+<p>執行起來後可以在uwsgi/uwsgi.log看到以下訊息</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">***</span> uWSGI is running <span class="k">in </span>multiple interpreter mode <span class="k">***</span>
+spawned uWSGI master process <span class="o">(</span>pid: 10<span class="o">)</span>
+spawned uWSGI worker 1 <span class="o">(</span>pid: 11, cores: 1<span class="o">)</span>
+spawned uWSGI worker 2 <span class="o">(</span>pid: 12, cores: 1<span class="o">)</span>
+</code></pre></div></div>
+
+<p>在端口配置上建立一個管道檔案，讓Nginx能夠透過此檔案跟uWSGI進行對接</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">socket</span><span class="p">=</span><span class="s">/tmp/uwsgi.sock</span>
+</code></pre></div></div>
+
+<p>執行起來後可以在容器內部/tmp底下看到<strong>uwsgi.sock</strong>檔案，在/tmp底下還會有<strong>uwsgi.status</strong>與<strong>uwsgi.pid</strong>兩個檔案，前者是負責記錄目前uWSGI運作狀態資訊，後者是紀錄目前uWSGI在系統程序上編號。</p>
+
+<p>檔案有更動時自動重新加載</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">py-autoreload</span> <span class="p">=</span> <span class="s">1</span>
+</code></pre></div></div>
+
+<p>開發環境下可以設置為1代表開啟，如果在正式運作環境下請記得務必設置為0，否則不小心更動檔案會導致uWSGI偵測到檔案更動，重新加載檔案有可能會導致運作上發生錯誤。
+執行成功紀錄:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">***</span> Starting uWSGI 2.0.18 <span class="o">(</span>64bit<span class="o">)</span> on <span class="o">[</span>Sun Jun 21 13:20:53 2020] <span class="k">***</span>
+compiled with version: 8.3.0 on 19 June 2020 13:16:24
+os: Linux-4.19.76-linuxkit <span class="c">#1 SMP Tue May 26 11:42:35 UTC 2020</span>
+nodename: 688513a0ed4d
+machine: x86_64
+clock <span class="nb">source</span>: unix
+detected number of CPU cores: 2
+current working directory: /
+writing pidfile to /tmp/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+<span class="o">!!!</span> no internal routing support, rebuild with pcre support <span class="o">!!!</span>
+uWSGI running as root, you can use <span class="nt">--uid</span>/--gid/--chroot options
+<span class="k">***</span> WARNING: you are running uWSGI as root <span class="o">!!!</span> <span class="o">(</span>use the <span class="nt">--uid</span> flag<span class="o">)</span> <span class="k">***</span> 
+chdir<span class="o">()</span> to /web/web_data/
+your memory page size is 4096 bytes
+detected max file descriptor number: 1048576
+lock engine: pthread robust mutexes
+thunder lock: disabled <span class="o">(</span>you can <span class="nb">enable </span>it with <span class="nt">--thunder-lock</span><span class="o">)</span>
+uwsgi socket 0 bound to UNIX address /tmp/uwsgi.sock fd 3
+uWSGI running as root, you can use <span class="nt">--uid</span>/--gid/--chroot options
+<span class="k">***</span> WARNING: you are running uWSGI as root <span class="o">!!!</span> <span class="o">(</span>use the <span class="nt">--uid</span> flag<span class="o">)</span> <span class="k">***</span> 
+Python version: 3.7.3 <span class="o">(</span>default, Dec 20 2019, 18:57:59<span class="o">)</span>  <span class="o">[</span>GCC 8.3.0]
+Python main interpreter initialized at 0x5570facf8cc0
+uWSGI running as root, you can use <span class="nt">--uid</span>/--gid/--chroot options
+<span class="k">***</span> WARNING: you are running uWSGI as root <span class="o">!!!</span> <span class="o">(</span>use the <span class="nt">--uid</span> flag<span class="o">)</span> <span class="k">***</span> 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy <span class="k">for </span>graceful operations on workers is 60 seconds
+mapped 218712 bytes <span class="o">(</span>213 KB<span class="o">)</span> <span class="k">for </span>2 cores
+<span class="k">***</span> Operational MODE: preforking <span class="k">***</span>
+WSGI app 0 <span class="o">(</span><span class="nv">mountpoint</span><span class="o">=</span><span class="s1">''</span><span class="o">)</span> ready <span class="k">in </span>0 seconds on interpreter 0x5570facf8cc0 pid: 10 <span class="o">(</span>default app<span class="o">)</span>
+uWSGI running as root, you can use <span class="nt">--uid</span>/--gid/--chroot options
+<span class="k">***</span> WARNING: you are running uWSGI as root <span class="o">!!!</span> <span class="o">(</span>use the <span class="nt">--uid</span> flag<span class="o">)</span> <span class="k">***</span> 
+<span class="k">***</span> uWSGI is running <span class="k">in </span>multiple interpreter mode <span class="k">***</span>
+spawned uWSGI master process <span class="o">(</span>pid: 10<span class="o">)</span>
+spawned uWSGI worker 1 <span class="o">(</span>pid: 11, cores: 1<span class="o">)</span>
+spawned uWSGI worker 2 <span class="o">(</span>pid: 12, cores: 1<span class="o">)</span>
+Python auto-reloader enabled
+<span class="k">***</span> Stats server enabled on /tmp/uwsgi.status fd: 11 <span class="k">***</span>
+<span class="o">[</span>pid: 12|app: 0|req: 1/1] 172.17.0.1 <span class="o">()</span> <span class="o">{</span>52 vars <span class="k">in </span>1871 bytes<span class="o">}</span> <span class="o">[</span>Sun Jun 21 13:21:08 2020] GET /index <span class="o">=&gt;</span> generated 94 bytes <span class="k">in </span>21 msecs <span class="o">(</span>HTTP/1.1 200<span class="o">)</span> 2 headers <span class="k">in </span>79 bytes <span class="o">(</span>1 switches on core 0<span class="o">)</span>
+<span class="o">[</span>pid: 11|app: 0|req: 1/2] 172.17.0.1 <span class="o">()</span> <span class="o">{</span>50 vars <span class="k">in </span>1782 bytes<span class="o">}</span> <span class="o">[</span>Sun Jun 21 13:21:09 2020] GET /favicon.ico <span class="o">=&gt;</span> generated 16 bytes <span class="k">in </span>2 msecs <span class="o">(</span>HTTP/1.1 404<span class="o">)</span> 2 headers <span class="k">in </span>86 bytes <span class="o">(</span>1 switches on core 0<span class="o">)</span>
+<span class="o">[</span>pid: 12|app: 0|req: 2/3] 172.17.0.1 <span class="o">()</span> <span class="o">{</span>50 vars <span class="k">in </span>1559 bytes<span class="o">}</span> <span class="o">[</span>Sun Jun 21 13:23:01 2020] GET /index <span class="o">=&gt;</span> generated 94 bytes <span class="k">in </span>1 msecs <span class="o">(</span>HTTP/1.1 200<span class="o">)</span> 2 headers <span class="k">in </span>79 bytes <span class="o">(</span>1 switches on core 0<span class="o">)</span>
+<span class="o">[</span>pid: 12|app: 0|req: 3/4] 172.17.0.1 <span class="o">()</span> <span class="o">{</span>50 vars <span class="k">in </span>1495 bytes<span class="o">}</span> <span class="o">[</span>Sun Jun 21 13:23:02 2020] GET /favicon.ico <span class="o">=&gt;</span> generated 16 bytes <span class="k">in </span>1 msecs <span class="o">(</span>HTTP/1.1 404<span class="o">)</span> 2 headers <span class="k">in </span>86 bytes <span class="o">(</span>1 switches on core 0<span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="靜態檔案目錄html與模板目錄">靜態檔案目錄、HTML與模板目錄</h3>
+
+<p><strong>靜態檔案目(static/)</strong> <br />
+此目錄底下放置著css、js基本檔案之外，開發者可以自行決定要如何規劃放置什麼檔案。</p>
+
+<p><strong>HTML與模板目錄(templates/)</strong>  <br />
+此目錄底下放置html檔案，筆者使用<a href="http://docs.jinkan.org/docs/jinja2/">Jinja2</a>模板語言進行html開發。</p>
+
+<h3 id="資料模型更新腳本">資料模型更新腳本</h3>
+
+<p>腳本有分為兩種，一種是對應Windows，另一種是對應Linux，但實際工作內容不變，執行上面執行命令控管-更新資料庫動作內容。</p>
+
+<p>Windows → DB_initialize.bat</p>
+
+<script src="https://gist.github.com/s123600g/1d93257357683fd23e7cb171d915c7a7.js"></script>
+
+<p>使用前請務必修改 <code class="language-plaintext highlighter-rouge">DirectoryName</code> 內容，此為網站跟目錄位置。</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">Set</span> <span class="py">DirPath</span><span class="p">=</span><span class="s">你的網站跟目錄位置</span>
+</code></pre></div></div>
+<p>需要注意等號(=)前是不能有空格的，要連在一起否則執行會出錯。</p>
+
+<p>Linux → DB_initialize.sh</p>
+
+<script src="https://gist.github.com/s123600g/ece115243d68943464db00059dd88e9d.js"></script>
+
+<hr />
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

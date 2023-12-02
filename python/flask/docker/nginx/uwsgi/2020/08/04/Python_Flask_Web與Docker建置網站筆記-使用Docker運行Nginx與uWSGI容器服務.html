@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Python Flask Web與Docker建置網站筆記-Flask建置Resful API
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Python Flask Web與Docker建置網站筆記-Flask建置Resful API</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Python Flask Web與Docker建置網站筆記-Flask建置Resful API</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-08-04 13:01:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<hr />
+
+<h2 id="下載專案包">下載專案包</h2>
+
+<p><a href="https://github.com/s123600g/FlaskDemoNotes/tree/master/Restful_API">https://github.com/s123600g/FlaskDemoNotes/tree/master/Restful_API</a></p>
+
+<p>建立完成後請記得在專案目錄內新增一個uwsgi目錄，此為用來放置uWSGI運行Log檔案。</p>
+
+<hr />
+
+<h2 id="下載dockfile與建置image">下載Dockfile與建置Image</h2>
+
+<p><a href="https://github.com/s123600g/FlaskDemoNotes/tree/master/Docker/Nginx_uWSGI_RestfulAPI">https://github.com/s123600g/FlaskDemoNotes/tree/master/Docker/Nginx_uWSGI_RestfulAPI</a></p>
+
+<p>預設服務使用的Port為8807，如果需要更改請修改Dockerfile內</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">ENV web_port=8807</span>
+</code></pre></div></div>
+
+<p>在終端機記得先切換位置至Dockerfle所在位置內，切換完後再建置Image</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> nginx_flask_restfulapi_server:p8807 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>如果要修改Image所顯示名稱與標籤，修改<code class="language-plaintext highlighter-rouge">-t</code>後面參數內容 –&gt; <code class="language-plaintext highlighter-rouge">nginx_flask_restfulapi_server:p8807</code></p>
+
+<hr />
+
+<h2 id="運行docker容器服務">運行Docker容器服務</h2>
+
+<p>在終端機使用<code class="language-plaintext highlighter-rouge">docker run</code>指令建置容器服務運行</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run  <span class="nt">--name</span> flask_restfulapi_base <span class="nt">-p</span> 8807:80 <span class="nt">-v</span> E:<span class="se">\P</span>roject<span class="se">\G</span>itHub<span class="se">\F</span>laskDemoNotes<span class="se">\R</span>estful_API:/web/web_data <span class="nt">-d</span> nginx_flask_restfulapi_server:p8807
+</code></pre></div></div>
+
+<p>記得要修改<code class="language-plaintext highlighter-rouge">-v</code>後面參數內容 –&gt; <code class="language-plaintext highlighter-rouge">E:\Project\GitHub\FlaskDemoNotes\Restful_API</code> 改成自己對應位置。</p>
+
+<p>如果有修改Dockerfile內預設服務使用的Port，請將<code class="language-plaintext highlighter-rouge">-p</code>後面參數內容<code class="language-plaintext highlighter-rouge">8807</code>改成自己設定的Port。</p>
+
+<h4 id="測試容器服務是否正常運作起來">測試容器服務是否正常運作起來</h4>
+
+<p>在瀏覽器輸入以下位址</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:8807/
+</code></pre></div></div>
+
+<p><img src="python_03-1.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>這裡預設是顯示在<code class="language-plaintext highlighter-rouge">Server.py</code>內針對<code class="language-plaintext highlighter-rouge">/</code>路由位置內配置</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>   
+    <span class="k">return</span> <span class="s">"Restful API."</span>
+</code></pre></div></div>
+
+<p>主要用來測試容器服務掛載運作是否有起來，實際上主要API設置是在<code class="language-plaintext highlighter-rouge">Restful_API/FirstAPI.py</code>，詳細可參考下方框架配置說明。</p>
+
+<h4 id="使用postman測試-get與post">使用Postman測試 GET與POST</h4>
+
+<p><strong>GET</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:8807/firstapi?title=Hello
+</code></pre></div></div>
+
+<p><img src="python_03-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>POST</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:8807/firstapi
+</code></pre></div></div>
+
+<p>body參數</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"title"</span><span class="p">:</span><span class="s2">"Hi"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"value"</span><span class="p">:</span><span class="s2">"Hello!!"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="python_03-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+<h2 id="框架配置說明">框架配置說明</h2>
+
+<p>API主體參數與實體配置檔案為<code class="language-plaintext highlighter-rouge">Startup.py</code></p>
+
+<p>API模組放在<code class="language-plaintext highlighter-rouge">Restful_API/</code>內 → <code class="language-plaintext highlighter-rouge">FirstAPI.py</code></p>
+
+<p>官方 Quickstart：
+<a href="https://flask-restful.readthedocs.io/en/latest/quickstart.html">https://flask-restful.readthedocs.io/en/latest/quickstart.html</a></p>
+
+<h3 id="在startuppy設置">在Startup.py設置</h3>
+
+<ol>
+  <li>初始化 Flask Restful API 實體</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>先建立Flask-RESTful API本體，之後所有API類別都會註冊給此本體作控管。</p>
+
+<ol>
+  <li>匯入 Restful API Module</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">Restful_API.FirstAPI</span> <span class="kn">import</span> <span class="n">FirstAPI</span>
+</code></pre></div></div>
+
+<p>將獨立API類別做為一個模組，可以自己自訂那些API負責做什麼事情。</p>
+
+<ol>
+  <li>註冊 Restful API Module for Router</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">api</span><span class="p">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">FirstAPI</span><span class="p">,</span> <span class="s">'/firstapi'</span><span class="p">,</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">,</span><span class="s">'POST'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>將客製好的API模組給予註冊一個路由分配，透過指定路由來讓本體知道來自這一支路由請求該去哪一個模組處理請求。</p>
+
+<h3 id="在firstapipy設置">在FirstAPI.py設置</h3>
+
+<p>在實作一個API模組時，需要先匯入重要相關套件Resource</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask_restful</span> <span class="kn">import</span> <span class="n">Resource</span>
+</code></pre></div></div>
+
+<p>flask_restful Resource是我們實作模組基礎，也就是我們API類別繼承上層父類別，這一個最上層父類別幫我們實作了一些HTTP Method View基底，所以我們在模組繼承此類別後，可以直接實作針對Http Method View Function，在這Function名稱就是以使用Http Method來命名。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>class API_Module_Name(Resource):
+    
+    # Http Method View Function
+    def your_Http_Method_Name(self):
+        pass
+</code></pre></div></div>
+
+<p>關於可使用Http Method View可參考： <a href="https://flask.palletsprojects.com/en/1.1.x/views/#method-views-for-apis">Method Views for APIs​</a></p>
+
+<p>在官方說明中你可以看到提供簡單實作例子：
+<a href="https://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api">https://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api</a></p>
+
+<p>在此API模組例子中，首先第一步先將模組類別繼承Resource</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">FirstAPI</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+</code></pre></div></div>
+
+<p>內部簡單實作一個dict_result Dict物件作為簡單暫存空間，內部遵循以下資料結構</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="err">key:value</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>實際建置</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dict_result</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"Hello"</span><span class="p">:</span><span class="s">"Welcome"</span><span class="p">,</span>
+    <span class="s">"Author"</span><span class="p">:</span><span class="s">"jyu"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在完成繼承後，以此上層類別基礎實作兩種Http Method View Function，分別是GET與POST。</p>
+
+<p><strong>Http Method View Functionv –&gt; GET</strong></p>
+
+<script src="https://gist.github.com/s123600g/bf79a8ebb67ed6cb6b51d79e031739e6.js"></script>
+
+<p>根據URL參數所傳遞參數title內容值作為dict_result簡單暫存空間取值依據，取出值後回傳給請求端作為回應結果。</p>
+
+<p>取出URL參數 — title</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">get_web_arg_title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"title"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>關鍵點在於request來自於</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
+</code></pre></div></div>
+
+<p>使用</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">get</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>可參考 The Request Context：<br />
+<a href="https://flask.palletsprojects.com/en/1.1.x/reqcontext/">https://flask.palletsprojects.com/en/1.1.x/reqcontext/</a></p>
+
+<p><strong>Http Method View Functionv — POST</strong></p>
+
+<script src="https://gist.github.com/s123600g/54ae65096331b55dde243c631e3e9d69.js"></script>
+
+<p>根據POST請求帶資料FormBody → JSON內title與value各自對應value，來新增一筆資料紀錄在dict_result簡單暫存空間。</p>
+
+<p>取出JSON資料 — title、value</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">get_web_arg_title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">"title"</span><span class="p">])</span>
+<span class="n">get_web_arg_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">"value"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>關鍵點在於request來自於</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
+</code></pre></div></div>
+
+<p>使用</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">request</span><span class="p">.</span><span class="n">get_json</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>可參考 Incoming Request Data — get_json： <br /></p>
+
+<p><a href="https://flask.palletsprojects.com/en/1.1.x/api/#flask.Request.get_json">https://flask.palletsprojects.com/en/1.1.x/api/#flask.Request.get_json</a></p>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

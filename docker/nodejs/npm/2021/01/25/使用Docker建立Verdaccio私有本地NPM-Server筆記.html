@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - 使用Docker建立Verdaccio私有本地NPM Server筆記
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">使用Docker建立Verdaccio私有本地NPM Server筆記</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">使用Docker建立Verdaccio私有本地NPM Server筆記</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2021-01-25 13:01:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>此為紀錄筆者在工作上，碰到公司需要建置新的私有本地NPM Server 操作筆記，在Windows 10下使用Verdaccio並搭配Docker來建置環境。</p>
+
+<p>關於Docker安裝過程省略，直接進行Container服務操作。</p>
+
+<hr />
+
+<h3 id="verdaccio">Verdaccio</h3>
+
+<h5 id="step-1-下載image">Step 1. 下載image</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull verdaccio/verdaccio
+</code></pre></div></div>
+<p><img src="docker_02_1.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>可以透過以下指令查看下載的Image</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker images
+</code></pre></div></div>
+<p><img src="docker_02_1-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>可以看到Image名為<code class="language-plaintext highlighter-rouge">verdaccio/verdaccio</code>，並且Tag為<code class="language-plaintext highlighter-rouge">latest</code>，在運行Container指定的images來源正確名稱為<code class="language-plaintext highlighter-rouge">verdaccio/verdaccio:latest</code>。</p>
+
+<h5 id="step-2-運行container">Step 2. 運行Container</h5>
+
+<p>官方預設運行指令</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">--name</span> verdaccio <span class="nt">-p</span> 4873:4873 verdaccio/verdaccio
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-p</code> 參數設置Host與Container內TCP對應Port，官方預設是以4873來作為兩方對應Port。</li>
+  <li><code class="language-plaintext highlighter-rouge">--rm</code> 當Container服務退出時，會把Container給清除掉。</li>
+  <li><code class="language-plaintext highlighter-rouge">--it</code> 當執行運作Container指令時，會把當前終端機與Container做TTY連結，使其變成當前Container程序標準輸出入介面。</li>
+</ul>
+
+<p><img src="docker_02_2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>當有在瀏覽器上輸入網址進行瀏覽動作時，可以發現當前運行指令終端機準輸出入介面中，輸出了有瀏覽狀態紀錄。</p>
+
+<p><img src="docker_02_2-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>預設執行模式為<code class="language-plaintext highlighter-rouge">Foreground</code>，當執行完畢後Container服務就結束，因為有加上<code class="language-plaintext highlighter-rouge">--rm</code>所以會清除掉該Container包含屬於內部相關anonymous volumes。</p>
+
+<p>筆者使用環境當然是需要讓服務常駐在背景運作，也就是在Detached模式運作，需要更改指令參數配置</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">docker</span><span class="w"> </span><span class="nx">run</span><span class="w"> </span><span class="nt">--name</span><span class="w"> </span><span class="nx">verdaccio</span><span class="w"> </span><span class="nt">-p</span><span class="w"> </span><span class="nx">4873:4873</span><span class="w"> </span><span class="nt">-v</span><span class="w"> </span><span class="nx">F:\verdaccio\storage:/verdaccio/storage</span><span class="w">  </span><span class="nt">--restart</span><span class="w"> </span><span class="nx">always</span><span class="w"> </span><span class="nt">-d</span><span class="w"> </span><span class="nx">verdaccio/verdaccio</span><span class="w">
+</span></code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-v</code> 將Container內部VOLUME(<code class="language-plaintext highlighter-rouge">/verdaccio/storage</code>)與本機指定實體位址做掛載。</li>
+  <li><code class="language-plaintext highlighter-rouge">--restart always</code> 設置不管在什麼情況下導致Container退出，都強制讓Container服務重新啟動運作。</li>
+  <li><code class="language-plaintext highlighter-rouge">-d</code> 指定將Container服務常駐運作在背景中。</li>
+</ul>
+
+<p><img src="docker_02_2-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>運行下列指令確認Container服務狀態</p>
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">docker</span><span class="w"> </span><span class="nx">ps</span><span class="w"> </span><span class="nt">-a</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="docker_02_2-4.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>可以觀察到在<code class="language-plaintext highlighter-rouge">STATUS</code>是<code class="language-plaintext highlighter-rouge">Up About a minute</code>，代表Container服務正常運作中。</p>
+
+<p>在瀏覽器上輸入<code class="language-plaintext highlighter-rouge">http://127.0.0.1:4873/</code>進行瀏覽可以看到Server首頁。</p>
+
+<p><img src="docker_02_2-5.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+<h3 id="關於使用到npm操作指令">關於使用到NPM操作指令</h3>
+
+<h5 id="建立user">建立User</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm adduser <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<h5 id="登入user">登入User</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm login <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<h5 id="登出user">登出User</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">logout</span> <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<h5 id="查看目前登入者">查看目前登入者</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">whoami</span> <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<h5 id="發佈">發佈</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm publish <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<h5 id="取消發佈">取消發佈</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm unpublish PackageName <span class="nt">--force</span> <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+<p>參考格式: <code class="language-plaintext highlighter-rouge">npm unpublish [&lt;@scope&gt;/]&lt;pkg&gt; --force</code></p>
+
+<h5 id="下載">下載</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install </span>PackageName <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="執行操作範例">執行操作範例</h3>
+
+<h5 id="準備sample-package">準備Sample Package</h5>
+<p>在自訂位置底下建立一個資料夾名為HelloTest，並在該目錄底下執行下面操作</p>
+
+<ul>
+  <li>Step 1. 建立<code class="language-plaintext highlighter-rouge">package.json</code>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm init
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><img src="docker_02_3.png" class="img-fluid rounded mx-auto" /></p>
+
+<ul>
+  <li>Step 2. 建立<code class="language-plaintext highlighter-rouge">HelloTest.js</code>，並貼上以下內容
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Helloworld</span><span class="p">()</span> <span class="p">{</span>   
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Helloworld</span><span class="dl">"</span><span class="p">);</span> 
+<span class="p">}</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">Helloworld</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><img src="docker_02_3-2.png" class="img-fluid rounded mx-auto" /></p>
+
+<h5 id="建立user在npm-server">建立User在NPM Server</h5>
+
+<ul>
+  <li>Step 1. 先登入User
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm adduser <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div>    </div>
+    <p>出現輸入User帳號、密碼與信箱登入，輸入完畢都正確後即登入成功。</p>
+  </li>
+</ul>
+
+<p><img src="docker_02_3-3.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>確認目前在NPM Server上登入User身份</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">whoami</span> <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<p><img src="docker_02_3-4.png" class="img-fluid rounded mx-auto" /></p>
+
+<ul>
+  <li>Step 2. 執行上傳Package
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm publish <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div>    </div>
+    <p><strong>NPM Package</strong> 名稱為當前目錄名稱，在上一個步驟中建立名為HelloTest目錄，並且在裡面建置Package內容檔案。</p>
+  </li>
+</ul>
+
+<p><img src="docker_02_3-5.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>執行上傳完畢後，可以在NPM Server頁面中看到上傳的Package，名稱就如筆者所建立目錄名稱<code class="language-plaintext highlighter-rouge">HelloTest</code>。</p>
+
+<p><img src="docker_02_3-6.png" class="img-fluid rounded mx-auto" /></p>
+
+<ul>
+  <li>Step 3. 上傳完畢後登出目前登入使用者
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">logout</span> <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h5 id="下載npm-package">下載NPM Package</h5>
+
+<p>建立一個放置Package Web目錄。</p>
+
+<ul>
+  <li>Step 1. 下載<code class="language-plaintext highlighter-rouge">hellotest</code>套件
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install </span>hellotest <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>下載完成後，Package會放置在該目錄底下<code class="language-plaintext highlighter-rouge">node_modules/</code>。</p>
+
+<p><img src="docker_02_3-7.png" class="img-fluid rounded mx-auto" /></p>
+
+<ul>
+  <li>Step 2. 建立<code class="language-plaintext highlighter-rouge">test.html</code>
+放置以下內容
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="dl">"</span><span class="s2">./node_modules/hellotest/HelloTest.js</span><span class="dl">"</span><span class="o">&gt;&lt;</span><span class="sr">/script&gt;  &lt;script type="text/</span><span class="nx">javascript</span><span class="dl">"</span><span class="s2">&gt;
+ Helloworld(); 
+&lt;/script&gt;
+</span></code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><img src="docker_02_3-8.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>可以看到在上方準備Sample Package步驟中建立測試Function輸出<code class="language-plaintext highlighter-rouge">Helloworld</code>結果。</p>
+
+<h5 id="取消發佈-1">取消發佈</h5>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm unpublish hellotest <span class="nt">--force</span> <span class="nt">--registry</span> http://127.0.0.1:4873
+</code></pre></div></div>
+
+<p>如果想再重新發佈相同套件，須注意在package.json內參數version版本號不能重複存在Server中，需要再重新設定新的版本號，並且在Server上未存在過該版本號紀錄，否則會被Server擋下來並且警告有相同版本號紀錄已存在問題。</p>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+<ol>
+  <li><a href="https://github.com/verdaccio/verdaccio">關於Verdaccio</a></li>
+  <li><a href="https://verdaccio.org/docs/en/docker.html">Docker 安裝Verdaccio官方說明</a></li>
+  <li><a href="https://hub.docker.com/r/verdaccio/verdaccio">Verdaccio docker hub</a></li>
+  <li><a href="https://ceall8650.medium.com/%E7%AD%86%E8%A8%98-%E5%BB%BA%E7%AB%8B%E8%87%AA%E5%B7%B1%E7%9A%84-npm-%E4%BB%A5npm-orgs%E8%B7%9Fverdaccio%E7%82%BA%E4%BE%8B-cfb83b2307e6">[筆記] 建立自己的 npm, 以npm Orgs跟Verdaccio為例</a></li>
+  <li><a href="https://docs.docker.com/engine/reference/run/#foreground">Docker-Foreground</a></li>
+  <li><a href="https://docs.docker.com/engine/reference/run/#clean-up---rm">Docker-Clean up (–rm)</a></li>
+  <li><a href="https://docs.docker.com/engine/reference/run/#detached-vs-foreground">Detached vs foreground</a></li>
+  <li><a href="https://docs.docker.com/engine/reference/run/#detached-vs-foreground">Restart policies (–restart)</a></li>
+  <li><a href="https://hub.docker.com/r/verdaccio/verdaccio">docker-hub verdaccio/verdaccio</a></li>
+</ol>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

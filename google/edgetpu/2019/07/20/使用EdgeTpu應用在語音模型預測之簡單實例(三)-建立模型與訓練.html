@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - 使用EdgeTpu應用在語音模型預測之簡單實例(三)-建立模型與訓練
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">使用EdgeTpu應用在語音模型預測之簡單實例(三)-建立模型與訓練</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">使用EdgeTpu應用在語音模型預測之簡單實例(三)-建立模型與訓練</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2019-07-20 16:00:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>GitHub：<a href="https://github.com/s123600g/asr_edgetpu_demo">https://github.com/s123600g/asr_edgetpu_demo</a></p>
+
+<p>經過<a href="https://s123600g.github.io/google/edgetpu/2019/07/20/%E4%BD%BF%E7%94%A8EdgeTpu%E6%87%89%E7%94%A8%E5%9C%A8%E8%AA%9E%E9%9F%B3%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E4%B9%8B%E7%B0%A1%E5%96%AE%E5%AF%A6%E4%BE%8B(%E4%BA%8C)-%E8%AA%9E%E9%9F%B3%E8%B3%87%E6%96%99%E9%9B%86%E8%99%95%E7%90%86.html">(二) 語音資料集處理</a>得到已擷取出來語音特徵檔案，在此階段可以開始建置模型並進行訓練，產生可以用在後面<a href="https://s123600g.github.io/google/edgetpu/2019/07/20/%E4%BD%BF%E7%94%A8EdgeTpu%E6%87%89%E7%94%A8%E5%9C%A8%E8%AA%9E%E9%9F%B3%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E4%B9%8B%E7%B0%A1%E5%96%AE%E5%AF%A6%E4%BE%8B(%E5%9B%9B)-%E6%A8%A1%E5%9E%8B%E8%BD%89%E6%8F%9B%E6%A0%BC%E5%BC%8F%E7%82%BAtflite.html">(四) 模型轉換格式為tflite</a>之語音模型。</p>
+
+<p>此階段所使用程式為<code class="language-plaintext highlighter-rouge">Train_Data.py</code>，包含以下處理程序</p>
+<ol>
+  <li>產生資料集(訓練、測試、驗證)</li>
+  <li>建立模型(CNN Model)</li>
+  <li>量化模型之訓練</li>
+  <li>儲存訓練中每一回合權重紀錄</li>
+  <li>儲存訓練後模型tensor graph與權重紀錄</li>
+  <li>TensorBoard使用</li>
+  <li>驗證模型</li>
+  <li>輸出模型</li>
+</ol>
+
+<p>程式內部一些必要參數配置，存放在<code class="language-plaintext highlighter-rouge">Config.py</code>裡面，如需更改請到<code class="language-plaintext highlighter-rouge">Config.py</code>內找尋對應參數配置進行修改。</p>
+
+<hr />
+
+<h2 id="模型結構">模型結構</h2>
+
+<p>首先，要先建置一個簡單的語音模型，此模型結構為卷積神經網絡CNN ，因為只是探討簡單應用實作，所以模型架構先以簡單建置進行。</p>
+
+<p>這次使用Tensorflow內部已包含之Keras套件進行模型建置，而不使用外部安裝形式Keras套件。</p>
+
+<p>模型原始結構資訊如下：</p>
+
+<p><img src="edgetpu03-01.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="edgetpu03-02.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>以下為<code class="language-plaintext highlighter-rouge">Train_Data.py</code>內關於語音模型結構建置與參數配置程式碼</p>
+
+<script src="https://gist.github.com/s123600g/fe0ffd69b914d8a75fd9b5d24eb21ffa.js"></script>
+
+<hr />
+
+<h2 id="產生資料集訓練測試驗證">產生資料集(訓練、測試、驗證)</h2>
+
+<p>此為<code class="language-plaintext highlighter-rouge">Gen_DataSet.py</code>程式負責處理，主要是<code class="language-plaintext highlighter-rouge">Train_Data.py</code>用來呼叫取得處理後資料集，內部程式代碼呼叫如下</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">''' 產生訓練、測試、驗證資料集 '''</span>
+<span class="n">Gen_DataSet</span> <span class="o">=</span> <span class="n">Gen_DataSet</span><span class="p">(</span><span class="n">Config</span><span class="p">)</span>
+<span class="n">Gen_DataSet</span><span class="p">.</span><span class="n">DataSet_Process</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Gen_DataSet.py</code>內<code class="language-plaintext highlighter-rouge">DataSet_Process()</code>方法，讀取<a href="https://medium.com/@s123600g/%E4%BD%BF%E7%94%A8edgetpu%E6%87%89%E7%94%A8%E5%9C%A8%E8%AA%9E%E9%9F%B3%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E4%B9%8B%E7%B0%A1%E5%96%AE%E5%AF%A6%E4%BE%8B-%E4%BA%8C-%E8%AA%9E%E9%9F%B3%E8%B3%87%E6%96%99%E9%9B%86%E8%99%95%E7%90%86-a9a1f4492bc0">(二) 語音資料集處理</a>產生結果，每一個分類特徵文字檔內容全部經過以下處理步驟：</p>
+
+<p><strong>Step 1. 執行資料分類標籤之對應編號存進資料庫。</strong>  <br /></p>
+
+<p>將讀取<code class="language-plaintext highlighter-rouge">audio_classlabels.txt</code>內容存進SQLite3輕量化資料庫中，存放在專案目錄內<code class="language-plaintext highlighter-rouge">DB/class.db3</code>，此資料庫在之後預測會用到，用來將模型預測結果，進行識別類別名稱查詢用途。</p>
+
+<p><img src="edgetpu03-03.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><img src="edgetpu03-04.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>Step 2. 讀取語音特徵值檔案內容，取得每一筆特徵值內容與分類標籤。</strong> <br /></p>
+
+<p><strong>Step 3. 將所有已讀取完每一筆特徵值內容與分類標籤進行資料混淆矩陣打散。</strong> <br /></p>
+
+<p><strong>Step 4. 將每一筆特徵值所屬分類標籤進行轉換成對應編號，與SQLite3資料庫內資料表，每一分類所屬編號內容相對應。</strong> <br /></p>
+
+<p>在上階段語音資料集處理，有產生分類標籤之對應編號結果，將其讀取進來內容如下：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+	0: 'backward', 
+	1: 'bed', 
+	2: 'bird', 
+	3: 'cat', 
+	4: 'dog',
+	5: 'down', 
+	6: 'eight', 
+	7: 'five', 
+	8: 'follow', 
+	9: 'forward', 
+	10: 'four', 
+	11: 'go', 
+	12: 'happy', 
+	13: 'house', 
+	14: 'learn', 
+	15: 'left', 
+	16: 'marvin', 
+	17: 'nine', 
+	18: 'no', 
+	19: 'off', 
+	20: 'on', 
+	21: 'one', 
+	22: 'right', 
+	23: 'seven', 
+	24: 'sheila', 
+	25: 'six', 
+	26: 'stop', 
+	27: 'three', 
+	28: 'tree', 
+	29: 'two', 
+	30: 'up', 
+	31: 'visual', 
+	32: 'wow', 
+	33: 'yes', 
+	34: 'zero'
+}
+</code></pre></div></div>
+
+<p>在<strong>Step2</strong>所產生分類標籤矩陣內部格式為以下： <br /></p>
+
+<p>[‘wow’, ‘nine’, ‘five’, … ,’dog’ ,’tree’, ‘forward’] <br /></p>
+
+<p>必須要轉換為之前已設定好每一分類對應之編號，不能給模型標籤內容為字串形式，必須要轉換為整數型態數值，因為後面還有One-Hot編碼轉換，要求必須為整數格式進行，轉換後內容如下： <br /></p>
+
+<p>[32 ,17,7, … ,4,28,9] <br /></p>
+
+<p>編號對應分類範例：</p>
+<ul>
+  <li>32 → ‘wow’</li>
+  <li>17 → ‘nine’</li>
+  <li>7 → ‘five’</li>
+</ul>
+
+<p><strong>Step 5. 產生訓練模型所需資料集(訓練、驗證、測試)</strong> <br /></p>
+
+<p>在這裡就會產生要給模型用之訓練與驗證用資料集，還有後面用來測試模型準確度之資料集，分別對應如下：</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">self.Config.Train_DataSet</code> –&gt; 放置訓練用內容資料集。</li>
+  <li><code class="language-plaintext highlighter-rouge">self.Config.Train_Labels</code> –&gt; 放置訓練用標籤資料集。</li>
+  <li><code class="language-plaintext highlighter-rouge">self.Config.Valid_DataSet</code> –&gt; 放置驗證用內容資料集。</li>
+  <li><code class="language-plaintext highlighter-rouge">self.Config.Valid_Labels</code> –&gt; 放置驗證用標籤資料集。</li>
+  <li><code class="language-plaintext highlighter-rouge">self.Config.Test_DataSet</code> –&gt; 放置測試用內容資料集。</li>
+  <li><code class="language-plaintext highlighter-rouge">self.Config.Test_Labels</code> –&gt; 放置測試用標籤資料集。</li>
+</ol>
+
+<p>以上資料經過以下處理程序所產生：</p>
+<ol>
+  <li>切割資料集、將經過<strong>Step 2</strong> ~ <strong>Step 4</strong>處理後，將存放所有語音特徵<code class="language-plaintext highlighter-rouge">self.Config.MFCC_Data</code>與<code class="language-plaintext highlighter-rouge">self.Config.labels</code>進行比例切割成三等份資料集結果(訓練、驗證、測試)。</li>
+  <li>轉換資料集結果(訓練、驗證、測試)為Numpy Array型態。</li>
+  <li>轉換資料集結果(訓練、驗證、測試)小數精度為 float32。</li>
+  <li>轉換資料集結果(訓練、驗證、測試) 向量維度(Shape)轉換，轉成(15750 , 20 , 11 , 1)格式
+    <ul>
+      <li>關於轉換格式： <code class="language-plaintext highlighter-rouge">(語音特徵總筆數 , 每一筆特徵列數 , 每一筆特徵欄位數 , Channel)</code></li>
+    </ul>
+  </li>
+</ol>
+
+<p><strong>Step 6. 將所有資料集(訓練、驗證、測試)之分類標籤編號進行One-Hot 編碼</strong> <br /></p>
+
+<hr />
+
+<h2 id="進行模型量化訓練">進行模型量化訓練</h2>
+
+<p>在Tensorflow量化訓練中有兩種方式，以下為個人白話理解其運作概念：</p>
+
+<p>第一種為<strong>Post-training quantization</strong>，此種方式為將已訓練好模型，插入一個宣告已量化證明，來告知此模型已完成量化，但畢竟不是真的經過訓練中進行量化過程，而只是給予一個模擬量化後權重，有點類似於將已訓練好未經過訓練過程量化之模型，給予一個模擬經過量化後之證明，告知此模型已有量化，是偽量化處理之一，但是，實際在inference()執行下，對於權重還是沒有使用量化數值型態uint8，而是以原始float數值型態來進行。</p>
+
+<p><img src="edgetpu03-05.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>第二種為<strong>Quantization-aware training (Qat)</strong>，此處理分為訓練前與訓練後，分別是 create_training_graph 與 create_eval_graph 兩個階段 ，在訓練前會進行插入 fake quantization nodes 在模型中，並且先經過初始化後，在訓練過程中，會存放經過激活函數處理後權重，在經過量化處理產生數據，也就是每一層 fake quantization node 內存放最小值與最大值，此為一個偽量化處理(模擬量化)，模型訓練後，在將整個模型之權重數據包含量化數據，進行一個變量轉換常量動作，也就是固定所有數值後，在輸出成pb格式模型檔案。</p>
+
+<p><img src="edgetpu03-06.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>可參考 <a href="https://tensorflow.juejin.im/performance/quantization.html">連結1</a> <a href="https://blog.csdn.net/lishanlu136/article/details/88872266">連結2</a> <a href="https://www.tensorflowers.cn/t/7136">連結3</a> <a href="https://zhuanlan.zhihu.com/p/62047684">連結4</a></p>
+
+<p>Google Coral 官方在<a href="https://coral.ai/docs/edgetpu/models-intro/#quantization">Quantization</a>區塊內說明</p>
+
+<p>本專案主要使用量化方式為<strong>Qat</strong>，你必須了解<strong>Qat</strong>量化在實作架購上，所調用tf.contrib.quantize api function內容分別為：</p>
+<ol>
+  <li><a href="https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/contrib/quantize/create_training_graph?hl=zh_tw">create_training_graph</a></li>
+  <li><a href="https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/contrib/quantize/create_eval_graph?hl=zh_tw">create_eval_graph</a></li>
+</ol>
+
+<p>實作上需要做的步驟有以下：</p>
+
+<p><strong>Step 1. 訓練模型與儲存模型所有graph與checkpoints(create_training_graph)</strong> <br /></p>
+<ol>
+  <li>在訓練模型之前，將已產生模型結構(還未進行模型編譯生成)，插入放置量化權重數據之 fake quantization nodes，這些量化權重數據指的是放置最小值與最大值資訊，用來後面進行 tflite 模型透過 inference() 執行時使用。</li>
+  <li>進行模型編譯生成，並且重新初始化模型權重，開始模型之訓練，在訓練過程中，會將需要進行量化之權重變量，自動進行量化計算放置到 fake quantization node，訓練完畢後，儲存總體 graph 與 checkpoints 到外部檔案。</li>
+  <li>將模型訓練過程，輸出成可視覺化圖檔(png)。
+    <ul>
+      <li>調用<code class="language-plaintext highlighter-rouge">history_plot.py</code>進行模型訓練過程可視覺化圖檔。</li>
+    </ul>
+  </li>
+  <li>可以用TensorBoard觀看訓練過程變化，需要再訓練完畢後才會完整顯示</li>
+</ol>
+
+<p>需要做以下設置</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">''' 設置模型訓練時之回調函數控制 '''</span>
+<span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># TensorBoard設置
+</span>    <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">callbacks</span><span class="p">.</span><span class="n">TensorBoard</span><span class="p">(</span>        
+        <span class="c1"># 輸出檔案位置
+</span>        <span class="n">log_dir</span><span class="o">=</span><span class="n">Config</span><span class="p">.</span><span class="n">Log_TensorBoard_Path</span><span class="p">,</span>        
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>        
+        <span class="n">write_images</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>    
+    <span class="p">),</span>
+
+    <span class="c1">#設置儲存每一回合儲存Checkpoint紀錄
+</span>    <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">callbacks</span><span class="p">.</span><span class="n">ModelCheckpoint</span><span class="p">(</span>
+        <span class="c1"># 輸出儲存檔案配置(檔案路徑,檔案命名格式)
+</span>        <span class="n">filepath</span><span class="o">=</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">Config</span><span class="p">.</span><span class="n">Model_ModelCheckpoint_Path</span><span class="p">,</span> <span class="s">"ckpt_{epoch:02d}"</span><span class="p">),</span>        
+        <span class="c1"># 顯示儲存過程
+</span>        <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>        
+        <span class="c1"># 設置是否只儲存權重
+</span>        <span class="n">save_weights_only</span><span class="o">=</span><span class="bp">False</span>    
+    <span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<p>在終端機執行以下指令</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tensorboard <span class="nt">--logdir</span><span class="o">=</span> TensorBoard Log 放置位置
+</code></pre></div></div>
+
+<p>此專案範例格式</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tensorboard <span class="nt">--logdir</span><span class="o">=</span>/home/jyu/Program/Audio_Speech_Recognition_TPU_Demo/log_file/TensorBoard
+</code></pre></div></div>
+
+<p><img src="edgetpu03-07.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>執行後會顯示以下連結資訊，點擊即可查看
+http://127.0.0.1:6006/#scalars&amp;run=logs</p>
+
+<p><img src="edgetpu03-08.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>量化模型訓練過程視覺化(Tensorboard Graph)</p>
+
+<p><img src="edgetpu03-09.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>Step2. 進行模型之輸出(create_eval_graph)</strong> <br /></p>
+<ol>
+  <li>重新取得模型結構，建立重新模擬量化之驗證graph。</li>
+  <li>取得模型內部結構，包含節點、內部函數數值等等。</li>
+  <li>重新載入儲存權重變數，也就是 Step1. 儲存總體 graph 與 checkpoints。</li>
+  <li>將模型中所有的變量轉換成相同數值常量。</li>
+  <li>輸出pb格式模型。
+    <ul>
+      <li>輸出模型存放位置在專案目錄內<code class="language-plaintext highlighter-rouge">model/model_pb/</code></li>
+      <li>模型名稱為<code class="language-plaintext highlighter-rouge">frozen_model.pb</code></li>
+    </ul>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="執行結果">執行結果</h2>
+
+<p>到目前為止針對建立模型與訓練，我們已訓練好所需量化模型，並且輸出成pb格式模型檔案，接下來就可以進行<a href="https://s123600g.github.io/google/edgetpu/2019/07/20/%E4%BD%BF%E7%94%A8EdgeTpu%E6%87%89%E7%94%A8%E5%9C%A8%E8%AA%9E%E9%9F%B3%E6%A8%A1%E5%9E%8B%E9%A0%90%E6%B8%AC%E4%B9%8B%E7%B0%A1%E5%96%AE%E5%AF%A6%E4%BE%8B(%E5%9B%9B)-%E6%A8%A1%E5%9E%8B%E8%BD%89%E6%8F%9B%E6%A0%BC%E5%BC%8F%E7%82%BAtflite.html">(四) 模型轉換格式為tflite</a>。</p>
+
+<script src="https://gist.github.com/s123600g/cc27e978a9f5266641b29fb91408cc0d.js"></script>
+
+<hr />
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

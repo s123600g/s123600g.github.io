@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Python_Flask_Web與Docker建置網站筆記-使用Docker建置Nginx結合uWSGI映像檔
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Python_Flask_Web與Docker建置網站筆記-使用Docker建置Nginx結合uWSGI映像檔</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Python_Flask_Web與Docker建置網站筆記-使用Docker建置Nginx結合uWSGI映像檔</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-06-27 11:01:00
+      </span>
+    </div>
+
+    <p>此筆記為筆者學習建立一個Nginx整合uWSGI Server服務 Docker映像檔，紀錄建立一個Dockerfile檔案到建置完成過程。</p>
+
+<!--more-->
+
+<p>GitHub: <a href="https://github.com/s123600g/FlaskDemoNotes/tree/master/Docker/Nginx_uWSGI_Flask">https://github.com/s123600g/FlaskDemoNotes/tree/master/Docker/Nginx_uWSGI_Flask</a></p>
+
+<blockquote>
+  <p>Docker Contianer → 在筆記稱為<strong>容器</strong>。 <br />
+Docker Image →在筆記稱為<strong>映像檔</strong>。</p>
+</blockquote>
+
+<hr />
+
+<p>根據<code class="language-plaintext highlighter-rouge">Docker\Nginx_uWSGI_Flask\</code> 底下會有檔案內容如下:</p>
+<ol>
+  <li>Dockerfile</li>
+  <li>nginx.conf</li>
+  <li>requirements.txt</li>
+  <li>start_up.sh</li>
+  <li>web.conf</li>
+</ol>
+
+<h2 id="映像檔建置操作">映像檔建置操作</h2>
+
+<p><strong>Step1. 開啟終端機並將起始位置切換至Dockerfile位置底下</strong></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd  </span>path to<span class="se">\d</span>ockerfile
+</code></pre></div></div>
+
+<p><strong>Setp2. 執行建立映像檔</strong></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> <span class="s2">"自訂映像檔名稱:自訂Tag"</span> <span class="nb">.</span>
+</code></pre></div></div>
+<p>實際範例，建置一個命名為<em>nginxflaskserver</em>映像檔</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> nginx_flask_server <span class="nb">.</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="映像檔匯出操作">映像檔匯出操作</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker save <span class="nt">--output</span> 檔案名稱.tar image識別標籤
+</code></pre></div></div>
+
+<p>實際範例，匯出一個映像實體檔(nginx_flask_server.tar)</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker save <span class="nt">--output</span> nginx_flask_server.tar nginx_flask_server
+</code></pre></div></div>
+
+<h2 id="映像檔匯入操作">映像檔匯入操作</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker load <span class="nt">--input</span> 檔案名稱.tar
+</code></pre></div></div>
+
+<p>實際範例，匯入一個映像實體檔(nginx_flask_server.tar)</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker load <span class="nt">--input</span> nginx_flask_server.tar
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="映像檔刪除操作">映像檔刪除操作</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker rmi image識別標籤
+</code></pre></div></div>
+
+<p>實際範例，刪除一個映像媒體(nginx_flask_server)</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker rmi nginx_flask_server
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="列出目前所有映像檔資訊">列出目前所有映像檔資訊</h2>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker images
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="dockerfile內容">Dockerfile內容</h2>
+
+<script src="https://gist.github.com/s123600g/4ff15b02a611b2adff1c7b4e155789f1.js"></script>
+
+<p><strong>(1) 指定本機與容器之間連接Port</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ENV web_port=85
+</code></pre></div></div>
+
+<p>預設是設定85為容器開放Port。 <br /></p>
+
+<p><em>請注意此設置代表之後以此映像檔建立之容器，開放有效溝通端口為85 Port，實際上還需要在docker run進行開通設定才能完全讓本機跟容器對接起來。</em></p>
+
+<p></p>
+
+<p><strong>(2) 預設容器內部網站目錄指向為 /web/web_data</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chdir=/web/web_data/
+</code></pre></div></div>
+
+<p></p>
+
+<p><strong>(3) 複製必要檔案至容器內部</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COPY '檔案名稱' '容器內部位置'
+</code></pre></div></div>
+
+<p>映像檔在建置過程中，會複製當前所在位置底下內有存在指定檔案至內部對應位置。 <br /></p>
+
+<p><strong>nginx.conf</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COPY "nginx.conf" "/web"
+</code></pre></div></div>
+
+<p>更改Nginx內部主設定配置檔案，覆蓋掉原本官方預設配置檔案內容。 <br />
+先複製要覆蓋的配置檔在內部<code class="language-plaintext highlighter-rouge">/web</code>底下，再透過下面程序環節更新覆蓋掉官方預設配置檔案</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx_old.conf \
+    &amp;&amp; cp /web/nginx.conf /etc/nginx/
+</code></pre></div></div>
+
+<p><strong>web.conf</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COPY "web.conf" "/etc/nginx/sites-enabled"
+</code></pre></div></div>
+
+<p>Nginx對應uWSGI Socket配置檔放置內部<code class="language-plaintext highlighter-rouge">/etc/nginx/sites-enabled</code>底下，此為Nginx反向代理器與Flask網站uWSGi Server對接配置。 <br /></p>
+
+<p><strong>requirements.txt</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COPY "requirements.txt" "/web"
+</code></pre></div></div>
+
+<p>Python套件需求名單文字檔，在映像檔建置過程中，順便安裝運行Python環境所需要套件，會依據此文字檔內紀錄套件名稱進行下載安裝，內容如下</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alembic==1.3.0
+aniso8601==8.0.0
+astroid==2.3.1
+autopep8==1.4.4
+certifi==2019.9.11
+Click==7.0
+colorama==0.4.1
+DateTime==4.3
+Flask==1.1.1
+Flask-Admin==1.5.4
+Flask-CKEditor==0.4.3
+Flask-Login==0.4.1
+Flask-Migrate==2.5.2
+Flask-RESTful==0.3.7
+Flask-Script==2.0.6
+Flask-Session==0.3.1
+Flask-SQLAlchemy==2.4.1
+Flask-WTF==0.14.2
+isort==4.3.21
+itsdangerous==1.1.0
+Jinja2==2.10.3
+lazy-object-proxy==1.4.2
+Mako==1.1.0
+MarkupSafe==1.1.1
+mccabe==0.6.1
+pycodestyle==2.5.0
+pylint==2.4.2
+python-dateutil==2.8.0
+python-editor==1.0.4
+pytz==2019.3
+pymssql==2.1.4
+six==1.12.0
+SQLAlchemy==1.3.10
+typed-ast==1.4.0
+Werkzeug==0.16.0
+wincertstore==0.2
+wrapt==1.11.2
+WTForms==2.2.1
+zope.interface==4.6.0
+openpyxl==3.0.3
+uWSGI==2.0.18
+mysqlclient==1.4.6
+</code></pre></div></div>
+
+<p><strong>start_up.sh</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>COPY "start_up.sh" "/var/local"
+</code></pre></div></div>
+<p>此為Nginx與uWSGI自啟動腳本，在映像檔建置最後步驟中，設置每當以此映像檔建置之容器，每一次啟動時，優先執行此自啟動腳本設置網站服務運作。
+透過最後一道程序，來設置每次容器啟動時首先執行此腳本</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CMD [ "/bin/bash", "-c" , "/var/local/start_up.sh ;"]
+</code></pre></div></div>
+
+<p>關於此自啟動腳本內容如下</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+nginx <span class="nt">-g</span> <span class="s1">'daemon off;'</span> | uwsgi <span class="nt">--ini</span> /web/web_data/uwsgi.ini
+</code></pre></div></div>
+
+<p>關於腳本內部添加nginx全域設定-關掉守護線程</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nginx -g 'daemon off;'
+</code></pre></div></div>
+
+<p>將 Nginx 設置為執行啟動時不依附上層核心程序進行，避免因為上層核心程序終結而導致連帶中止結束，因為容器啟動執行時，Nginx服務是以程序驅動執行腳本而不是一個獨立程序，導致腳本執行完畢時，因上層執行驅動腳本核心程序結束，導致連帶一起關閉腳本所啟用服務程序連帶中止，也就是一開始pid=1為執行腳本核心程序，一但結束此核心程序那Nginx也連帶一起中止，docker會判定此容器工作已經結束執行，自動關閉容器服務。</p>
+
+<hr />
+
+<h2 id="nginx">Nginx</h2>
+
+<p>Nginx主體配置檔為<code class="language-plaintext highlighter-rouge">nginx.conf</code></p>
+
+<script src="https://gist.github.com/s123600g/7f9435ec887f9000a5c42d11e9dabf35.js"></script>
+
+<p>Nginx web socket配置檔為web.conf</p>
+
+<script src="https://gist.github.com/s123600g/90b9b3c7b331f4f6c4be74ce25a582fa.js"></script>
+
+<p>Nginx參數說明：</p>
+<ol>
+  <li>listen → 指定Nginx要監聽的Port</li>
+  <li>server_name → 主機Host位址</li>
+  <li>access_log → Nginx 連線紀錄日誌放置位置</li>
+  <li>error_log → Nginx 連線錯誤紀錄日誌放置位置</li>
+  <li>location → 設置監聽端口Port</li>
+  <li>uwsgi_pass： 配置指定的uwsgi連線管道(Web Socket)</li>
+  <li>include：將指定的uwsgi配置全部包含讀取進來</li>
+</ol>
+
+<hr />
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

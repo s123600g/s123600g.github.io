@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - HTML-DataTables系列筆記-基礎語法使用
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">HTML-DataTables系列筆記-基礎語法使用</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">HTML-DataTables系列筆記-基礎語法使用</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2020-06-01 13:56:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<h2 id="語法結構">語法結構</h2>
+
+<p>結構上有分為以下區塊</p>
+<ol>
+  <li>屬性區塊</li>
+  <li>ajax區塊</li>
+  <li>資料欄位區塊(columns)</li>
+  <li>語言區塊(language)</li>
+  <li>欄位元素定義區塊(columnDefs)</li>
+  <li>列元素區塊(rowCallback)</li>
+</ol>
+
+<hr />
+
+<h2 id="一-呼叫初始化語法">(一) 呼叫初始化語法</h2>
+
+<p>JQuery初始化語法</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nx">$</span><span class="p">(</span><span class="nx">datatable_id</span><span class="p">).</span><span class="nx">DataTable</span><span class="p">()</span>
+</code></pre></div></div>
+<p><strong>datatable_id</strong>對應為Table元件ID，以下面Table元件為例</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">"test_table"</span><span class="nt">&gt;&lt;/table&gt;</span>
+</code></pre></div></div>
+<p>在JQuery初始化語法呈現如下</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$</span><span class="p">(</span><span class="dl">"</span><span class="s2">#test_table</span><span class="dl">"</span><span class="p">).</span><span class="nx">DataTable</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>完整語法結構</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">$</span><span class="p">(</span><span class="nx">datatable_id</span><span class="p">).</span><span class="nx">DataTable</span><span class="p">(</span>
+    <span class="c1">// 屬性區塊,</span>
+    <span class="c1">// ajax區塊,</span>
+    <span class="c1">// 資料欄位區塊(columns),</span>
+    <span class="c1">// 語言區塊(language),</span>
+    <span class="c1">// 欄位元素定義區塊(columnDefs),</span>
+    <span class="c1">// 列元素區塊(rowCallback)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="二-屬性區塊">(二) 屬性區塊</h2>
+
+<p>在Datatables歸類在Options內，可參考
+<a href="https://datatables.net/reference/option/">https://datatables.net/reference/option/</a></p>
+
+<p>屬性區塊在語法結構範例如下
+<script src="https://gist.github.com/s123600g/ebc8ee70f98df5c05b5964551273146f.js"></script></p>
+
+<ul>
+  <li>
+    <p><strong>“searching”</strong>: 
+是否開啟搜尋欄位，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>paging</strong>”: 
+設置是否要開啟分頁功能，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>sPaginationType</strong>”:
+分頁功能呈現樣式，預設參數值”full_numbers”
+關於官方說明可參考 <a href="https://datatables.net/reference/option/pagingType">https://datatables.net/reference/option/pagingType</a></p>
+  </li>
+  <li>
+    <p>“<strong>lengthMenu</strong>”: 
+設置顯示筆數下拉選單內，顯示可區分幾筆參數
+預設參數值 [[10, 25, 50, -1], [10, 25, 50, “All”]]，代表要顯示10、25、50筆資料，其中 -1是告訴Datatables要關閉分頁欄位，因為是顯示全部資料，所以到這裡也可以發現它是跟”ALL”配對呼應的，只是要有一個開關去告訴Datatables要關閉分頁欄位，不然顯示全部資料那分頁就應該不需要存在才對。</p>
+  </li>
+  <li>
+    <p>“<strong>processing</strong>”: 
+當頁面剛載入時候，是否要顯示當前資料處理狀態資訊，參數值有true/false</p>
+  </li>
+  <li>
+    <p>“<strong>serverSide</strong>”: 
+設置是否透過Server端處理分頁、排序、過濾處理機制模式，也就是決定這三者功能是否給Server端處理好在回傳給前端顯示，或者，全都給Client端去做處理，參數值有true/false。
+全都給Client端處理情況下，必須要注意資料量多寡問題，當資料筆數是非常龐大的時候，受限於電腦效能，如果電腦效能不太穩定可能會帶來不好的體驗，並且也要考慮到資料安全問題，因為必須要將全部資料回傳給Client端自己去做分頁、排序、過濾處理機制。
+給予Server端處理情況下，透過ajax與指定API發送請求，透過特定關鍵字條件參數，告知後端要在特定條件參數值下，回傳符合的結果資料即可，不需回傳全部的資料給前端處理。</p>
+  </li>
+  <li>
+    <p>“<strong>stateSave</strong>”: 
+設置在頁面刷新時，是否要保存當前表格資料與狀態，不保存便會在刷新時回復到原始初始狀態，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>destroy</strong>”: 
+設置每一次Datatables有做修改時，是否銷毀當前暫存資料，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>info</strong>”:
+設置是否要顯示Datatables基本資訊狀態欄，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>autoWidth</strong>”: 
+設置是否要自動調整表格寬度(自適應當前資料量設置表格寬度)，如果為false代表不要自適應，讓表格寬度遠永填滿當前所在區塊大小，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>ordering</strong>”: 
+設置是否要開啟欄位排序，如果為true情況下，可以點擊header欄位來進行當前資料排序，點哪一個欄位就是以該欄位作為排序依據，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>scrollCollapse</strong>”: 
+設置是否開始滾軸功能控制X、Y軸，參數值有true/false。</p>
+  </li>
+  <li>
+    <p>“<strong>scrollY</strong>”: 
+設置Y軸最大高度，如果有設置此選項就會開啟Y軸滾軸功能，假設為”200px”代表最大高度為200px，當資料筆數呈現高度超過此限制就會開啟滾軸功能。</p>
+  </li>
+  <li>
+    <p>“<strong>scrollX</strong>”:
+設置X軸最大寬度，如果有設置此選項就會開啟X軸滾軸功能，假設為”500px”代表最大寬度為500px，當資料筆數呈現寬度超過此限制就會開啟滾軸功能。</p>
+  </li>
+  <li>
+    <p>“<strong>dom</strong>”: 
+設置各Datattables元件所處在位置，
+可參考關於Datatables各元件位置設定(DOM positioning)
+<a href="https://datatables.net/examples/basic_init/dom.html">https://datatables.net/examples/basic_init/dom.html</a></p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  '&lt;"top"&gt;rt&lt;"bottom"&gt;&lt;"clear"&gt;'
+    
+  l - length changing input control
+  f - filtering input
+  t - The table!
+  i - Table information summary
+  p - pagination control
+  r - processing display element
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="三-ajax區塊">(三) ajax區塊</h2>
+
+<p>可參考關於Datatables ajax： <a href="https://datatables.net/reference/option/ajax">https://datatables.net/reference/option/ajax</a></p>
+
+<p>標準語法結構如下：
+<script src="https://gist.github.com/s123600g/5d07d47a006c96aab77f943e09dfecf7.js"></script></p>
+
+<p>基本參數：</p>
+
+<ul>
+  <li>
+    <p><strong>url</strong>：
+將請求發送給Server端API連結，字串型態。</p>
+  </li>
+  <li>
+    <p><strong>type</strong>:
+發送請求型態，一般都是用POST單純請求資料。</p>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="四-資料欄位區塊columns">(四) 資料欄位區塊(columns)</h2>
+
+<p>欄位宣告標準語法結構如下：</p>
+
+<script src="https://gist.github.com/s123600g/ee763f912af3b9aeeca288c35dc7da7f.js"></script>
+
+<p>在Datatables中有幾個欄位就會有幾個”{data: ‘欄位名稱’}”，此用途是讓Datatables知道Server端回傳的資料中，哪個位置資料是給予哪一個欄位放置，Server端回傳的資料型態JSON格式，每一個位key值就是對應欄位名稱，value值就是該欄位要放置的資料。</p>
+
+<p>假設有一筆Server端回傳的JSON資料為以下：</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[
+    {'col1': 'val1' , 'col2': 'val2'},
+    {'col1': 'val3' , 'col2': 'val4'},
+]
+</code></pre></div></div>
+
+<p>對應資料欄位區塊語法為以下：</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">columns</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="na">data</span><span class="p">:</span> <span class="dl">'</span><span class="s1">col1</span><span class="dl">'</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="na">data</span><span class="p">:</span> <span class="dl">'</span><span class="s1">col2</span><span class="dl">'</span> <span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div></div>
+<p>在Html Table元件語法結構如下：</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;table</span> <span class="na">class=</span><span class="s">"display table-bordered  table table-responsive  table-hover"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;thead&gt;</span>
+        <span class="nt">&lt;th</span> <span class="na">class=</span><span class="s">"text-center"</span><span class="nt">&gt;</span>col1<span class="nt">&lt;/th&gt;</span>
+        <span class="nt">&lt;th</span> <span class="na">class=</span><span class="s">"text-center"</span><span class="nt">&gt;</span>col2<span class="nt">&lt;/th&gt;</span>
+    <span class="nt">&lt;/thead&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</code></pre></div></div>
+
+<p>最後Table呈現效果如下： <br /></p>
+
+<p><img src="frontend_01.jpg" class="img-fluid rounded mx-auto" /> <br /></p>
+
+<p>從這個例子中，你可以發現到資料欄位區塊(columns)內，不管有建立幾個欄位宣告，最後跟有幾筆(列)資料是無關的，它只跟有幾個欄位有關係，如果你建立的欄位宣告有缺少，或者不符合回傳的資料對應欄位key，會出現錯誤，需要注意這一點。</p>
+
+<hr />
+
+<h2 id="五-語言區塊language">(五) 語言區塊(language)</h2>
+
+<p>此區塊針對DataTables內各區塊所顯示資訊語言，可以自訂要呈現內容，例如當資料還在載入初始化時，可以自訂當前狀態敘述內容，或者分頁功能內按鈕名稱等等。
+<script src="https://gist.github.com/s123600g/c30435cba60d8baf9ca3f23e334473d7.js"></script></p>
+
+<hr />
+
+<h2 id="六-欄位元素定義區塊columndefs">(六) 欄位元素定義區塊(columnDefs)</h2>
+
+<p>可參考關於Datatables option — columnDefs： <a href="https://datatables.net/reference/option/columnDefs">https://datatables.net/reference/option/columnDefs</a></p>
+
+<p>標準語法結構如下：
+<script src="https://gist.github.com/s123600g/2d735048aa7d4d04040c52190affe59e.js"></script></p>
+
+<p>基本參數：</p>
+<ul>
+  <li><strong>targets</strong>：
+指定該區塊所套用的欄位目標，依據索引值來指定哪一個欄位，起始值是從0開始算起，可以選擇單一目標或多個目標一起套用。
+當只有一個目標時，可以用以下宣告方式：
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  targets: 0
+</code></pre></div>    </div>
+    <p>或者</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  targets: [0]
+</code></pre></div>    </div>
+    <p>當有多個目標時，可以用以下宣告方式：</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  targets: [0,1,2,...]
+</code></pre></div>    </div>
+    <p>當要指定全部欄位目標時，可以用以下宣告方式：</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  targets: '_all'
+</code></pre></div>    </div>
+    <p><strong>‘_all’</strong> 代表全部欄位的意思。</p>
+  </li>
+  <li><strong>屬性項目</strong>：
+指定該區塊內目標欄位，要套用的屬性項目設定。</li>
+</ul>
+
+<p>例如：指定第一個欄位和第二個欄位內的值都套用置中對齊
+    <code class="language-plaintext highlighter-rouge">
+    {
+        targets: [0, 1],
+        className: 'text-center'              
+    }
+   </code></p>
+
+<p>例如：將第三個欄位顯示的是時間，想要改變時間顯示格式為YYYY-MM-DD，時間格式套件設定採用momentjs，可參考 https://momentjs.com/</p>
+
+<script src="https://gist.github.com/s123600g/7dd3aaed7b86a7e6ef6c09f8832043a8.js"></script>
+
+<p>例如：要為第一個欄位加入css樣式，控制欄位寬度百分比</p>
+
+<script src="https://gist.github.com/s123600g/32d2dba47e4f8ed1641f8a2b3cdad298.js"></script>
+
+<hr />
+
+<h2 id="七-列元素區塊rowcallback">(七) 列元素區塊(rowCallback)</h2>
+
+<p>可參考關於Datatables rowCallback： <a href="https://datatables.net/reference/option/rowCallback">https://datatables.net/reference/option/rowCallback</a></p>
+
+<p>標準語法結構如下：
+<script src="https://gist.github.com/s123600g/d53957716d3c7f6ab55444472615eae2.js"></script></p>
+
+<p>有關於function參數說明，請參考上方連結內說明。
+最常使用的參數為以下：</p>
+<ul>
+  <li><strong>row</strong>：
+此為代表一列也就是該筆資料列。</li>
+  <li><strong>data</strong>：
+此為代表該列內欄位資料，如果要取該列內指定欄位資料，可以用以下方式取值
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  data[欄位key值]
+</code></pre></div>    </div>
+    <p>例如：有一個欄位名為’status’，要取出此欄位值用以下方是進型行：</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  data['status']
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>假設要為一整列套用一個背景色CSS樣式，使用BootStrap顏色類別名，在該列添加一個CSS類別為BootStrap顏色類別名’warning’，可以用以下方式：
+<script src="https://gist.github.com/s123600g/395ad55ae07542fe76276deef18f46cd.js"></script></p>
+
+<hr />
+
+<h2 id="八-完整範例格式">(八) 完整範例格式</h2>
+
+<p>Html
+<script src="https://gist.github.com/s123600g/1af02bce18cf117a631a93e0a14369d3.js"></script></p>
+
+<p>JQuery：
+<script src="https://gist.github.com/s123600g/3cf2931e00c4306454dbab0a17f55f8b.js"></script></p>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+
+<ul>
+  <li><a href="https://datatables.net/">datatables</a></li>
+</ul>
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

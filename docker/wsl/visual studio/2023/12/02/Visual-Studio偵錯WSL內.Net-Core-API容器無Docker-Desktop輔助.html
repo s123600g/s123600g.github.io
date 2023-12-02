@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - Visual Studio偵錯WSL內.Net Core API容器無Docker Desktop輔助
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Visual Studio偵錯WSL內.Net Core API容器無Docker Desktop輔助</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">Visual Studio偵錯WSL內.Net Core API容器無Docker Desktop輔助</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2023-12-02 08:46:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<p>Windows環境未安裝Docker Desktop，運行<code class="language-plaintext highlighter-rouge">WSL2</code>+<code class="language-plaintext highlighter-rouge">Ubuntu</code>子系統有安裝<code class="language-plaintext highlighter-rouge">Docker Enginer</code>環境下，Visual studio附加串接至容器進行偵錯配置筆記。</p>
+
+<p>如果使用情境比較複雜，此筆記紀錄方法不確定是否可適用，需再自行評估是否還是需要Docker Desktop來輔助。</p>
+
+<p>使用環境：</p>
+<ol>
+  <li>Windows作業系統。</li>
+  <li>WSL2使用Ubuntu 22.04。</li>
+  <li>Visual Studio 2022。</li>
+  <li>Docker Engine，無安裝Docker Desktop。</li>
+</ol>
+
+<hr />
+
+<h2 id="事前準備">事前準備</h2>
+
+<p><strong>Step 1. WSL安裝設置</strong></p>
+
+<p>使用Winodws內WSL(Windows Subsystem for Linux)功能，使用版本為V2 –&gt; <code class="language-plaintext highlighter-rouge">WSL2</code></p>
+
+<p>關於<code class="language-plaintext highlighter-rouge">WSL2</code>安裝可以參考 <a href="https://learn.microsoft.com/en-us/windows/wsl/install">How to install Linux on Windows with WSL</a>，安裝過程也會順便創建最新版Ubuntu子系統，後面操作以此Linux環境操作。</p>
+
+<blockquote>
+  <p>再此紀錄時間點下，使用Ubuntu最新版本為<code class="language-plaintext highlighter-rouge">Ubuntu Jammy 22.04 (LTS)</code></p>
+</blockquote>
+
+<p><strong>Step 2. 安裝Docker Engine</strong></p>
+
+<p>Docker容器是放置在Linux環境下，需要在Ubuntu終端機介面下，進行<code class="language-plaintext highlighter-rouge">Docker Enginer</code>安裝，可以參考<a href="https://docs.docker.com/engine/install/ubuntu/">Install Docker Engine on Ubuntu</a></p>
+
+<p>此筆記是Windows不安裝Docker Desktop，如果Windows要使用Docker容器的話，常見介紹作法是安裝Docker Desktop，可以參考<a href="https://docs.docker.com/desktop/install/windows-install/">Install Docker Desktop on Windows</a></p>
+
+<p>因為安裝過程會自動幫你透過WSL建置Docker Enginer相關設定和實體，算是懶人包操作處理，透過Docker Desktop來管理整個Docker Enginer運作。</p>
+
+<p>簡單來說，Windows實際上還是運行Linux環境操作Docker容器(預設使用Linux Container情況)。</p>
+
+<p><strong>Step 3. 安裝SSH Server</strong></p>
+
+<p>使用<code class="language-plaintext highlighter-rouge">OpenSSH Server</code>工具，可以參考<a href="https://ubuntu.com/server/docs/service-openssh">OpenSSH Server</a></p>
+
+<p>根據<a href="https://learn.microsoft.com/en-us/visualstudio/debugger/attach-to-process-running-in-docker-container?view=vs-2022#prerequisites">Attach to a process running on a Docker container - Prerequisites</a>，透過以下指令進行安裝<code class="language-plaintext highlighter-rouge">openssh-server</code></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>openssh-server unzip curl
+</code></pre></div></div>
+
+<p>確認SSH Server服務狀態</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service ssh status
+</code></pre></div></div>
+
+<p>安裝完之後，SSH Server服務是未啟動狀態，需再手動將其服務啟動</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service ssh start
+</code></pre></div></div>
+
+<p>Windows環境測試SSH連接</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh &lt;username&gt;@&lt;ip-address&gt;
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">&lt;username&gt;</code> –&gt; WSL下Ubuntu的User Name</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;ip-address&gt;</code> –&gt; WSL下Ubuntu的IP，使用127.0.0.1即可</li>
+</ul>
+
+<p>EX：<code class="language-plaintext highlighter-rouge">&lt;username&gt;</code> = test01</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh test01@127.0.0.1
+</code></pre></div></div>
+
+<p>當終端機顯示以下訊息，請輸入<code class="language-plaintext highlighter-rouge">yes</code>按下Enter送出</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Are you sure you want to continue connecting (yes/no/[fingerprint])?
+</code></pre></div></div>
+
+<p>之後會出現輸入登入密碼，輸入成功後即可成功連到SSH Server。</p>
+
+<p><strong>Step 4. 掛載專案存放位置</strong></p>
+
+<p>WSL底下Ubuntu預設使用者目錄內沒有對應Windows本機上專案存放目錄，可以將Windows存放專案目錄做一個軟連結(link)。</p>
+
+<p>WSL底下Ubuntu預設有跟Windows本機檔案目錄做一個掛載地方–&gt;<code class="language-plaintext highlighter-rouge">/mnt</code>，如果用<code class="language-plaintext highlighter-rouge">ls</code>顯示該目錄底下內容，可以看到以Windows上磁碟曹代號目錄。</p>
+
+<p>假設Windows上存放專案目錄在<code class="language-plaintext highlighter-rouge">C:\Project</code>，對應<code class="language-plaintext highlighter-rouge">/mnt/c/project</code>，依據此位置在使用者根目錄(<code class="language-plaintext highlighter-rouge">~</code>)下建軟連結目錄。</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /mnt/c/project /home/jyu
+</code></pre></div></div>
+<blockquote>
+  <p>將<code class="language-plaintext highlighter-rouge">/mnt/c/project</code>建立軟連結在使用者目錄底下–&gt;<code class="language-plaintext highlighter-rouge">/home/jyu</code></p>
+</blockquote>
+
+<p>透過<code class="language-plaintext highlighter-rouge">ls</code>查看根目錄(<code class="language-plaintext highlighter-rouge">~</code>)底下內容，可以發現多了一個<code class="language-plaintext highlighter-rouge">project</code>名稱目錄。</p>
+
+<p><img src="docker_20231202_1.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+<h2 id="執行偵錯">執行偵錯</h2>
+
+<p>使用Visual Studio建立預設API專案作為範例。</p>
+
+<p>專案需要有docker相關運作配置，可以參考<a href="https://learn.microsoft.com/en-us/visualstudio/containers/overview?view=vs-2022#adding-docker-support">Adding Docker support</a></p>
+
+<h4 id="運行container">運行Container</h4>
+
+<p>以docker-compose做範例，docker-compose相關yaml配置檔在WSL內Ubuntu底下位置–&gt;<code class="language-plaintext highlighter-rouge">~/project/Local/WebApplication1</code>。</p>
+
+<p>以下指令皆在WSL內Ubuntu終端機介面執行。</p>
+
+<p>切換至專案目錄底下</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ~/project/Local/WebApplication1
+</code></pre></div></div>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">~</code>代表在當前使用者家目錄。
+範例專案名稱為WebApplication1。</p>
+</blockquote>
+
+<p>執行運作</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose <span class="nt">-f</span> docker-compose.yml <span class="nt">-f</span> docker-compose.override.yml  up <span class="nt">-d</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">-f</code> 代表要引用的yaml配置檔案。
+<code class="language-plaintext highlighter-rouge">-d</code> 代表運作起來在背景常駐執行，當前終端機不持續追蹤運行容器程序之中。</p>
+</blockquote>
+
+<p>範例API專案預設配置Port為<code class="language-plaintext highlighter-rouge">5015</code>(不一定都是)，開啟Swagger介面位址–&gt;<code class="language-plaintext highlighter-rouge">http://127.0.0.1:5015/swagger/index.html</code></p>
+
+<p><img src="docker_20231202_2.png" class="img-fluid rounded mx-auto" /></p>
+
+<h4 id="連接container偵錯">連接Container偵錯</h4>
+
+<p>開始偵錯前需要確認以下事項</p>
+<ol>
+  <li>WSL底下Ubuntu內SSH Server服務是啟用正常運作中。</li>
+  <li>專案Container是否有運作起來。</li>
+</ol>
+
+<p><strong>Step 1. Visual Studio內點擊<code class="language-plaintext highlighter-rouge">Debug</code>–&gt;<code class="language-plaintext highlighter-rouge">Attach to Process</code></strong></p>
+
+<p><img src="docker_20231202_3.png" class="img-fluid rounded mx-auto" /></p>
+
+<blockquote>
+  <p>Connection Type 選擇<code class="language-plaintext highlighter-rouge">Docker(Linux Container)</code></p>
+</blockquote>
+
+<p><strong>Step 2. 點擊Connection target旁邊<code class="language-plaintext highlighter-rouge">Find</code>按鈕</strong></p>
+
+<p><img src="docker_20231202_4.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>點選<code class="language-plaintext highlighter-rouge">Add</code>按鈕，出現登入SSH介面</p>
+
+<p><img src="docker_20231202_5.png" class="img-fluid rounded mx-auto" /></p>
+
+<blockquote>
+  <p>Host Name輸入<code class="language-plaintext highlighter-rouge">localhost</code>，因為是在本機內WSL底下Ubuntu。
+Port使用SSH預設<code class="language-plaintext highlighter-rouge">22</code>。
+Authentication type選擇<code class="language-plaintext highlighter-rouge">Password</code>。
+User Name和Password輸入WSL底下Ubuntu使用者帳戶登入名稱和密碼。</p>
+</blockquote>
+
+<p>點擊<code class="language-plaintext highlighter-rouge">Connect</code>正常連到之後，可以看到WSL內Ubuntu底下運行Container清單，找到範例專案<code class="language-plaintext highlighter-rouge">webapplication1_demoapi_1</code>並選取按<code class="language-plaintext highlighter-rouge">OK</code>。</p>
+
+<p><img src="docker_20231202_6.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>之後回到<code class="language-plaintext highlighter-rouge">Attach to Process</code>介面，可以看到被選取的容器專案，按下<code class="language-plaintext highlighter-rouge">Attach</code>後Visual Studio即會開始進行連結偵錯。</p>
+
+<p>找到範例API下中斷點，回到Swagger介面測試該API呼叫，可以發現中斷點可執行運作。</p>
+
+<p><img src="docker_20231202_7.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>如果更改程式還需要在重新連結偵錯，需要把Conatiner刪除重新在建置運行一次，Visual Studio需要再透過<code class="language-plaintext highlighter-rouge">Attach to Process</code>操作來執行。</p>
+
+<hr />
+
+<h4 id="相關參考">相關參考</h4>
+<ol>
+  <li><a href="https://dotnetting.net/2022/01/how-to-use-visual-studio-without-docker-desktop-to-debug-a-.net-core-application-running-in-a-container-inside-wsl/">How to use Visual Studio without Docker Desktop to debug a .NET Core application running in a container inside WSL</a></li>
+  <li><a href="https://learn.microsoft.com/zh-tw/visualstudio/debugger/attach-to-process-running-in-docker-container?view=vs-2022#attach-to-a-process-running-on-a-linux-docker-container">附加至於 Linux Docker 容器執行的處理序</a></li>
+  <li><a href="https://askubuntu.com/questions/205841/how-do-i-mount-a-folder-from-another-partition">How do I mount a folder from another partition?</a></li>
+</ol>
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>

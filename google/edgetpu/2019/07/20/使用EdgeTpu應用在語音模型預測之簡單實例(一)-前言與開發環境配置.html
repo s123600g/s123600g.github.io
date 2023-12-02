@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+
+
+
+
+
+
+
+<head>
+  <meta charset="utf-8">
+  <title>
+    JYU Blog - 使用EdgeTpu應用在語音模型預測之簡單實例(一)-前言與開發環境配置
+  </title>
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
+
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+
+  <!-- 針對是否為Production Mode對應特定Js套件來源引入 -->
+  <!-- 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.29/vue.global.prod.min.js"
+    integrity="sha512-NZwTAzVi1EAKCNv0XBX0j3+4UyjSlMjYSrfZw9l8Vi+oSCMUWhnadIBcqbODVuird9fAsl5fx6ysQT2lGxsQjw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+   -->
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/MainStyles.css" />
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
+</head>
+
+
+
+
+
+
+
+<body>
+  
+
+
+
+
+
+
+<div class="container">
+    <header
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+
+        <div class="col-md-3 text-start fs-3">
+            JYU Blog
+        </div>
+
+        <ul class="nav nav-pills col-12 col-md-auto mb-2 fs-5 justify-content-center mb-md-0">
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/" class="nav-link px-2 link-secondary">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-body" href="/about" class="nav-link px-2 link-secondary">About</a>
+            </li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+        </div>
+
+    </header>
+</div>
+  
+
+
+
+
+
+
+<main class="container-sm">
+    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+        aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fas fa-home"></i> <a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">使用EdgeTpu應用在語音模型預測之簡單實例(一)-前言與開發環境配置</li>
+        </ol>
+    </nav>
+    <hr />
+</main>
+
+  <main class="container-sm">
+
+    <div class="mb-3">
+      <span class="fs-3" style="color: #A6341B;">使用EdgeTpu應用在語音模型預測之簡單實例(一)-前言與開發環境配置</span>
+      <br />
+      <span class="fs-6 opacity-75 text-secondary">
+        <i class="fas fa-clock text-info"></i>
+        2019-07-20 16:00:00
+      </span>
+    </div>
+
+    <!--more-->
+
+<h2 id="前言">前言</h2>
+
+<p>此應用專案為探討如何建置一個簡單語音識別例子，並使用<a href="https://coral.withgoogle.com/docs/accelerator/get-started/">Google Coral USB Accelerator</a>、Tensorflow 搭配在筆記型電腦環境上進行開發實作。</p>
+
+<p>有關於Google Coral說明可參考：<a href="https://coral.withgoogle.com/docs/">https://coral.withgoogle.com/docs/</a> <br />
+有關於Tensorflow說明可參考：<a href="https://www.tensorflow.org/">https://www.tensorflow.org/</a></p>
+
+<p>使用硬體規格：</p>
+<ol>
+  <li>Intel® Core™ i5-7200U CPU @ 2.50GHz × 4</li>
+  <li>Ram：12G</li>
+  <li>Google Coral USB Accelerator</li>
+</ol>
+
+<p>後續探討開發重點在於以下幾點：</p>
+<ol>
+  <li>如何取出語音檔案之特徵值處理實作。</li>
+  <li>如何建置簡單CNN模型應用在語音分類。</li>
+  <li>如何進行量化模型訓練，本專案使用<strong>Quantization-aware training</strong>。</li>
+  <li>將訓練好量化模型進行轉換成tflite模型。</li>
+  <li>如何將轉換後tflite模型進行Edgetpu Compile 。</li>
+  <li>如何進行預測之實作。</li>
+</ol>
+
+<hr />
+
+<h2 id="開發環境配置">開發環境配置</h2>
+
+<ol>
+  <li>作業系統：<code class="language-plaintext highlighter-rouge">Ubuntu 18.04.2</code></li>
+  <li>開發工具：Visual Studio Code</li>
+  <li>虛擬環境：virtualenv</li>
+  <li>程式語言：<code class="language-plaintext highlighter-rouge">Python3.6</code></li>
+  <li>Tensorflow版本：
+    <ul>
+      <li>tf-nightly <code class="language-plaintext highlighter-rouge">1.15.0.dev20190627</code></li>
+      <li>tf-estimator-nightly <code class="language-plaintext highlighter-rouge">1.14.0.dev2019062701</code></li>
+    </ul>
+  </li>
+</ol>
+
+<p><strong>Step 1. 檢查是否有安裝python3-pip</strong></p>
+
+<p>在終端機打以下指令，確認能夠正常顯示當前python3 擁有Package清單</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 list
+</code></pre></div></div>
+
+<p><img src="edgetpu01-01.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>如果未正常顯示代表未安裝python3-pip，在終端機打以下指令進行安裝</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>python3-pip
+</code></pre></div></div>
+
+<p><strong>Step 2. 安裝虛擬環境virtualenv應用在Python3環境</strong></p>
+
+<p>在終端機打以下指令，安裝虛擬環境virtualenv</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>virtualenv
+</code></pre></div></div>
+
+<p><strong>Step 3. 建置專案python虛擬環境</strong></p>
+
+<p>在終端機打以下指令，進行建立虛擬環境</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>virtualenv 自訂虛擬環境名稱 <span class="nt">--python</span><span class="o">=</span>指定python版本
+</code></pre></div></div>
+
+<p>假設要建立一個虛擬環境名稱為tf_env，並且指定此虛擬環境使用python版本為python3，此python3與<code class="language-plaintext highlighter-rouge">/usr/bin/python3</code>相應連結，也就是虛擬環境所建置python版本環境以它作為模板下去建置，但是在python package方面只會產生最基本配置，如果有額外安裝的package並不會一起建置在虛擬環境內。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>virtualenv tf_env <span class="nt">--python</span><span class="o">=</span>python3
+</code></pre></div></div>
+
+<p><img src="edgetpu01-02.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>在終端機打以下指令，進入建置python虛擬環境內</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source </span>自訂虛擬環境名稱/bin/activate
+</code></pre></div></div>
+
+<p>以此例建立虛擬環境<strong>tf_env</strong>為例</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source </span>tf_env/bin/activate
+</code></pre></div></div>
+
+<p>會看到在終端機命令列前端出現(虛擬環境名稱)如下</p>
+
+<p><img src="edgetpu01-03.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>在終端機打以下指令，可離開虛擬環境</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deactivate
+</code></pre></div></div>
+
+<p><img src="edgetpu01-04.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>Step 4. 在python虛擬環境安裝必要python package</strong></p>
+
+<p>需要先進入python虛擬環境，才能進行安裝python package，否則會以電腦上實機python環境為主。</p>
+
+<p>python package清單如下：</p>
+
+<script src="https://gist.github.com/s123600g/44b19f69c6d8cdc3b55a2e6d5626aeba.js"></script>
+
+<p>以上套件清單會建立在<code class="language-plaintext highlighter-rouge">requirement.txt</code>檔案內，並且以讀取套件清單檔案形式進行安裝。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="nt">-r</span> requirement.txt
+</code></pre></div></div>
+
+<p><img src="edgetpu01-05.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>由於Tensorflow 最近改版更新，原本使用tf-nightly 1.15.0.dev20190627已被移除安裝來源，需要使用 Tensorflow 1.15來取代使用</p>
+
+<p>tensorflow 1.15.2 ：<a href="https://pypi.org/project/tensorflow/1.15.2/">https://pypi.org/project/tensorflow/1.15.2/</a></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span><span class="nv">tensorflow</span><span class="o">==</span>1.15.2
+</code></pre></div></div>
+
+<p><strong>Step 5. 安裝Edge TPU runtime</strong></p>
+
+<p>參考官方說明文件： <br />
+<a href="https://coral.ai/docs/accelerator/get-started/#1-install-the-edge-tpu-runtime">https://coral.ai/docs/accelerator/get-started/#1-install-the-edge-tpu-runtime</a></p>
+
+<p>將官方edgetpu來源加入置sources清單內</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"deb https://packages.cloud.google.com/apt coral-edgetpu-stable main"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/coral-edgetpu.list
+</code></pre></div></div>
+
+<p>下載官方來源金鑰並加入</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | <span class="nb">sudo </span>apt-key add -
+</code></pre></div></div>
+
+<p>進行更新將來源套件下載</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update
+</code></pre></div></div>
+
+<p>執行套件安裝</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>libedgetpu1-std
+</code></pre></div></div>
+
+<p><strong>Step 6. 安裝 TensorFlow Lite Library</strong></p>
+
+<p>參考官方說明文件：  <br />
+<a href="https://coral.ai/docs/accelerator/get-started/#2-install-the-tensorflow-lite-library">https://coral.ai/docs/accelerator/get-started/#2-install-the-tensorflow-lite-library</a> <br />
+<a href="https://www.tensorflow.org/lite/guide/python#install_just_the_tensorflow_lite_interpreter">https://www.tensorflow.org/lite/guide/python#install_just_the_tensorflow_lite_interpreter</a></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp36-cp36m-linux_x86_64.whl
+</code></pre></div></div>
+
+<p><strong>Step 7. 安裝 Edge TPU Python API Library</strong></p>
+
+<p>參考官方說明文件： <br />
+<a href="https://coral.ai/docs/edgetpu/api-intro/#install-the-library-and-examples">https://coral.ai/docs/edgetpu/api-intro/#install-the-library-and-examples</a></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>python3-edgetpu
+</code></pre></div></div>
+
+<p>需注意一點的是，這裡所安裝的 Edge TPU Python API Library 是存在實體環境 python裡面，並不存在上面步驟所建置虛擬環境內，執行調用相關 Edge TPU Python API時，請在非虛擬環境底下進行。</p>
+
+<p><strong>Step 8. 執行Edge TPU Demo範例</strong></p>
+
+<p>這裡執行的範例是直接使用Edge TPU Python API Demo，關於使用TensorFlow Lite API 官方說明已有介紹，在此不再執行使用TensorFlow Lite API Demo。</p>
+
+<p>參考官方說明文件：<br />
+<a href="https://coral.withgoogle.com/docs/edgetpu/api-intro/">https://coral.withgoogle.com/docs/edgetpu/api-intro/</a> <br />
+<a href="https://github.com/google-coral/edgetpu">https://github.com/google-coral/edgetpu</a></p>
+
+<p>取得examples內容，安裝完畢後所有檔案會放置在<code class="language-plaintext highlighter-rouge">/usr/share/edgetpu/examples</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>edgetpu-examples
+</code></pre></div></div>
+
+<p><img src="edgetpu01-06.png" class="img-fluid rounded mx-auto" /></p>
+
+<p>運行之前，請先插入Google Coral USB Accelerator在USB3.0，不然會在運行時發生例外錯誤 “RuntimeError: No Edge TPU device detected!”</p>
+
+<p><img src="edgetpu01-07.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>Image classification example</strong></p>
+
+<p><a href="https://coral.ai/examples/classify-image/">https://coral.ai/examples/classify-image/</a></p>
+
+<p>執行範例程式， 主程式檔案 <code class="language-plaintext highlighter-rouge">classify_image.py</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 /usr/share/edgetpu/examples/classify_image.py <span class="se">\</span>
+<span class="nt">--model</span> /usr/share/edgetpu/examples/models/mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite <span class="se">\</span>
+<span class="nt">--label</span> /usr/share/edgetpu/examples/models/inat_bird_labels.txt <span class="se">\</span>
+<span class="nt">--image</span> /usr/share/edgetpu/examples/images/parrot.jpg
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">—-model</code> 指定使用tflite模型來源</li>
+  <li><code class="language-plaintext highlighter-rouge">—-labels</code> 指定分類標籤來源</li>
+  <li><code class="language-plaintext highlighter-rouge">—-input</code> 指定輸入圖片來源</li>
+</ul>
+
+<p><img src="edgetpu01-08.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><strong>Object detection example</strong></p>
+
+<p><a href="https://coral.ai/examples/detect-image/#run-the-example-for-object-detection">Run the example for object detection</a></p>
+
+<p>執行範例程式， 主程式檔案 <code class="language-plaintext highlighter-rouge">object_detection.py</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 /usr/share/edgetpu/examples/object_detection.py <span class="se">\</span>
+<span class="nt">--model</span> /usr/share/edgetpu/examples/models/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite <span class="se">\</span>
+<span class="nt">--label</span> /usr/share/edgetpu/examples/models/coco_labels.txt <span class="se">\</span>
+<span class="nt">--input</span> /usr/share/edgetpu/examples/images/grace_hopper.bmp <span class="se">\</span>
+<span class="nt">--output</span> <span class="k">${</span><span class="nv">HOME</span><span class="k">}</span>/object_detection_results.jpg
+</code></pre></div></div>
+
+<p><img src="edgetpu01-09.png" class="img-fluid rounded mx-auto" /></p>
+
+<p><a href="https://coral.ai/examples/detect-image/#run-the-example-for-face-detection">Run the example for face detection</a></p>
+
+<p>執行範例程式， 主程式檔案 <code class="language-plaintext highlighter-rouge">object_detection.py</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 /usr/share/edgetpu/examples/object_detection.py <span class="se">\</span>
+<span class="nt">--model</span> /usr/share/edgetpu/examples/models/mobilenet_ssd_v2_face_quant_postprocess_edgetpu.tflite <span class="se">\</span>
+<span class="nt">--input</span> /usr/share/edgetpu/examples/images/grace_hopper.bmp <span class="se">\</span>
+<span class="nt">--output</span> <span class="k">${</span><span class="nv">HOME</span><span class="k">}</span>/face_detection_results.jpg
+</code></pre></div></div>
+
+<p><img src="edgetpu01-10.png" class="img-fluid rounded mx-auto" /></p>
+
+<hr />
+
+
+
+    <script src="https://utteranc.es/client.js" repo="s123600g/s123600g.github.io"
+      issue-term="title" theme="boxy-light"
+      label="Article" crossorigin="anonymous" async></script>
+  </main>
+</body>
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <span class="text-muted">© 2023 JYUN YU LI. All rights reserved.</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-3">
+                <a class="text-muted" href="https://github.com/s123600g" target="_blank">
+                    <i class="fab fa-github fs-3"></i>
+                </a>
+            </li>
+
+            <li class="ms-3">
+                <a class="text-muted" href="mailto://s123600g@gmail.com">
+                    <i class="fas fa-envelope fs-3"></i>
+                </a>
+            </li>
+        </ul>
+    </footer>
+</div>
+
+</html>
